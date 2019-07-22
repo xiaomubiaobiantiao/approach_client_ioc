@@ -6,13 +6,14 @@
  */
 namespace Home\Service\Index;
 
+use Home\Common\Service\CommonService;
 use Home\Common\Utility\PclZipController as Zip;
 use Home\Common\Utility\DownloadUtility as Download;
 use Home\Common\Utility\FileBaseUtility as FileBase;
-use Home\Service\Index\IndexLogService as ProcessLog;
 use Home\Common\Utility\DetectionUtility as Detection;
+use Home\Service\Index\IndexLogService as ProcessLog;
 
-class IndexParentService
+class IndexParentService extends CommonService
 {
 
 	public function __construct() {
@@ -33,7 +34,7 @@ class IndexParentService
 			: $this->Detection->inforReceive( __CLASS__.' '.__FUNCTION__.' '.__LINE__.' '.$pVersionPath, 4 );
 	}
 
-	//获取文件本数据
+	//获取文件本地数据
 	public function getTextData() {
 		
 	}

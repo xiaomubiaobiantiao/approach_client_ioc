@@ -13,7 +13,7 @@ use Home\Supply\Log\Logs;
 class DetectionUtility extends Logs
 {
 
-	public $errorInfo = array(
+	protected $errorInfo = array(
 
 			1 => 'Search update file',
 			2 => 'Search additional log files',
@@ -23,7 +23,7 @@ class DetectionUtility extends Logs
 			6 => 'Search delete file'
 	);
 
-	public $successInfo = array(
+	protected $successInfo = array(
 
 			1 => 'Search update file complete!',
 			2 => 'Search additional log files complete!',

@@ -6,9 +6,9 @@
  * @author Michael
  * DateTime: 19-6-27 09:37:00
  */
-namespace Home\Common\Utility;
+namespace Home\Supply\File;
 
-class FileBaseUtility extends Controller
+class FileBase
 {
 
 	/**
@@ -192,7 +192,7 @@ class FileBaseUtility extends Controller
 	}
 
 	//删除文件
-	public function deleteFile( $pFile ) {
+	protected function deleteFile( $pFile ) {
 		return unlink( $pFile );
 	}
 

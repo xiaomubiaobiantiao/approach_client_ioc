@@ -6,21 +6,45 @@
  */
 namespace Home\Service\Index;
 
+use Home\Model\PackModel;
 use Home\Service\Index\IndexParentService as Process;
 use Home\Service\Index\IndexFileService as GetPath;
 
-class IndexService extends Process
+class UpdateService extends Process
 {
 
 	public function __construct() {
 		parent::__construct();
-		$this->PackModel = D( 'Pack' );
-		//查看当前版本
+		//生成数据库操作类
+		$this->PackModel = new PackModel();
+		//生成压缩包服务类
+		//$this->PackService = new PackService();
+		//查看当前版本 - 未写
 	}
 
-	//返回所有压缩包信息
-	public function getUpdatePack() {
-		//return $this->PackModel->getPageDataType( '', array('type'=>1), 0, 10, 'update_time' );
+	//获取分类列表
+	public function getSystemTypeList() {
+		return $this->PackModel->systemTypeList();
+	}
+
+	//获取全部已下载的压缩包信息
+	private function getLocalData() {
+		return $this->PackModel->getTrueData();
+	}
+
+	//获取单个分类的相关数据
+	private function getTypeDataList( $pTypeId ) {
+		$typeDataList = $this->getLocalData();
+		return $typeDataList[$pTypeId];
+	}
+
+	//返回系统分类列表和当前分类相关数据的和集
+	public function dataCollection( $pTypeId ) {
+		//下面赋值依次为分类列表,当前类别相关数据
+		$dataList[] = $this->getSystemTypeList();
+		$dataList[] = $this->getTypeDataList( $pTypeId );
+		$dataList[] = $pTypeId;
+		return $dataList;
 	}
 
 	//更新压缩包的流程

@@ -54,29 +54,25 @@ $(document).ready(function(e) {
     <!--
     <li><label>招聘企业<b>*</b></label><input name="" type="text" class="dfinput" value="请填写单位名称"  style="width:518px;"/></li>
     -->
+
+        <form id="form_type" action="<?php echo U('Home/Update/index');?>" method="get" >
         <li>
         <label>选择类别<b>*</b></label>  
         <div class="vocation">
-            <select class="select1">
-                <option>UI设计师</option>
-                <option>交互设计师</option>
-                <option>前端设计师</option>
-                <option>网页设计师</option>
-                <option>Flash动画</option>
-                <option>视觉设计师</option>
-                <option>插画设计师</option>
-                <option>美工</option>
-                <option>其他</option>
+            <select id="type" name="type_id" class="select1">
+                <?php if(is_array($datalist[0])): foreach($datalist[0] as $key=>$vo): if($vo["type"] == $datalist[2]): ?><option value="<?php echo ($vo["type"]); ?>" selected ><?php echo ($vo["type_name"]); ?></option>
+                    <?php else: ?>
+                        <option value="<?php echo ($vo["type"]); ?>" ><?php echo ($vo["type_name"]); ?></option><?php endif; endforeach; endif; ?>
             </select>
         </div>
         </li>
-        
-        <form action="<?php echo U( 'Home/Index/update' );?>" method="get" >
+        </form>
+        <form action="<?php echo U( 'Home/Update/update' );?>" method="get" >
         <li>
             <label>选择版本<b>*</b></label>
             <div class="vocation">
                 <select name="version_id" class="select1">
-                    <?php if(is_array($list)): foreach($list as $key=>$vo): ?><option value="<?php echo ($vo["id"]); ?>"><?php echo ($vo["pack_name"]); ?></option><?php endforeach; endif; ?>
+                    <?php if(is_array($datalist[1])): foreach($datalist[1] as $key=>$vo): ?><option value="<?php echo ($vo["id"]); ?>"><?php echo ($vo["pack_name"]); ?></option><?php endforeach; endif; ?>
                 </select>
             </div>
         </li>
@@ -216,7 +212,16 @@ $(document).ready(function(e) {
     $('.tablelist tbody tr:odd').addClass('odd');
     </script>
     
-    
+    <script type="text/javascript">
+        /*提交类别表单*/
+        $('#type').change(function(){
+            //jQuery 提交表单
+            $("form[id='form_type']").submit();
+            //js 提交表单
+            //document.getElementById("form_type").submit()
+        });
+
+    </script>
     
     
     

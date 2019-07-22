@@ -13,14 +13,28 @@ class PackModel extends CommonModel
 {
 
 	//全部数据
-	public $data = array();
+	private $data = array();
 
 	//每次创建一个此类(new)初始化一次数据库(将文本转换成数组赋值给$data)
 	public function __construct() {
 		$this->data = $this->textToData();
 	}
 
-	//生成系统类型列表
+	//获取全部数据
+	public function getData() {
+		return $this->orderByData( $this->data );
+	}
+
+	//获取有本地压缩包的数据(已下载的) 并 分类
+	public function getTrueData() {
+		foreach ( $this->data as $value ) {
+			if ( $value['status'] == 1 )
+				$data[$value['type']][] = $value;
+		}
+		return $data;
+	}
+
+	//生成更新包类型列表
 	public function systemTypeList() {
 		$num = array();
 		$data = array();
@@ -38,21 +52,50 @@ class PackModel extends CommonModel
 				$data[$key]['type_name'] = $value['type_name'];
 			}
 		}
+		$this->orderByData();
 		return $data;
 	}
 
-	//生成与系统类型相匹配的数据列表
+	//生成与更新包各自类型相匹配 的 分组数据列表( 自动按类型分组 )
 	public function typeDataList() {
-		foreach ( $this->data as $value )
+		$result = $this->orderByData( $this->data );
+		foreach ( $result as $value )
 			$data[$value['type']][] = $value;
+		return $data;
+	}
+
+	//按时间排序数据 - 默认从大到小
+	public function orderByData( $pDataArr, $pStr = '>'  ) {
+		$data = $pDataArr;
+		$count = count( $data );
+		for ( $i=0; $i<$count; $i++ ) {
+			for ( $j=0; $j<$i; $j++ ) {
+				if ( $pStr == '>' ) {
+					if ( $data[$i]['add_time'] > $data[$j]['add_time'] ) {
+						$tmp = $data[$i];
+						$data[$i] = $data[$j];
+						$data[$j] = $tmp;
+					}
+				} else {
+					if ( $data[$i]['add_time'] < $data[$j]['add_time'] ) {
+						$tmp = $data[$i];
+						$data[$i] = $data[$j];
+						$data[$j] = $tmp;
+					}
+				}
+			}
+		}
+		//dump( $data );
 		return $data;
 	}
 
 	//将文本转换成数据
 	public function textToData() {
-		$dataName = array( 'id','pack_name','type','type_name','download','status', 'add_time' );
-
+		//初始化数组
 		$data = array();
+		//定义字段名
+		$dataName = array( 'id','pack_name','type','type_name','download','status', 'add_time' );
+		//读取文件
 		$fopen = fopen( DATABASE_TEXT, "rb" );
         while ( !feof( $fopen )){
             $tData = fgets( $fopen );
@@ -64,30 +107,32 @@ class PackModel extends CommonModel
 	}
 
 	//------------------------------------------------------------------------------------------
-	//获取单个更新包路径
+	//获取单个更新包全部信息
 	public function getPackPath( $pId ) {
 		foreach ( $this->data as $key=>$value ) {
-			if ( strcmp( $value['id'], $pId ) == 0 )
-				return $dataFilePath = rtrim( $value['download'], '/' ).'/'.$value['pack_name'];
+			if ( strcmp( $value['id'], $pId ) == 0 ) {
+				$value['download'] = rtrim( $value['download'], '/' ).'/'.$value['pack_name'];
+				return $value;
+			}
 		}
 	}
 
 	//设置压缩包下载状态改为 1 已下载
-	public function setStatusValue_1( $pId ) {
+	public function setStatusValue( $pId, $pStatus ) {
 		foreach ( $this->data as $key=>$value ) {
 			if ( strcmp( $pId, $value['id'] ) == 0 )
-				$this->data[$key]['status'] = 1;
+				$this->data[$key]['status'] = $pStatus;
 		}
 		$this->dataToText();
 	}
 
-	//设置压缩包下载状态改为 0 未下载
-	public function setStatusValue_0( $pId ) {
+	//对比更新包设置 下载状态 是否成功  1 为已下载 0 为未下载
+	public function downloadStatus( $pId, $pStatus ) {
 		foreach ( $this->data as $key=>$value ) {
-			if ( strcmp( $pId, $value['id'] ) == 1 )
-				$this->data[$key]['status'] = 0;
+			if (( strcmp( $pId, $value['id'] ) == 0 ) && ( strcmp( $pStatus, $this->data[$key]['status'] ) == 0 ))
+				return true;
 		}
-		$this->dataToText();
+		return false;
 	}
 
 	//将数据写入到文本
@@ -101,8 +146,8 @@ class PackModel extends CommonModel
 	}
 
 	//删除本地更新包
-	public function deletePack( $pPath ) {
-		return unlink( $pFile );
+	public function deletePack( $pFilePath ) {
+		return unlink( $pFilePath );
 	}
 
 	//数组转换成字符串 - 
@@ -110,28 +155,6 @@ class PackModel extends CommonModel
 		$data = array_values( $pArr );
 		return implode( $pChar, $data );
 	}
-
-
-	//------------------------------------------------------------------------------------------
-
-	// protected $pk = 'id';
-
-	// protected $autoinc = true;
-
-	// protected $trueTableName = 'file_pack_infor';
-
-	// protected $fields = array(
-	// 	'id', 'pack_name', 'path', 'relative_path', 'download', 'user', 'type', 'type_name', 'add_time', 'update_time',
-
-	// 	//提供类型, 以供某些验证用, 目前未用到
-	// 	'_type'=>array(
-	// 		'id'=>'int', 'pack_name'=>'varchar', 'path'=>'varchar',
-	// 		'relative_path'=>'varchar', 'download'=>'varchar', 'user'=>'varchar',
-	// 		'type'=>'tinyint', 'type_name'=>'varchar', 'add_time'=>'int', 'update_time'=>'int'
-	// 	)
-
-	// );
-
 
 
 

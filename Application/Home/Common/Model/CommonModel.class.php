@@ -7,8 +7,7 @@
 
 /**
  * Description of CommonModel 
- * @基本模型(公共模型)
- * Created by Sublime Text
+ * @基本模型(公共模型) - 目前未用
  * @author Michael
  * DateTime: 19-6-27 14:34:00
  */

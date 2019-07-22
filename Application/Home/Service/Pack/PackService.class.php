@@ -6,19 +6,17 @@
  */
 namespace Home\Service\Pack;
 
-//use Home\Common\Service\CommonService;
-use Home\Service\Pack\PackLogService as PackLogs;
 use Home\Model\PackModel;
-use Home\Common\Utility\DetectionUtility as Detection;
-use Home\Common\Utility\UploadUtility as Upload;
+use Home\Common\Service\CommonService;
+use Home\Service\Pack\PackDetectionLogService as PackLogs;
+//use Home\Common\Utility\UploadUtility as Upload;
 use Home\Common\Utility\DownloadUtility as Download;
 
-class PackService extends PackLogs
+class PackService // extends CommonService
 {
 
 	//初始化文本数据
 	public function __construct() {
-		parent::__construct();
 		$this->PackModel = new PackModel();
 	}
 
@@ -29,7 +27,14 @@ class PackService extends PackLogs
 
 	//获取全部数据列表
 	public function getDataList() {
-		return $this->PackModel->data;
+		return $this->PackModel->getData();
+	}
+
+	//返回所有压缩包信息
+	public function getUpdatePack() {
+		$datalist[] = $this->getSystemTypeList();
+		$datalist[] = $this->getDataList();
+		return $datalist;
 	}
 
 	//获取单个分类的相关数据
@@ -50,44 +55,70 @@ class PackService extends PackLogs
 		return $dataList;
 	}
 
-	//删除本地更新包过程
-	public function deletePackProcess( $pId ) {
-		$packFilePath = $this->PackModel->getPackPath( $pId );
-
-		if ( is_file( $packFilePath )) {
-			$this->PackModel->deletePack( $packFilePath );
-			if ( is_file( $packFilePath ))
-				return false;
-		}
-
-		false == PackLogs::scanFile( $filePath )
-			? PackLogs::successReceive( 2, $filePath )
-			: PackLogs::inforReceive( __METHOD__.' '.__LINE__.' '.$filePath, 2 );
-
-
-		$this->PackModel->deletePack();
-	}
-
 	//下载更新包
 	public function download( $pId ) {
-		//获取更新包下载地址
-		$packFilePath = $this->PackModel->getPackPath( $pId );
+		//获取单个更新包信息
+		$packInfo = $this->PackModel->getPackPath( $pId );
 		//下载文件
-		Download::down( $packFilePath, UPLOAD_PATH )
+		Download::down( $packInfo['download'], UPLOAD_PATH )
 			? Download::successReceive( 1, UPLOAD_PATH )
-			: Download::inforReceive( __METHOD__.' '.__LINE__.' '.$pId.$packFilePath.' '.UPLOAD_PATH, 1 );
+			: Download::inforReceive( __METHOD__.' '.__LINE__.' '.$pId.'|'.$packInfo['download'].' '.UPLOAD_PATH, 1 );
 
 		//组合下载后更新包的路径
-		$filePath = rtrim( UPLOAD_PATH, '/' ).'/'.basename( $packFilePath );
+		$localPath = rtrim( UPLOAD_PATH, '/' ).'/'.$packInfo['pack_name'];
 		//检测文件是否存在
-		PackLogs::scanFile( $filePath )
-			? PackLogs::successReceive( 1, $filePath )
-			: PackLogs::inforReceive( __METHOD__.' '.__LINE__.' '.$filePath, 1 );
-		//设置更新包的状态信息为 1 已下载
-		$this->PackModel->setStatusValue_1( $pId );
-		//检测是否更新成功
-		
-		return true;
+		PackLogs::scanFile( $localPath )
+			? PackLogs::successReceive( 1, $localPath )
+			: PackLogs::inforReceive( __METHOD__.' '.__LINE__.' '.$localPath, 1 );
+
+		//设置更新包的下载状态信息为 1 已下载
+		$this->PackModel->setStatusValue( $pId, 1 );
+
+		//检测更新包的下载状态信息是否更新成功为 1
+		$boolValue = $this->PackModel->downloadStatus( $pId, 1 );
+
+		//判断更新包的下载状态并给出相应信息
+		if ( false == PackLogs::checkBoolValue( $boolValue )) {
+			//删除本地更新包
+			$this->PackModel->deletePack( $localPath );
+			PackLogs::inforReceive( __METHOD__.' '.__LINE__.' '.$pId.'|1|'.$localPath, 5 );
+		} else {
+			PackLogs::successReceive( 4, $pId.'|1|'.$localPath );
+		}
+
+	}
+
+	//删除本地更新包过程
+	public function deletePackProcess( $pId ) {
+
+		//获取更新本地地址
+		$packInfo = $this->PackModel->getPackPath( $pId );
+
+		//组合下载后更新包的路径
+		$localPath = rtrim( UPLOAD_PATH, '/' ).'/'.$packInfo['pack_name'];
+		//检测本地更新包是否存在
+		if ( false == PackLogs::scanFile( $localPath ))
+			PackLogs::inforReceive( __METHOD__.' '.__LINE__.' '.$localPath, 3 );
+
+		//删除本地更新包
+		$this->PackModel->deletePack( $localPath );
+
+		//检测本地更新包是否删除更新成功
+		false == PackLogs::scanFile( $localPath )
+			? PackLogs::successReceive( 2, $localPath )
+			: PackLogs::inforReceive( __METHOD__.' '.__LINE__.' '.$localPath, 2 );
+
+		//设置更新包的下载状态信息为 0 未下载
+		$this->PackModel->setStatusValue( $pId, 0 );
+
+		//检测更新包的下载状态信息是否更新成功为 0
+		$boolValue = $this->PackModel->downloadStatus( $pId, 0 );
+
+		//判断更新包的下载状态并给出相应信息
+		PackLogs::checkBoolValue( $boolValue )
+			? PackLogs::successReceive( 4, $pId.'|0|'.$localPath )
+			: PackLogs::inforReceive( __METHOD__.' '.__LINE__.' '.$pId.'|0|'.$localPath, 5 );
+
 	}
 
 	//文件上传配置
@@ -149,9 +180,9 @@ class PackService extends PackLogs
 	}
 	
 	//查看数据
-	public function checkData() {
-		return $this->PackModel->getDataList();
-	}
+	// public function checkData() {
+	// 	return $this->PackModel->getDataList();
+	// }
 
 	//删除数据 - 待完善
 	// public function deleteData( $pId ) {

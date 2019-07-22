@@ -1,5 +1,7 @@
 <?php
 /**
+ * Description of CommonModel 
+ * 公共服务类 - 目前未用
  * Created by Sublime Text
  * @author Michael
  * DateTime: 19-6-27 09:37:00
@@ -7,9 +9,7 @@
 
 namespace Home\Common\Service;
 
-use Think\Controller;
-
-class CommonService extends Controller
+class CommonService
 {
 
     //删除数据和文件 - 待完善

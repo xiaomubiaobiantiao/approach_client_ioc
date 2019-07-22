@@ -5,23 +5,18 @@
  * @author Michael
  * DateTime: 19-6-27 09:37:00
  */
-namespace Home\Service\Pack;
+namespace Home\Supply\Detection;
 
-use Home\Common\Utility\FileBaseUtility as FileBase;
+use Home\Supply\File\FileBase;
 use Home\Supply\Log\Logs;
 
-class PackLogService extends Logs
+class Detection extends Logs
 {
 
-	public $errorInfo = array(
-			1 => 'Search download file',
-			2 => 'Search delete file'
-	);
 
-	public $successInfo = array(
-			1 => 'Search download file complete!',
-			2 => 'Search delete file complete!'
-	);
+	protected $errorInfo = array();
+
+	protected $successInfo = array();
 
 	//检测文件
 	public function scanFile( $pFilePath ) {

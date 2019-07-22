@@ -76,7 +76,7 @@
             <li class="click"><span><img src="/Public/images/t02.png" /></span>修改</li>
             <li><span><img src="/Public/images/t03.png" /></span>删除</li>
             -->
-            <form id="formid" action="<?php echo U( 'Home/Pack/dataList' ) ;?>" method="post" >
+            <form id="form_type" action="<?php echo U( 'Home/Pack/dataList' ) ;?>" method="get" >
             <!--<li>选择系统</li>-->
             <li>
                 <div class="vocation">
@@ -128,8 +128,8 @@
                             <td style="color:gray" >未下载</td><?php endif; ?>
                         <td>
                             <!-- <?php echo U( 'Home/Pack/downloadPack', array( 'id'=>$vo['id'] ));?> -->
-                            <a id="a_action" href="" value="<?php echo ($vo['id']); ?>" class="tablelink">下载</a> 
-                            <?php if($vo["status"] == 1): ?><a href="<?php echo U( 'Home/Pack/del', array( 'id'=>$vo['id'] ));?>" class="tablelink">删除</a>
+                            <a id="down" href="" value="<?php echo ($vo['id']); ?>" class="tablelink">下载</a> 
+                            <?php if($vo["status"] == 1): ?><a id="del" href="" value="<?php echo ($vo['id']); ?>" class="tablelink">删除</a>
                             <?php else: ?>
                                 <a style="color:gray" href="#" class="tablelink">删除</a><?php endif; ?>
                         </td>
@@ -193,13 +193,22 @@
 <script type="text/javascript">
 
     /* 点击下载按钮时将分类id和当前一条数据id传递给后端处理 */
-    $(".imgtable #a_action").click(function() {
+    $(".imgtable #down").click(function() {
         /* 获取分类 id */
         var type_id = $( "#type" ).find( "option:selected" ).val();
         /* 获取当前一条数据 id */
         var id = $(this).attr("value");
         /* 拼接URI请求地址 */
-        $(this).attr( 'href', "<?php echo U( 'Home/Pack/downloadPack' );?>"+'?id='+id+'&type_id='+type_id ); 
+        $(this).attr( 'href', "<?php echo U( 'Home/Pack/downloadPack' );?>"+'?id='+id+'&type_id='+type_id );
+    });
+
+    $(".imgtable #del").click(function() {
+        /* 获取分类 id */
+        var type_id = $( "#type" ).find( "option:selected" ).val();
+        /* 获取当前一条数据 id */
+        var id = $(this).attr("value");
+        /* 拼接URI请求地址 */
+        $(this).attr( 'href', "<?php echo U( 'Home/Pack/del' );?>"+'?id='+id+'&type_id='+type_id ); 
     });
 
     function checkUser(){
@@ -213,7 +222,7 @@
        //  alert("密码不能为空");
        //   return false;
        // }
-        document.getElementById("formid").submit()
+        document.getElementById("form_type").submit()
     }
 </script>
 
