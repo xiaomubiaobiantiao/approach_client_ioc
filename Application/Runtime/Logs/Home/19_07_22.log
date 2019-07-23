@@ -13579,3 +13579,83 @@ INFO: [ app_end ] --START--
 INFO: Run Behavior\ShowPageTraceBehavior [ RunTime:0.000864s ]
 INFO: [ app_end ] --END-- [ RunTime:0.000978s ]
 
+[ 2019-07-22T21:14:32+08:00 ] ::1 /index.php/Home/Update/index.html
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000020s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000416s ]
+NOTIC: [8] Constant LOG_PATH already defined D:\phpStudy\PHPTutorial\WWW\approach_client\Application\Home\Conf\config.php 第 24 行.
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000722s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000834s ]
+NOTIC: [2] Missing argument 1 for Home\Model\PackModel::orderByData(), called in D:\phpStudy\PHPTutorial\WWW\approach_client\Application\Home\Model\PackModel.class.php on line 55 and defined D:\phpStudy\PHPTutorial\WWW\approach_client\Application\Home\Model\PackModel.class.php 第 68 行.
+NOTIC: [8] Undefined variable: pDataArr D:\phpStudy\PHPTutorial\WWW\approach_client\Application\Home\Model\PackModel.class.php 第 69 行.
+NOTIC: [2] Missing argument 1 for Home\Model\PackModel::orderByData(), called in D:\phpStudy\PHPTutorial\WWW\approach_client\Application\Home\Model\PackModel.class.php on line 55 and defined D:\phpStudy\PHPTutorial\WWW\approach_client\Application\Home\Model\PackModel.class.php 第 68 行.
+NOTIC: [8] Undefined variable: pDataArr D:\phpStudy\PHPTutorial\WWW\approach_client\Application\Home\Model\PackModel.class.php 第 69 行.
+INFO: [ view_parse ] --START--
+INFO: [ template_filter ] --START--
+INFO: Run Behavior\ContentReplaceBehavior [ RunTime:0.000085s ]
+INFO: [ template_filter ] --END-- [ RunTime:0.000181s ]
+INFO: Run Behavior\ParseTemplateBehavior [ RunTime:0.049448s ]
+INFO: [ view_parse ] --END-- [ RunTime:0.049560s ]
+INFO: [ view_filter ] --START--
+INFO: Run Behavior\WriteHtmlCacheBehavior [ RunTime:0.000372s ]
+INFO: [ view_filter ] --END-- [ RunTime:0.000435s ]
+INFO: [ app_end ] --START--
+INFO: Run Behavior\ShowPageTraceBehavior [ RunTime:0.000552s ]
+INFO: [ app_end ] --END-- [ RunTime:0.000615s ]
+
+[ 2019-07-22T21:14:33+08:00 ] ::1 /index.php/Home/Pack/index.html
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000029s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000566s ]
+NOTIC: [8] Constant LOG_PATH already defined D:\phpStudy\PHPTutorial\WWW\approach_client\Application\Home\Conf\config.php 第 24 行.
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000837s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000963s ]
+NOTIC: [2] Missing argument 1 for Home\Model\PackModel::orderByData(), called in D:\phpStudy\PHPTutorial\WWW\approach_client\Application\Home\Model\PackModel.class.php on line 55 and defined D:\phpStudy\PHPTutorial\WWW\approach_client\Application\Home\Model\PackModel.class.php 第 68 行.
+NOTIC: [8] Undefined variable: pDataArr D:\phpStudy\PHPTutorial\WWW\approach_client\Application\Home\Model\PackModel.class.php 第 69 行.
+INFO: [ view_parse ] --START--
+INFO: [ template_filter ] --START--
+INFO: Run Behavior\ContentReplaceBehavior [ RunTime:0.000171s ]
+INFO: [ template_filter ] --END-- [ RunTime:0.000325s ]
+NOTIC: [8] Undefined offset: 2 D:\phpStudy\PHPTutorial\WWW\approach_client\Application\Runtime\Cache\Home\2d4b105cc3f28ce14a5e37983c2cdccc.php 第 85 行.
+NOTIC: [8] Undefined offset: 2 D:\phpStudy\PHPTutorial\WWW\approach_client\Application\Runtime\Cache\Home\2d4b105cc3f28ce14a5e37983c2cdccc.php 第 85 行.
+NOTIC: [8] Undefined index: relative_path D:\phpStudy\PHPTutorial\WWW\approach_client\Application\Runtime\Cache\Home\2d4b105cc3f28ce14a5e37983c2cdccc.php 第 120 行.
+NOTIC: [8] A non well formed numeric value encountered D:\phpStudy\PHPTutorial\WWW\approach_client\Application\Runtime\Cache\Home\2d4b105cc3f28ce14a5e37983c2cdccc.php 第 119 行.
+NOTIC: [8] Undefined index: relative_path D:\phpStudy\PHPTutorial\WWW\approach_client\Application\Runtime\Cache\Home\2d4b105cc3f28ce14a5e37983c2cdccc.php 第 120 行.
+NOTIC: [8] A non well formed numeric value encountered D:\phpStudy\PHPTutorial\WWW\approach_client\Application\Runtime\Cache\Home\2d4b105cc3f28ce14a5e37983c2cdccc.php 第 119 行.
+NOTIC: [8] Undefined index: relative_path D:\phpStudy\PHPTutorial\WWW\approach_client\Application\Runtime\Cache\Home\2d4b105cc3f28ce14a5e37983c2cdccc.php 第 120 行.
+INFO: Run Behavior\ParseTemplateBehavior [ RunTime:0.097388s ]
+INFO: [ view_parse ] --END-- [ RunTime:0.097534s ]
+INFO: [ view_filter ] --START--
+INFO: Run Behavior\WriteHtmlCacheBehavior [ RunTime:0.000809s ]
+INFO: [ view_filter ] --END-- [ RunTime:0.000937s ]
+INFO: [ app_end ] --START--
+INFO: Run Behavior\ShowPageTraceBehavior [ RunTime:0.001040s ]
+INFO: [ app_end ] --END-- [ RunTime:0.001157s ]
+
+[ 2019-07-22T21:14:33+08:00 ] ::1 /index.php/Home/Update/index.html
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000026s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000528s ]
+NOTIC: [8] Constant LOG_PATH already defined D:\phpStudy\PHPTutorial\WWW\approach_client\Application\Home\Conf\config.php 第 24 行.
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000602s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000697s ]
+NOTIC: [2] Missing argument 1 for Home\Model\PackModel::orderByData(), called in D:\phpStudy\PHPTutorial\WWW\approach_client\Application\Home\Model\PackModel.class.php on line 55 and defined D:\phpStudy\PHPTutorial\WWW\approach_client\Application\Home\Model\PackModel.class.php 第 68 行.
+NOTIC: [8] Undefined variable: pDataArr D:\phpStudy\PHPTutorial\WWW\approach_client\Application\Home\Model\PackModel.class.php 第 69 行.
+NOTIC: [2] Missing argument 1 for Home\Model\PackModel::orderByData(), called in D:\phpStudy\PHPTutorial\WWW\approach_client\Application\Home\Model\PackModel.class.php on line 55 and defined D:\phpStudy\PHPTutorial\WWW\approach_client\Application\Home\Model\PackModel.class.php 第 68 行.
+NOTIC: [8] Undefined variable: pDataArr D:\phpStudy\PHPTutorial\WWW\approach_client\Application\Home\Model\PackModel.class.php 第 69 行.
+INFO: [ view_parse ] --START--
+INFO: [ template_filter ] --START--
+INFO: Run Behavior\ContentReplaceBehavior [ RunTime:0.000083s ]
+INFO: [ template_filter ] --END-- [ RunTime:0.000165s ]
+INFO: Run Behavior\ParseTemplateBehavior [ RunTime:0.014266s ]
+INFO: [ view_parse ] --END-- [ RunTime:0.014392s ]
+INFO: [ view_filter ] --START--
+INFO: Run Behavior\WriteHtmlCacheBehavior [ RunTime:0.000376s ]
+INFO: [ view_filter ] --END-- [ RunTime:0.000436s ]
+INFO: [ app_end ] --START--
+INFO: Run Behavior\ShowPageTraceBehavior [ RunTime:0.000600s ]
+INFO: [ app_end ] --END-- [ RunTime:0.000667s ]
+
