@@ -22,6 +22,12 @@ class UpdateService extends Process
 		//查看当前版本 - 未写
 	}
 
+	//获取默认分类
+	public function getDefaultType() {
+		$typeInfo = $this->getSystemTypeList();
+		return $typeInfo[0]['type'];
+	}
+
 	//获取分类列表
 	public function getSystemTypeList() {
 		return $this->PackModel->systemTypeList();

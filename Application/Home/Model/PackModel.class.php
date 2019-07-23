@@ -31,7 +31,8 @@ class PackModel extends CommonModel
 			if ( $value['status'] == 1 )
 				$data[$value['type']][] = $value;
 		}
-		return $data;
+		$result = $this->orderByData( $data );
+		return $result;
 	}
 
 	//生成更新包类型列表

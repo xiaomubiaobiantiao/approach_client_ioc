@@ -25,10 +25,8 @@ class UpdateController extends Controller
 		$typeId = I( 'type_id' );
 
 		//如果未传入类别值 默认为分类列表的第一个类别
-		if ( empty( $typeId )) {
-			$typeInfo = $this->UpdateService->getSystemTypeList();
-			$typeId = $typeInfo[0]['type'];
-		}
+		if ( empty( $typeId ))
+			$typeId = $this->UpdateService->getDefaultType();
 
 		$datalist = $this->UpdateService->dataCollection( $typeId );
 		$this->assign( 'datalist', $datalist );
