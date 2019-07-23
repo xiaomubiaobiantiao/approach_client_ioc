@@ -1,8 +1,10 @@
 <?php
-//UPLOAD_PATH 常量值 路径后面必须加 / 符号	********
+//UPDATE_PATH 常量值 路径后面必须加 / 符号	********
+//UPLOAD_PATH  常量值 路径后面必须加 / 符号	********
 //BACKUP_PACK 常量值 路径后面必须加 / 符号	********
 //BACKUP_TMP_PACK 常量值 路径后面必须加 / 符号	********
 //UNPACK_TMP_PATH 常量值 路径后面必须加 / 符号	********
+//LOG_PATH 常量值 路径后面必须加 / 符号	********
 
 //文件更新的路径
 //define( 'UPDATE_PATH', './' );
@@ -12,16 +14,16 @@ define( 'UPDATE_PATH', 'D:/phpStudy/PHPTutorial/WWW/approach_test/' );
 define( 'UPLOAD_PATH', 'Public/files/uploads_pack/' );
 
 //文件压缩包备份的路径 里面包含需要备份的文件和更新时追加的文件的记录文档
-define( 'BACKUP_PACK', 'Public/files/backup_pack/' );
+define( 'BACKUP_PATH', 'Public/files/backup_pack/' );
 
 //文件备份的临时路径 最后会被自动删除
-define( 'BACKUP_TMP_PACK', 'Public/files/backup_tmp_pack/' );
+define( 'BACKUP_TMP_PATH', 'Public/files/backup_tmp_pack/' );
 
 //文件解压缩的临时路径 最后会被自动删除
 define( 'UNPACK_TMP_PATH', 'Public/files/update_tmp_pack/' );
 
 //文件日志的路径
-define( 'LOG_PATH', 'Public/files/logs/' );
+define( 'LOCAL_LOG_PATH', 'Public/files/logs/' );
 
 
 

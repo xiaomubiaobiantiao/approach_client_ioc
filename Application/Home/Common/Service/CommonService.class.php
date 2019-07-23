@@ -12,7 +12,7 @@ namespace Home\Common\Service;
 class CommonService
 {
 
-    //删除数据和文件 - 待完善
+    //删除数据和文件 - 待完善 - 目前未用
     public function deleteData( $pId ) {
 
         $data = $this->PackModel->getDataOne( array( 'id'=>$pId ) );
@@ -28,9 +28,9 @@ class CommonService
 
 	//字符串转换成数组
     //IndexFileService在用
-	private function strConversionArr( $pStr, $pChar = ',' ) {
-		return explode( $pChar, trim( $pStr ));
-	}
+	// private function strConversionArr( $pStr, $pChar = ',' ) {
+	// 	return explode( $pChar, trim( $pStr ));
+	// }
 
 	//模拟 array_column 函数, 因为 array_column 只能用于5.5以上版本,具体使用方法参考手册
 	//暂时未用

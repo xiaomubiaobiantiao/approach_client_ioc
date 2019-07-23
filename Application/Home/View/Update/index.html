@@ -75,7 +75,7 @@ $(document).ready(function(e) {
         <li>
             <label>选择版本<b>*</b></label>
             <div class="vocation">
-                <select name="version_id" class="select1">
+                <select id="version" name="version_id" class="select1">
                     <foreach name="datalist[1]" item="vo">
                         <option value="{$vo.id}">{$vo.pack_name}</option>
                     </foreach>
@@ -85,7 +85,7 @@ $(document).ready(function(e) {
 
         <li><label>选择版本<b>*</b></label>
             <div class="vocation">
-                <input type="submit" value="提交" >
+                <input id="submit" type="submit" value="提交" >
             </div>
         </li>
         </form>
@@ -211,11 +211,11 @@ $(document).ready(function(e) {
     </div> 
  
     <script type="text/javascript"> 
-      $("#usual1 ul").idTabs(); 
+        $("#usual1 ul").idTabs(); 
     </script>
     
     <script type="text/javascript">
-    $('.tablelist tbody tr:odd').addClass('odd');
+        $('.tablelist tbody tr:odd').addClass('odd');
     </script>
     
     <script type="text/javascript">
@@ -228,7 +228,6 @@ $(document).ready(function(e) {
         });
 
     </script>
-    
     
     
     </div>

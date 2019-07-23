@@ -36,8 +36,15 @@ class PclZipController extends Controller
 		return true;
 	}
 
-	//zip解压文件
+	/**
+	 * zip解压文件
+	 * [unpackZip description]
+	 * @param  [string] $pPath   [压缩文件的路径 包括文件名]
+	 * @param  [string] $pToPath [要解压至的目标路径 不包括文件名]
+	 * @return [bool]          [true or false]
+	 */
 	public function unpackZip( $pPath, $pToPath ) {
+		
 		//如果需要解压的路径不存在 尝试创建路径
 		if ( FALSE == is_dir( $pToPath ))
 			FileBase::createDir( dirname( $pToPath ));

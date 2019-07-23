@@ -71,7 +71,7 @@ $(document).ready(function(e) {
         <li>
             <label>选择版本<b>*</b></label>
             <div class="vocation">
-                <select name="version_id" class="select1">
+                <select id="version" name="version_id" class="select1">
                     <?php if(is_array($datalist[1])): foreach($datalist[1] as $key=>$vo): ?><option value="<?php echo ($vo["id"]); ?>"><?php echo ($vo["pack_name"]); ?></option><?php endforeach; endif; ?>
                 </select>
             </div>
@@ -79,7 +79,7 @@ $(document).ready(function(e) {
 
         <li><label>选择版本<b>*</b></label>
             <div class="vocation">
-                <input type="submit" value="提交" >
+                <input id="submit" type="submit" value="提交" >
             </div>
         </li>
         </form>
@@ -205,11 +205,11 @@ $(document).ready(function(e) {
     </div> 
  
     <script type="text/javascript"> 
-      $("#usual1 ul").idTabs(); 
+        $("#usual1 ul").idTabs(); 
     </script>
     
     <script type="text/javascript">
-    $('.tablelist tbody tr:odd').addClass('odd');
+        $('.tablelist tbody tr:odd').addClass('odd');
     </script>
     
     <script type="text/javascript">
@@ -222,7 +222,6 @@ $(document).ready(function(e) {
         });
 
     </script>
-    
     
     
     </div>

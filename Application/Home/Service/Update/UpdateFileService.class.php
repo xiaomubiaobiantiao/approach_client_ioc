@@ -4,15 +4,14 @@
  * @author Michael
  * DateTime: 19-6-27 09:37:00
  */
-namespace Home\Service\Index;
+namespace Home\Service\Update;
 
-use Home\Common\Service\CommonService;
-use Home\Common\Utility\PclZipController;
-use Home\Common\Utility\FileBaseUtility as FileBase ;
-use Home\Service\Index\IndexLogService as Log;
+//use Home\Common\Service\CommonService;
+//use Home\Common\Utility\PclZipController;
+use Home\Service\Index\UpdateLogService as Log;
 use Home\Common\Utility\DetectionUtility as Detection;
 
-class IndexFileService extends CommonService
+class UpdateFileService //extends CommonService
 {
 
 	//更新包文件 与 原有文件 的数组结构
@@ -83,11 +82,11 @@ class IndexFileService extends CommonService
 			$this->fileOperation[$arrName]['root_dir'][] = $tmpDir;
 		}
 
-		if ( false == is_dir( $dir )) 
-			LogUtility::inforReceive( __CLASS__.' '.__FUNCTION__.' '.__LINE__.' '.$dir, 4 );	//错误报告
+		if ( false == is_dir( $dir ))
+			Log::inforReceive( __METHOD__.' '.__LINE__.' '.$dir.'|'.$arrName, 4 );	//错误报告
 
 	    if ( false == ( $handle = opendir( $dir )))
-        	LogUtility::inforReceive( __CLASS__.' '.__FUNCTION__.' '.__LINE__.' '.$path, 2 );
+        	Log::inforReceive( __METHOD__.' '.__LINE__.' '.$path.'|'.$arrName, 2 );
 
         //循环资源文件
 	    while ( false !== ( $file = readdir( $handle ))) {
@@ -134,6 +133,10 @@ class IndexFileService extends CommonService
 		foreach ( $pFilePathArr as $value )
 			$tmpArr[] = dirname( $value );
 		return array_unique( $tmpArr );
+	}
+
+	private function strConversionArr( $pStr, $pChar = ',' ) {
+		return explode( $pChar, trim( $pStr ));
 	}
 
 

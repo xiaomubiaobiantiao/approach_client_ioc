@@ -5,11 +5,11 @@
  * @author Michael
  * DateTime: 19-6-27 09:37:00
  */
-namespace Home\Service\Index;
+namespace Home\Service\Update;
 
 use Home\Supply\Log\Logs;
 
-class IndexLogService extends Logs
+class UpdateLogService extends Logs
 {
 
 	public $errorInfo = array(

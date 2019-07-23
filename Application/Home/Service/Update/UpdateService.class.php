@@ -4,11 +4,11 @@
  * @author Michael
  * DateTime: 19-6-27 09:37:00
  */
-namespace Home\Service\Index;
+namespace Home\Service\Update;
 
 use Home\Model\PackModel;
-use Home\Service\Index\IndexParentService as Process;
-use Home\Service\Index\IndexFileService as GetPath;
+use Home\Service\Update\UpdateParentService as Process;
+use Home\Service\Update\UpdateFileService as GetPath;
 
 class UpdateService extends Process
 {
@@ -22,10 +22,20 @@ class UpdateService extends Process
 		//查看当前版本 - 未写
 	}
 
-	//获取默认分类
+	/* ----- 本文数据操作 -------------------------------------------------------- */
+	/* --------------------------------------------------------------------------- */
+	//获取默认分类和相关数据 - 只取压缩包存在的数据
 	public function getDefaultType() {
 		$typeInfo = $this->getSystemTypeList();
-		return $typeInfo[0]['type'];
+		foreach ( $typeInfo as $key=>$value ) {
+			$result = $this->getTypeDataList( $value['type'] );
+			if ( false == empty( $result )) {
+				$datalist[] = $typeInfo;
+				$datalist[] = $result;
+				$datalist[] = $value['type'];
+				return $datalist;
+			}
+		}
 	}
 
 	//获取分类列表
@@ -53,26 +63,23 @@ class UpdateService extends Process
 		return $dataList;
 	}
 
+	/* --------------------------------------------------------------------------- */
+
 	//更新压缩包的流程
 	public function updatePackProcess( $pId ) {
-		// $conn = oci_connect( 'wjz', 'wjz', "192.168.1.107/orcl" );
-		// echo $conn;
-		// phpinfo();
-		// die();
+
+		//转化常量路径
+		// $define = $this->addSlash();
+		// $uploadPath = $define['UPLOAD_PATH'];
+		// $upDatePath = $define['UPDATE_PATH'];
+		// $backUpPath = $define['BACKUP_PATH'];
+		// $unzipTmpPath = $define['UNPACK_TMP_PATH'];
+		// $backTmpPath = $define['BACKUP_TMP_PATH'];
+		// $localLogPath = $define['LOCAL_LOG_PATH'];
+
 		//扫描当前版本
 		$this->searchVersion( VERSION_PATH );
-
-		//将数据库数据转换成文本 - 临时测试用 - 不包含在本方法流程中
-
-		$files = 'id, pack_name, type, type_name, download';
-		$data = $this->PackModel->getPageDataType( $files, array('type'=>1), 0, 10, 'update_time' );
-		//dump( $data );
-		$this->arrConversionStr( $data );
-		die();
-		$this->updatePackText( $data, 'Public/pack_path.txt' );
-
-
-		die();
+		
 		//打开数据库 取出更新包相应 ID
 		$packInfo = $this->packInfo( $pId );
 
@@ -83,54 +90,53 @@ class UpdateService extends Process
 		//	? $unpackPath = $this->downFile( $packInfo['download'], UPLOAD_PATH )
 		//	: $unpackPath = $packInfo['relative_path'];
 
-		//对比更新包信息
-
-		
-
 		//根据ID解压文件到默认文件夹,自带创建目录的功能
-		$this->unZip( $packInfo['relative_path'], UNPACK_TMP_PATH );
+		$this->unZip( UPLOAD_PATH.$packInfo['pack_name'], UNPACK_TMP_PATH );
 
 		//检测压缩包文件 和 项目的文件
 		$PathObj = new GetPath( array( UNPACK_TMP_PATH, UPDATE_PATH ));
+		
 		//dump( $FileObj->fileOperation );
 		//对比文件后得出需要替换的文件列表和需要追加的文件列表
 		//dump($FileObj->lastResult);
 		//将需要替换的文件备份 - 添加全部日志 -添加备份日志
-		$this->copyBackUpFile( 
-			$PathObj->lastResult['backUpFilePathList'], 
-			$PathObj->lastResult['backUpFileList'], 
-			UPDATE_PATH,
-			BACKUP_TMP_PACK 
-		);
-		//dump($FileObj->lastResult);
+		if ( empty( $FileObj->lastResult['backUpFileList'] )) {
+			$this->copyBackUpFile( 
+				$PathObj->lastResult['backUpFilePathList'],
+				$PathObj->lastResult['backUpFileList'],
+				UPDATE_PATH,
+				BACKUP_TMP_PATH
+			);
+		}
+
 		//将需要追加的文件写入到一个追加文件日志中  - 添加全部日志 - 添加备份日志
-		
-		$addLogFilePath = $this->addFileLogBackUp(
-			$this->matchZipFileRootPath( UPDATE_PATH, $FileObj->lastResult['addFileList'] ),
-			BACKUP_TMP_PACK . date('Y_m_d').'-'.time().'-add.log'
-		);
+		if ( empty( $FileObj->lastResult['addFileList'] )) {
+			$addLogFilePath = $this->addFileLogBackUp(
+				$this->matchZipFileRootPath( UPDATE_PATH, $FileObj->lastResult['addFileList'] ),
+				BACKUP_TMP_PATH . date('Y_m_d').'-'.time().'-add.log'
+			);
 
-		//将日志文件路径存储到 $PathObj 类 的 addLogFilePath
-		$PathObj->setLogFilePath( $addLogFilePath );
+			//将日志文件路径存储到 $PathObj 类 的 addLogFilePath
+			$PathObj->setLogFilePath( $addLogFilePath );
 
-		//将日志路径写入到备份文件列表
-		$PathObj->lastResult['backUpFileList'][] = str_replace( BACKUP_TMP_PACK, '', $PathObj->addLogFilePath);
+			//将日志路径写入到备份文件列表
+			$PathObj->lastResult['backUpFileList'][] = str_replace( BACKUP_TMP_PATH, '', $PathObj->addLogFilePath);
 
-		//为写入文件争取停顿时间1秒
-		$this->sleepOperation( 1 );
+			//为写入文件争取停顿时间1秒
+			$this->sleepOperation( 1 );
+
+		}
 
 		//将备份文件打包,并命名 - 添加全部日志 - 添加备份日志
 		$zipPath = $this->addZip( 
-			BACKUP_PACK . date('Y_m_d').'-'.time().'b.zip',
-			$this->matchZipFileRootPath( BACKUP_TMP_PACK, $PathObj->lastResult['backUpFileList'] )
+			BACKUP_PATH.date('Y_m_d').'-'.time().'_b.zip',
+			$this->matchZipFileRootPath( BACKUP_TMP_PATH, $PathObj->lastResult['backUpFileList'] )
 		);
 
 		//将备份文件添加至文件 - 添加全部日志 - 添加备份日志
 		
 		//将备份文件路径存储到 $PathObj 类 的 backUpPackFilePath
 		$PathObj->setBackUpPath( $zipPath );
-
-		
 
 		//开始更新文件 - 添加全部日志 - 添加更新日志
 		$this->copyUpdateFile( 
@@ -142,9 +148,7 @@ class UpdateService extends Process
 
 		//创建版本信息
 
-
 		//检测所有操作是否成功
-
 		//检测备份日志是否存在
 		$this->scanAddFileLog( $PathObj->addLogFilePath );
 
@@ -157,7 +161,7 @@ class UpdateService extends Process
 		//查看日志是否更新成功
 		
 		//删除临时目录和备份目录里的所有文件
-		$this->deleteTmpFile( array( BACKUP_TMP_PACK, UNPACK_TMP_PATH ));
+		$this->deleteTmpFile( array( BACKUP_TMP_PATH, UNPACK_TMP_PATH ));
 		//查看垃圾回收机制是否清理完成
 
 		//查看版本信息是否创建或更新完成
@@ -180,14 +184,27 @@ class UpdateService extends Process
 		sleep( $pLong );
 	}
 
-	//返回压缩包相关信息
+	//返回一条压缩包相关信息
 	private function packInfo( $pId ) {
-		return $this->PackModel->getDataOne( array( 'id'=>$pId ));
+		return $this->PackModel->getOnePackInfo( $pId );
 	}
 
-	//解压缩
-	private function plcZip( $pPath ) {
-		
+	//斜杠 '/' 修正 防止路径拼接错误 - 暂时先用着 以后会移到类外部的
+	private function addSlash() {
+
+		$define = array(
+			'UPDATE_PATH' => UPDATE_PATH,
+			'UPLOAD_PATH' => UPLOAD_PATH,
+			'BACKUP_PACK' => BACKUP_PACK,
+			'BACKUP_TMP_PACK' => BACKUP_TMP_PACK,
+			'UNPACK_TMP_PATH' => UNPACK_TMP_PATH,
+			'LOCAL_LOG_PATH' => LOCAL_LOG_PATH
+		);
+
+		foreach ( $define as $key=>$value )
+			$define[$key] = rtrim( $value, '/' ).'/';
+		return $define;
+
 	}
 
 

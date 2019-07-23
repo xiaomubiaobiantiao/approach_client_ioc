@@ -109,7 +109,7 @@ class PackModel extends CommonModel
 
 	//------------------------------------------------------------------------------------------
 	//获取单个更新包全部信息
-	public function getPackPath( $pId ) {
+	public function getOnePackInfo( $pId ) {
 		foreach ( $this->data as $key=>$value ) {
 			if ( strcmp( $value['id'], $pId ) == 0 ) {
 				$value['download'] = rtrim( $value['download'], '/' ).'/'.$value['pack_name'];

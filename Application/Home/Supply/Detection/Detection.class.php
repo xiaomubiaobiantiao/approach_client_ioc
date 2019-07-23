@@ -7,7 +7,6 @@
  */
 namespace Home\Supply\Detection;
 
-use Home\Supply\File\FileBase;
 use Home\Supply\Log\Logs;
 
 class Detection extends Logs
@@ -20,12 +19,12 @@ class Detection extends Logs
 
 	//检测文件
 	public function scanFile( $pFilePath ) {
-		return FileBase::detectionFile( $pFilePath );
+		return is_file( $pFilePath );
 	}
 	
 	//检测目录
 	public function scanDir( $pFilePath ) {
-		return FileBase::detectionDir( $pFilePath );
+		return is_dir( $pFilePath );
 	}
 
 

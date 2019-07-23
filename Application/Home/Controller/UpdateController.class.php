@@ -7,7 +7,7 @@
 namespace Home\Controller;
 
 use Think\Controller;
-use Home\Service\Index\UpdateService;
+use Home\Service\Update\UpdateService;
 
 class UpdateController extends Controller
 {
@@ -23,30 +23,32 @@ class UpdateController extends Controller
 	public function index() {
 
 		$typeId = I( 'type_id' );
-
 		//如果未传入类别值 默认为分类列表的第一个类别
-		if ( empty( $typeId ))
-			$typeId = $this->UpdateService->getDefaultType();
+		empty( $typeId )
+			? $datalist = $this->UpdateService->getDefaultType()
+			: $datalist = $this->UpdateService->dataCollection( $typeId );
 
-		$datalist = $this->UpdateService->dataCollection( $typeId );
 		$this->assign( 'datalist', $datalist );
-		//查看当前版本
-		parent::index();
-
+		$this->display( 'Update/index' );
 	}
 
 	//更新文件
 	public function update() {
 
-		$this->UpdateService->updatePackProcess( I( 'get.version_id' ));
+		$vid = I( 'version_id' );
+
+		if ( empty( $vid )) {
+			die( '输入id名称' );
+		}
+
+		$this->UpdateService->updatePackProcess( $vid );
 		
 		die();
 		
 
 		$id = I( 'get.version_id' );
 		$this->redirect( 'Update/reductionBackup' );
-		if ( FALSE === $id ) $this->tips( 0, '发送' );
-		//$this->tips( 1, '发送' );
+		
 	}
 
 	//恢复备份

@@ -4,16 +4,16 @@
  * @author Michael
  * DateTime: 19-6-27 09:37:00
  */
-namespace Home\Service\Index;
+namespace Home\Service\Update;
 
 //use Home\Common\Service\CommonService;
 use Home\Common\Utility\PclZipController as Zip;
 use Home\Common\Utility\DownloadUtility as Download;
 use Home\Common\Utility\FileBaseUtility as FileBase;
-use Home\Common\Utility\DetectionUtility as Detection;
-use Home\Service\Index\IndexLogService as ProcessLog;
+use Home\Service\Update\UpdateDetectionLogService as Detection;
+use Home\Service\Update\UpdateLogService as ProcessLog;
 
-class IndexParentService //extends CommonService
+class UpdateParentService //extends CommonService
 {
 
 	public function __construct() {

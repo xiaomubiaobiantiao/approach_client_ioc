@@ -13,11 +13,11 @@ class DownloadUtility extends Logs
 {
 
     public $errorInfo = array(
-            1 => 'Download file'
+            1 => 'Download file '
     );
 
     public $successInfo = array(
-            1 => 'Download file complete!'
+            1 => 'Download file complete! '
     );
 
 	//下载压缩包
