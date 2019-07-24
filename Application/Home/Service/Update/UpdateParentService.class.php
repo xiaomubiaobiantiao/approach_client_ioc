@@ -28,20 +28,20 @@ class UpdateParentService //extends CommonService
 	}
 
 	//扫描当前版本
-	public function searchVersion( $pVersionPath ) {
-		$this->Detection->scanFile( $pVersionPath )
-			? $this->Detection->successReceive( 4, $pVersionPath )
-			: $this->Detection->inforReceive( __METHOD__.' '.__LINE__.' '.$pVersionPath, 4 );
-	}
-
-	//获取文件本地数据
-	public function getTextData() {
-		
-	}
+	// public function searchVersion( $pVersionPath ) {
+	// 	$this->Detection->versionInfo( $pVersionPath )
+	// 		FileBase::
+	// 		// ? $this->Detection->successReceive( 4, $pVersionPath )
+	// 		// : $this->Detection->inforReceive( __METHOD__.' '.__LINE__.' '.$pVersionPath, 4 );
+	// }
 
 	//下载文件
 	public function downFile() {
 		$this->Download->down();
+	}
+
+	protected function readFile( $pFile ) {
+		return FileBase::readFile( $pFile );
 	}
 
 	//创建压缩文件
@@ -57,6 +57,14 @@ class UpdateParentService //extends CommonService
 		Zip::unpackZip( $pZipPath, $pToPath )
 			? $this->Proc->successReceive( 2, $pZipPath.'|'.$pToPath )
 			: $this->Proc->inforReceive( __METHOD__.' '.__LINE__.' '.$pZipPath.'|'.$pToPath, 3 );
+	}
+
+	//初始化程序运行需要的目录
+	public function initializeDir( $pDirArr ) {
+		foreach ( $pDirArr as $value ) {
+			if ( false == is_dir( $value ))
+				FileBase::createDir( $value );
+		}
 	}
 
 	//删除目录下的所有文件-
@@ -77,7 +85,7 @@ class UpdateParentService //extends CommonService
 				: $this->Proc->inforReceive( __METHOD__.' '.__LINE__.' '.$pBackUpPath.$value, 7 );
 		}
 		foreach ( $pFileArr as $value ) {
-			$this->copyFiles( $pUpdatePath.$value, $pBackUpPath.$value )
+			FileBase::copyFile( $pUpdatePath.$value, $pBackUpPath.$value )
 				? $this->Proc->successReceive( 10, $pBackUpPath.$value )
 				: $this->Proc->inforReceive( __METHOD__.' '.__LINE__.' '.$pUpdatePath.$value.' '.$pBackUpPath.$value.' ', 8 );
 		}
@@ -87,41 +95,38 @@ class UpdateParentService //extends CommonService
 	//copy更新文件操作流程 先循环创建目录,再循环创建文件
 	public function copyUpdateFile( $pFilePathArr, $pFileArr, $pUpdatePath, $pBackUpPath ) {
 		foreach ( $pFilePathArr as $value ) {
-			FileBase::createDir( $updatePath.$value );
-			is_dir( $updatePath.$value )
+			FileBase::createDir( $pUpdatePath.$value );
+			is_dir( $pUpdatePath.$value )
 				? $this->Proc->successReceive( 11, $pBackUpPath.$value )
-				: $this->Proc->inforReceive( __METHOD__.' '.__LINE__.' '.$updatePath.$value, 7 );
+				: $this->Proc->inforReceive( __METHOD__.' '.__LINE__.' '.$pUpdatePath.$value, 7 );
 		}
 		foreach ( $pFileArr as $value ) {
-			$this->copyFiles( $pBackUpPath.$value, $pUpdatePath.$value )
-				? $this->Proc->successReceive( 12, $pBackUpPath.$value )
-				: $this->Proc->inforReceive( __METHOD__.' '.__LINE__.' '.$pBackUpPath.$value.' '.$pUpdatePath.$value, 5 );	
+			FileBase::copyFile( $pBackUpPath.$value, $pUpdatePath.$value )
+				? $this->Proc->successReceive( 12, $pUpdatePath.$value )
+				: $this->Proc->inforReceive( __METHOD__.' '.__LINE__.' '.$pUpdatePath.$value.' '.$pUpdatePath.$value, 5 );	
 		}
 		$this->Proc->successReceive( 5 );
 	}
 
 	//--------------------------------------------------------------------------------------
-	//将需要追加的文件写入到追加文件日志中,并将压缩包名称初始化到本类属性中
-	public function addFileLogBackUp( $pContent, $pFilePath ) {
-		FileBase::writeFile( $pContent, $pFilePath )
+	//将需要追加的文件列表写入到追加文件日志中
+	public function createAddFileLog( $pContent, $pAddLogFilePath ) {
+		FileBase::writeFile( $pContent, $pAddLogFilePath )
 			? $this->Proc->successReceive( 4 )
-			: $this->Proc->inforReceive( __METHOD__.' '.__LINE__.' '.$pPath, 1 );
+			: $this->Proc->inforReceive( __METHOD__.' '.__LINE__.' '.$pAddLogFilePath, 1 );
 		//$this->backUpPackFilePath = $pFilePath;
-		return $pFilePath;
-	}
-	//--------------------------------------------------------------------------------------
-	
-	//将数据库数据转换成文本 - 临时测试用 - 不包含在本类流程中
-	public function updatePackText( $pContent, $pFilePath ) {
-		FileBase::writeFile( $pContent, $pFilePath );
+		return $pAddLogFilePath;
 	}
 
-	//复制文件
-	private function copyFiles( $pUpdateFilePath, $pBackUpFilePath ) {
-		return FileBase::copyFile( $pUpdateFilePath, $pBackUpFilePath );
+	//将需要替换的文件列表写入到备份文件日志中
+	public function createBackUpFileLog( $pContent, $pBackUpLogFilePath ) {
+		FileBase::writeFile( $pContent, $pBackUpLogFilePath )
+			? $this->Proc->successReceive( 15 )
+			: $this->Proc->inforReceive( __METHOD__.' '.__LINE__.' '.$pBackUpLogFilePath, 11 );
+		//$this->backUpPackFilePath = $pFilePath;
+		return $pBackUpLogFilePath;
 	}
-	
-	//--------------------------------------------------------------------------------------
+
 	//检测更新后的文件是否存在
 	public function scanUpdateFile( $pFilePathArr ) {
 		foreach ( $pFilePathArr as $value ) {
@@ -138,12 +143,29 @@ class UpdateParentService //extends CommonService
 			: $this->Detection->inforReceive( __METHOD__.' '.__LINE__.' '.$pAddLogPath, 2 );
 	}
 
-	//检测备份 zip 压缩包是否存在
-	public function scanBackUpPath( $pBackUpPath ) {
-		$this->Detection->scanFile( $pBackUpPath )
-			? $this->Detection->successReceive( 3, $pBackUpPath )
-			: $this->Detection->inforReceive( __METHOD__.' '.__LINE__.' '.$pBackUpPath, 3 );
+	//检测替换文件日志是否存在
+	public function scanBackUpLog( $pBackUpLogPath ) {
+		$this->Detection->scanFile( $pBackUpLogPath )
+			? $this->Detection->successReceive( 7, $pBackUpLogPath )
+			: $this->Detection->inforReceive( __METHOD__.' '.__LINE__.' '.$pBackUpLogPath, 7 );
 	}
+
+	//检测备份 zip 压缩包是否存在
+	public function scanBackUpZip( $pBackUpZipPath ) {
+		$this->Detection->scanFile( $pBackUpZipPath )
+			? $this->Detection->successReceive( 3, $pBackUpPath )
+			: $this->Detection->inforReceive( __METHOD__.' '.__LINE__.' '.$pBackUpZipPath, 3 );
+	}
+
+	//检测垃圾是否清理完成 - 不需要的临时文件
+	public function scanRecycle( $pPathArr ) {
+		foreach ( $pPathArr as $value ) {
+			false == $this->Detection->scanDir( $value )
+				? $this->Detection->successReceive( 8, $value )
+				: $this->Detection->inforReceive( __METHOD__.' '.__LINE__.' '.$value, 8 );
+		}
+	}
+
 	//--------------------------------------------------------------------------------------
 
 }

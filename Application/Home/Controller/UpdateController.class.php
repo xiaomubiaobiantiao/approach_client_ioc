@@ -28,6 +28,7 @@ class UpdateController extends Controller
 			? $datalist = $this->UpdateService->getDefaultType()
 			: $datalist = $this->UpdateService->dataCollection( $typeId );
 
+		$datalist[3] = $this->UpdateService->getVersion();
 		$this->assign( 'datalist', $datalist );
 		$this->display( 'Update/index' );
 	}
@@ -37,9 +38,8 @@ class UpdateController extends Controller
 
 		$vid = I( 'version_id' );
 
-		if ( empty( $vid )) {
-			die( '输入id名称' );
-		}
+		//版本ID为空时结束程序 - 此处可以放入单独的错误页面
+		if ( empty( $vid )) die( '输入id名称' );
 
 		$this->UpdateService->updatePackProcess( $vid );
 		

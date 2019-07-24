@@ -15,12 +15,12 @@ class PackModel extends CommonModel
 	//全部数据
 	private $data = array();
 
-	//每次创建一个此类(new)初始化一次数据库(将文本转换成数组赋值给$data)
+	//每次创建一个此类(new)初始化一次数据库(将文本转换成数组赋值给data)
 	public function __construct() {
 		$this->data = $this->textToData();
 	}
 
-	//获取全部数据
+	//获取全部数据 并按时间从大到小排序
 	public function getData() {
 		return $this->orderByData( $this->data );
 	}
@@ -86,7 +86,7 @@ class PackModel extends CommonModel
 				}
 			}
 		}
-		//dump( $data );
+		
 		return $data;
 	}
 

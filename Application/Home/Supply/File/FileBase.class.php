@@ -11,6 +11,16 @@ namespace Home\Supply\File;
 class FileBase
 {
 
+	//读取文件内容
+	public function readFile( $pFile ) {
+		$fopen = fopen( $pFile, "rb" );
+        while ( !feof( $fopen )){
+            $data = fgets( $fopen );
+        }
+        fclose( $fopen );
+        return $data;
+	}
+
 	/**
 	 * 将内容写入文件,文件不存在则自动创建(在目录存在的情况下自动创建)
 	 * [writeFile description]
@@ -77,7 +87,7 @@ class FileBase
 	//递归创建目录
 	public function createDir( $pPath ) {
 		if ( false == is_dir( $pPath )) {
-			self::createDir( dirname( $pPath ) );
+			self::createDir( dirname( $pPath ));
 			mkdir( $pPath, 0777 );
 		}
 	} 
@@ -86,13 +96,14 @@ class FileBase
 	public function deleteDir( $path ) {
 
 		$path = str_replace( '\\', '/', $path ); //去除反斜杠
+		$path = rtrim($path,'/');
 
 	    if ( false == is_dir( $path ))
         	return false;
-
+        
         if ( false == ( $handle = opendir( $path )))
 			return false;
-
+		
         while ( false != ( $file = readdir( $handle ))) {
             if ( $file == '.' || $file == '..' )
                 continue;
@@ -115,7 +126,7 @@ class FileBase
 
 	}
 
-	//扫描目录下的所有文件 - 临时用
+	//扫描目录下的所有文件 - 临时用 - 暂未用
 	public function checkAllFile( $pDir ) {
 
 	    $handle = opendir( $pDir );
@@ -141,7 +152,7 @@ class FileBase
 	}
 
 	/**
-	 * 检测文件是否存在-多个文件可以数组的形式传递
+	 * 检测文件是否存在-多个文件可以数组的形式传递 - 暂时未用
 	 * [detectionAllFile]
 	 * @param  [String or Array] $pAnyFile [ path or multiple paths ]
 	 * @return [bool]       [true | false]
@@ -164,7 +175,7 @@ class FileBase
 	}
 
 	/**
-	 * 检测目录是否存在-多个目录可以数组的形式传递
+	 * 检测目录是否存在-多个目录可以数组的形式传递 - 暂时未用
 	 * [detectionAllFile]
 	 * @param  [String or Array] $pAnyDir [ path or multiple paths ]
 	 * @return [bool]       [true | false]

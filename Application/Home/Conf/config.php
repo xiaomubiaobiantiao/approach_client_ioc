@@ -40,5 +40,6 @@ define( 'DATABASE_TEXT', 'Public/data/database.txt' );
 //当前版本位置信息
 define( 'VERSION_PATH', 'Public/version.txt' );
 
-
+//版本信息默认值
+define( 'VERSION_DEFAULT_INFO', 'no version' );
 

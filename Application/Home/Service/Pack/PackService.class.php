@@ -20,8 +20,10 @@ class PackService // extends CommonService
 		$this->PackModel = new PackModel();
 	}
 
+	/* --------------------------------------------------------------------------- */
 	/* ----- 本文数据操作 -------------------------------------------------------- */
 	/* --------------------------------------------------------------------------- */
+	
 	//获取分类列表
 	public function getSystemTypeList() {
 		return $this->PackModel->systemTypeList();

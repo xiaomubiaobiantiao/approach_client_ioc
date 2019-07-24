@@ -1,5 +1,6 @@
 <?php
 /**
+ * 路径处理系统
  * Created by Sublime Text
  * @author Michael
  * DateTime: 19-6-27 09:37:00
@@ -14,7 +15,7 @@ use Home\Common\Utility\DetectionUtility as Detection;
 class UpdateFileService //extends CommonService
 {
 
-	//更新包文件 与 原有文件 的数组结构
+	//初始化更新包文件 与 原有文件 的数组结构
 	public $fileOperation = array(
 		'update'=>array( 'root_dir'=>array(), 'files'=>array(), 'dirs'=>array()),
 		'old'=>array( 'root_dir'=>array(), 'files'=>array(), 'dirs'=>array())
@@ -23,20 +24,29 @@ class UpdateFileService //extends CommonService
 	//更新包根目录与程序根目录的路径 参数为 2 个, 第1个是更新包的路径, 第2个是需要替换的程序的路径
 	public $dirArr = array();
 
+	//初始化路径最终结果集
 	public $lastResult = array( 
 		'updateAllFileList'=>array(),		//更新包内的全部文件列表 (结束后会被垃圾回收清除)
 		'updateFilePathList'=>array(),		//需要更新的文件路径 (不包括文件名 创建目录的时候用)
-		'backUpFileList'=>array(),			//需要备份的文件列表 (最后会被压缩成zip文件备份)
+		'backUpFileList'=>array(),			//需要备份的文件列表 (最后会被压缩成zip文件备份 并写到备份日志里面)
 		'backUpFilePathList'=>array(),		//需要备份的文件路径 (不包括文件名 创建目录的时候用)
 		'addFileList'=>array()				//需要追加的文件列表 (写到追加日志里面)
 	);
 
-	//需要检测的追加日志路径
+	//备份 - 追加文件列表的日志路径
 	public $addLogFilePath = '';
 
-	//需要备份的zip压缩包路径
+	//备份 - 替换文件列表的备份日志路径
+	public $backUpLogFilePath = '';
+
+	//备份 - 
+	//备份的zip压缩包路径 - 压缩包信息包含
+	//1 需要替换的文件
+	//2 追加日志
+	//3 替换日志
 	public $backUpPackFilePath = '';
 
+	//构造
 	public function __construct( $arr ) {
 		if ( false == empty( $arr )) {
 			$this->dirArr = $arr;
@@ -55,15 +65,25 @@ class UpdateFileService //extends CommonService
 			$this->myReaddir( $value, $pathName[$key] );
 	}
 
-	//设置追加日志文件路径
-	public function setLogFilePath( $pLogFilePath ) {
-		$this->addLogFilePath = $pLogFilePath;
+	//设置追加文件列表日志路径
+	public function setAddLogPath( $pAddLogPath ) {
+		$this->addLogFilePath = $pAddLogPath;
 	}
 
-	//设置追加日志文件路径
-	public function setBackUpPath( $pBackUpPath ) {
+	//设置备份文件列表日志路径
+	public function setBackUpLogPath( $pBackUpLogPath ) {
+		$this->backUpLogFilePath = $pBackUpLogPath;
+	}
+
+	//设置备份压缩包路径
+	public function setBackUpZipPath( $pBackUpPath ) {
 		$this->backUpPackFilePath = $pBackUpPath;
 	}	
+
+	//添加文件到备份列表
+	public function pushBackUpList( $pFilePath ) {
+		$this->lastResult['backUpFileList'][] = $pFilePath;
+	}
 
 	/**
 	 * 获取目录下所有文件的路径
@@ -118,7 +138,7 @@ class UpdateFileService //extends CommonService
 
 	}
 
-	//返回需要替换的文件和目录,追加的文件和目录,还有需要更新的全部文件
+	//设置需要替换的文件和目录,追加的文件和目录,还有需要更新的全部文件
 	private function fileReplace( $pArr1, $pArr2 ) {
 		$this->lastResult['updateAllFileList'] = $pArr2;
 		$this->lastResult['updateFilePathList'] = $this->distinctPath( $this->lastResult['updateAllFileList'] );
