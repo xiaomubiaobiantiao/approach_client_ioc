@@ -55,5 +55,16 @@ class DownloadUtility extends Logs
         return true;  
     }
 
+    public function inforReceive ( $pFunctionName = '', $pParam = '' ) {
+        $message = parent::inforReceive( $pFunctionName, $pParam );
+        $this->writeLog( $message, LOCAL_LOG );
+        $this->writeLog( $message, LOCAL_UPDATE_ERROR );
+    }
+
+    public function successReceive( $pParam = '', $pStr = '' ) {
+        $message = parent::successReceive( $pParam, $pStr );
+        $this->writeLog( $message, LOCAL_LOG );
+    }
+
 
 }

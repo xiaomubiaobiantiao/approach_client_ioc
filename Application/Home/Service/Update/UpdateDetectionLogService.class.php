@@ -23,7 +23,8 @@ class UpdateDetectionLogService extends Detection
 			6 => 'Search delete file ',
 			7 => 'Search backup log files ',
 			8 => 'Search remove ',
-			9 => 'Search version update'
+			9 => 'Search version update',
+			10 => 'Search log update'
 	);
 
 	protected $successInfo = array(
@@ -36,8 +37,20 @@ class UpdateDetectionLogService extends Detection
 			6 => 'Search delete file complete! ',
 			7 => 'Search backup log files complete! ',
 			8 => 'Search remove complete! ',
-			9 => 'Search version update complete! '
+			9 => 'Search version update complete! ',
+			10 => 'Search log update complete! '
 	);
+
+	public function inforReceive ( $pFunctionName = '', $pParam = '' ) {
+		$message = parent::inforReceive( $pFunctionName, $pParam );
+		$this->writeLog( $message, LOCAL_LOG );
+		$this->writeLog( $message, LOCAL_UPDATE_ERROR );
+	}
+
+	public function successReceive( $pParam = '', $pStr = '' ) {
+		$message = parent::successReceive( $pParam, $pStr );
+		$this->writeLog( $message, LOCAL_LOG );
+	}
 
 	//获取文件修改时间
 	public function scanFileInfo( $pFile ) {

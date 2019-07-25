@@ -66,6 +66,17 @@ class UpdateParentService //extends CommonService
 		}
 	}
 
+	//初始化日志文件
+	public function initializeLog( $pLogArr ) {
+		foreach ( $pLogArr as $value ) {
+			if ( false == is_file( $value )) {
+				FileBase::createFile( $value )
+					? $this->Proc->successReceive( 17, $value )
+					: $this->Proc->inforReceive( __METHOD__.' '.__LINE__.' '.$value, 15 );
+			}
+		}
+	}
+
 	//删除目录下的所有文件-
 	public function deleteTmpFile( $pPathArr ) {
 		foreach ( $pPathArr as $value ) {
@@ -165,12 +176,20 @@ class UpdateParentService //extends CommonService
 		}
 	}
 
+	//检测记录全部操作信息的日志是否更新成功
+	public function scanLog( $pLogPath ) {
+		$mTime = $this->Detection->scanFileInfo( $pLogPath );
+		( time()-$mTime < 60*2 )
+			? $this->Detection->successReceive( 10, date("Y-m-d H:i:s",$mTime).'|'.date("Y-m-d H:i:s") )
+			: $this->Detection->inforReceive( __METHOD__.' '.__LINE__.' '.date("Y-m-d H:i:s",$mTime).'|'.date("Y-m-d H:i:s"), 10 );
+	}
+
 	//检测版本信息是否更新完成
 	public function scanVersion( $pVersionPath ) {
-		$result = $this->Detection->scanFileInfo( $pVersionPath );
-		( time()-$result < 60*2 )
-			? $this->Detection->successReceive( 9, date("Y-m-d H:i:s",$result).'|'.date("Y-m-d H:i:s") )
-			: $this->Detection->inforReceive( __METHOD__.' '.__LINE__.' '.date("Y-m-d H:i:s",$result).'|'.date("Y-m-d H:i:s"), 9 );
+		$mTime = $this->Detection->scanFileInfo( $pVersionPath );
+		( time()-$mTime < 60*2 )
+			? $this->Detection->successReceive( 9, date("Y-m-d H:i:s",$mTime).'|'.date("Y-m-d H:i:s") )
+			: $this->Detection->inforReceive( __METHOD__.' '.__LINE__.' '.date("Y-m-d H:i:s",$mTime).'|'.date("Y-m-d H:i:s"), 9 );
 	}
 
 	//--------------------------------------------------------------------------------------

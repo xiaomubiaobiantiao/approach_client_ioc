@@ -24,7 +24,8 @@ class UpdateLogService extends Logs
 			9 => 'Search a update file ',
 			10 => 'Search backup log ',
 			11 => 'Backup log ',
-			12 => 'Version update'
+			12 => 'Version update',
+			15 => 'Create log'
 
 	);
 
@@ -42,23 +43,22 @@ class UpdateLogService extends Logs
 			11 => 'Create a update file path ',
 			12 => 'Copy a update file ',
 			15 => 'Create Backup file log complete! ',
-			16 => 'Version update complete! '
+			16 => 'Version update complete! ',
+			17 => 'Create log complete! '
 
 	);
 
-	public function inforReceive ( $functionName = '', $param = '' ) {
-		echo 1111;
-		dump( $functionName );
-		dump( $param );
-		parent::inforReceive( $functionName = '', $param = '' );
-
+	public function inforReceive ( $pFunctionName = '', $pParam = '' ) {
+		$message = parent::inforReceive( $pFunctionName, $pParam );
+		$this->writeLog( $message, LOCAL_LOG );
+		$this->writeLog( $message, LOCAL_UPDATE_ERROR );
 	}
 
-	public function successReceive( $param = '', $pStr = '' ) {
-		echo 2222;
-		dump( $param );
-		dump( $pStr );
-		parent::successReceive(  $param = '', $pStr = '' );
+	public function successReceive( $pParam = '', $pStr = '' ) {
+		$message = parent::successReceive( $pParam, $pStr );
+		$this->writeLog( $message, LOCAL_LOG );
 	}
+
+	
 	
 }

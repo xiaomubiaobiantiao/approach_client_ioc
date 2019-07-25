@@ -17,37 +17,44 @@ class Logs extends Controller implements Log
 	protected $successInfo = array();
 
 	/**
-	 * 错误提示并写入错误日志
+	 * 错误提示
 	 * [inforReceive description]
-	 * @param  string $functionName [functionName]
+	 * @param  [string] 			[functionName]
 	 * @param  [int] $param         [0,1,2...]
-	 * @return [string]             [error: infor]
+	 * @return [string]             [error: info]
 	 */
-	public function inforReceive( $functionName = '', $param = '' ){
-		if ( false == empty( $param )) {
-			echo '[' . date( 'Y-m-d h:i:s') . '] Error : '.$functionName.' '.$this->errorInfo[$param]. "\r\n".'<br>';
-			//errorLog();写入到全部日志 - 写入到错误日志
-			//die();
-		} 
+	public function inforReceive( $pFunctionName = '', $pParam = '' ){
+		return false == empty( $pParam )
+			? '['.date( 'Y-m-d h:i:s').'] Error : '.$pFunctionName.' '.$this->errorInfo[$pParam]//. "\r\n"
+			:'参数错误';
 	}
 
 	/**
-	 * 操作成功写入日志
+	 * 成功提示
 	 * [successReceive description]
-	 * @param  string $functionName [functionName]
+	 * @param  [string] 			[functionName]
 	 * @param  [int] $param         [0,1,2...]
-	 * @return [string]             [success: infor]
+	 * @return [string]             [success: info]
 	 */
-	public function successReceive( $param = '', $pStr = '' ) {
-		echo 666666;
-		dump( $param );
-		dump( $pStr );
-		if ( false == empty( $param )) {
-			echo '[' . date( 'Y-m-d h:i:s') . '] Success : '.$this->successInfo[$param].' '.$pStr."\r\n".'<br>';
-			//errorlog();写入到全部日志 - 写入到成功日志
-		} 
+	public function successReceive( $pParam = '', $pStr = '' ) {
+		return false == empty( $pParam )
+			? '['.date( 'Y-m-d h:i:s').'] Success : '.$this->successInfo[$pParam].' '.$pStr//."\r\n"
+			: '参数错误';
 	}
 
-
+	/**
+	 * 写入日志文件
+	 * [writeLog description]
+	 * @param  [string] $pContent [description]
+	 * @param  [type] $pLogFile [description]
+	 * @return [type]           [description]
+	 */
+	public function writeLog( $pContent, $pLogFile ) {
+		if ( false == ( $handle = fopen( $pLogFile, "a+" )))
+			return false;
+		fwrite( $handle, $pContent."\r\n" );
+		fclose( $handle );
+		return true;
+	}
 
 }

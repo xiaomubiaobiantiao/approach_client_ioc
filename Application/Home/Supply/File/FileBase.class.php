@@ -13,16 +13,21 @@ class FileBase
 
 	//读取文件内容
 	public function readFile( $pFile ) {
-		$fopen = fopen( $pFile, "rb" );
-        while ( !feof( $fopen )){
-            $data = fgets( $fopen );
+		$handle = fopen( $pFile, "rb" );
+        while ( !feof( $handle )){
+            $data = fgets( $handle );
         }
-        fclose( $fopen );
+        fclose( $handle );
         return $data;
 	}
 
+	//创建文件
+	public function createFile( $pFilePath ) {
+		return touch( $pFilePath );
+	}
+
 	/**
-	 * 将内容写入文件,文件不存在则自动创建(在目录存在的情况下自动创建)
+	 * 将内容写入文件,文件不存在则自动创建(在目录存在的情况下才会自动创建)
 	 * [writeFile description]
 	 * @param  [string] $filePath [write in path]
 	 * @param  [type] $content  [write content]

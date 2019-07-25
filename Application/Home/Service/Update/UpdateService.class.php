@@ -68,7 +68,19 @@ class UpdateService extends Process
 	public function updatePackProcess( $pId ) {
 				
 		//初始化程序所需目录结构
-		$this->initializeDir( array( BACKUP_PATH, BACKUP_TMP_PATH, UNPACK_TMP_PATH, LOCAL_LOG_PATH ));
+		$this->initializeDir( 
+			array( 
+				BACKUP_PATH, BACKUP_TMP_PATH, UNPACK_TMP_PATH, 
+				dirname( LOCAL_LOG ), 
+				dirname( LOCAL_UPDATE_ERROR ), 
+				dirname( LOCAL_RESTORE_ERROR )
+			)
+		);
+
+		//初始化日志文件
+		$this->initializeLog(
+			array( LOCAL_LOG,LOCAL_UPDATE_ERROR, LOCAL_UPDATE_RECORD, LOCAL_RESTORE_ERROR, LOCAL_RESTORE_RECORD )
+		);
 
 		//打开数据库 取出更新包相应 ID
 		$packInfo = $this->packInfo( $pId );
@@ -186,6 +198,7 @@ class UpdateService extends Process
 		$this->scanUpdateFile( $tAllFileList );
 
 		//查看日志是否更新成功
+		$this->scanLog( LOCAL_LOG );
 		
 		//删除临时目录和备份目录里的所有文件
 		$this->deleteTmpFile( array( BACKUP_TMP_PATH, UNPACK_TMP_PATH ));
@@ -242,7 +255,7 @@ class UpdateService extends Process
 		return $this->PackModel->getOnePackInfo( $pId );
 	}
 
-	//斜杠 '/' 修正 防止路径拼接错误 - 暂时先用着 以后会移到类外部的
+	//斜杠 '/' 修正 防止路径拼接错误 - 暂时未用 以后会移到类外部的
 	private function addSlash() {
 
 		$define = array(
@@ -250,8 +263,7 @@ class UpdateService extends Process
 			'UPLOAD_PATH' => UPLOAD_PATH,
 			'BACKUP_PACK' => BACKUP_PACK,
 			'BACKUP_TMP_PACK' => BACKUP_TMP_PACK,
-			'UNPACK_TMP_PATH' => UNPACK_TMP_PATH,
-			'LOCAL_LOG_PATH' => LOCAL_LOG_PATH
+			'UNPACK_TMP_PATH' => UNPACK_TMP_PATH
 		);
 
 		foreach ( $define as $key=>$value )
