@@ -36,5 +36,18 @@ class PackDetectionLogService extends Detection
 		return $value;
 	}
 
+	public function inforReceive ( $pFunctionName = '', $pParam = '' ) {
+		$message = parent::inforReceive( $pFunctionName, $pParam );
+		echo $message;
+		//$this->writeLog( $message, LOCAL_LOG );
+		//$this->writeLog( $message, LOCAL_UPDATE_ERROR );
+	}
+
+	public function successReceive( $pParam = '', $pStr = '' ) {
+		$message = parent::successReceive( $pParam, $pStr );
+		echo $message;
+		//$this->writeLog( $message, LOCAL_LOG );
+	}
+
 
 }

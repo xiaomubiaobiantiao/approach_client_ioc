@@ -1085,3 +1085,6 @@
 [2019-07-25 04:56:29] Success : Search remove complete!  Public/files/backup_tmp_pack/
 [2019-07-25 04:56:29] Success : Search remove complete!  Public/files/update_tmp_pack/
 [2019-07-25 04:56:29] Success : Search version update complete!  2019-07-25 16:56:28|2019-07-25 16:56:29
+[2019-07-25 06:07:34] Success : Download file complete!  Public/files/uploads_pack/
+[2019-07-25 06:07:37] Success : Download file complete!  Public/files/uploads_pack/
+[2019-07-25 06:07:38] Success : Download file complete!  Public/files/uploads_pack/

@@ -18,6 +18,7 @@ class PackService // extends CommonService
 	//初始化文本数据
 	public function __construct() {
 		$this->PackModel = new PackModel();
+		$this->download = new Download();
 	}
 
 	/* --------------------------------------------------------------------------- */
@@ -66,9 +67,9 @@ class PackService // extends CommonService
 		//获取单个更新包信息
 		$packInfo = $this->packInfo( $pId );
 		//下载文件
-		Download::down( $packInfo['download'], UPLOAD_PATH )
-			? Download::successReceive( 1, UPLOAD_PATH )
-			: Download::inforReceive( __METHOD__.' '.__LINE__.' '.$pId.'|'.$packInfo['download'].' '.UPLOAD_PATH, 1 );
+		$this->download->down( $packInfo['download'], UPLOAD_PATH )
+			? $this->download->successReceive( 1, UPLOAD_PATH )
+			: $this->download->inforReceive( __METHOD__.' '.__LINE__.' '.$pId.'|'.$packInfo['download'].' '.UPLOAD_PATH, 1 );
 
 		//组合下载后更新包的路径
 		$localPath = rtrim( UPLOAD_PATH, '/' ).'/'.$packInfo['pack_name'];
