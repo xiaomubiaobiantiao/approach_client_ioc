@@ -23,6 +23,7 @@ class UpdateDetectionLogService extends Detection
 			6 => 'Search delete file ',
 			7 => 'Search backup log files ',
 			8 => 'Search remove ',
+			9 => 'Search version update'
 	);
 
 	protected $successInfo = array(
@@ -35,9 +36,17 @@ class UpdateDetectionLogService extends Detection
 			6 => 'Search delete file complete! ',
 			7 => 'Search backup log files complete! ',
 			8 => 'Search remove complete! ',
+			9 => 'Search version update complete! '
 	);
 
-	
+	//获取文件修改时间
+	public function scanFileInfo( $pFile ) {
+		if ( false == $this->scanFile( $pFile ))
+			return false;
+		$handle = fopen( $pFile, "r" );
+		$fileStat = fstat( $handle );
+		return $fileStat["mtime"];
+	}
 
 
 

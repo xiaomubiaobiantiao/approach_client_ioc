@@ -27,8 +27,8 @@ class Logs extends Controller implements Log
 		if ( false == empty( $param )) {
 			echo '[' . date( 'Y-m-d h:i:s') . '] Error : '.$functionName.' '.$this->errorInfo[$param]. "\r\n".'<br>';
 			//errorLog();写入到全部日志 - 写入到错误日志
-			die();
-		}
+			//die();
+		} 
 	}
 
 	/**
@@ -39,10 +39,13 @@ class Logs extends Controller implements Log
 	 * @return [string]             [success: infor]
 	 */
 	public function successReceive( $param = '', $pStr = '' ) {
+		echo 666666;
+		dump( $param );
+		dump( $pStr );
 		if ( false == empty( $param )) {
 			echo '[' . date( 'Y-m-d h:i:s') . '] Success : '.$this->successInfo[$param].' '.$pStr."\r\n".'<br>';
 			//errorlog();写入到全部日志 - 写入到成功日志
-		}
+		} 
 	}
 
 

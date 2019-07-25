@@ -22,26 +22,25 @@ class UpdateParentService //extends CommonService
 		$this->Download = new Download();
 	}
 
-	//初始化执行目录,配置文件里面设置的全局变量的目录 - 未写
-	public function createPerformDir() {
-		FileBase::createDir();
+	protected function checkFile( $pVersionPath ) {
+		return FileBase::checkFile( $pVersionPath );
 	}
 
-	//扫描当前版本
-	// public function searchVersion( $pVersionPath ) {
-	// 	$this->Detection->versionInfo( $pVersionPath )
-	// 		FileBase::
-	// 		// ? $this->Detection->successReceive( 4, $pVersionPath )
-	// 		// : $this->Detection->inforReceive( __METHOD__.' '.__LINE__.' '.$pVersionPath, 4 );
-	// }
-
 	//下载文件
-	public function downFile() {
+	protected function downFile() {
 		$this->Download->down();
 	}
 
+	//读取文件
 	protected function readFile( $pFile ) {
 		return FileBase::readFile( $pFile );
+	}
+
+	//替换版本文件
+	protected function updateVersion( $pFilePath, $pNewPath ) {
+		FileBase::copyFile( $pFilePath, $pNewPath )
+			? $this->Proc->successReceive( 16, $pFilePath.'|'.$pNewPath )
+			: $this->Proc->inforReceive(  __METHOD__.' '.__LINE__.' '.$pFilePath.'|'.$pNewPath, 12 );
 	}
 
 	//创建压缩文件
@@ -164,6 +163,14 @@ class UpdateParentService //extends CommonService
 				? $this->Detection->successReceive( 8, $value )
 				: $this->Detection->inforReceive( __METHOD__.' '.__LINE__.' '.$value, 8 );
 		}
+	}
+
+	//检测版本信息是否更新完成
+	public function scanVersion( $pVersionPath ) {
+		$result = $this->Detection->scanFileInfo( $pVersionPath );
+		( time()-$result < 60*2 )
+			? $this->Detection->successReceive( 9, date("Y-m-d H:i:s",$result).'|'.date("Y-m-d H:i:s") )
+			: $this->Detection->inforReceive( __METHOD__.' '.__LINE__.' '.date("Y-m-d H:i:s",$result).'|'.date("Y-m-d H:i:s"), 9 );
 	}
 
 	//--------------------------------------------------------------------------------------

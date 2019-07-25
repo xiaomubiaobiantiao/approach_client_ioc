@@ -17,7 +17,6 @@ class UpdateService extends Process
 		parent::__construct();
 		//生成数据库操作类
 		$this->PackModel = new PackModel();
-		//查看当前版本 - 未写
 	}
 
 	/* --------------------------------------------------------------------------- */
@@ -67,28 +66,14 @@ class UpdateService extends Process
 
 	//更新压缩包的流程
 	public function updatePackProcess( $pId ) {
-
-		//转化常量路径
-		// $define = $this->addSlash();
-		// $uploadPath = $define['UPLOAD_PATH'];
-		// $upDatePath = $define['UPDATE_PATH'];
-		// $backUpPath = $define['BACKUP_PATH'];
-		// $unzipTmpPath = $define['UNPACK_TMP_PATH'];
-		// $backTmpPath = $define['BACKUP_TMP_PATH'];
-		// $localLogPath = $define['LOCAL_LOG_PATH'];
-
+				
 		//初始化程序所需目录结构
 		$this->initializeDir( array( BACKUP_PATH, BACKUP_TMP_PATH, UNPACK_TMP_PATH, LOCAL_LOG_PATH ));
 
-		//扫描当前版本
-		$this->searchVersion( VERSION_PATH );
-		
 		//打开数据库 取出更新包相应 ID
 		$packInfo = $this->packInfo( $pId );
 
-		//创建工作目录
-
-		//判断本地是否存在更新包文件 不存在则下载更新包 - 暂时无效
+		//判断本地是否存在更新包文件 不存在则下载更新包 - 暂时未用
 		//false == is_file( $packInfo['relative_path'] )
 		//	? $unpackPath = $this->downFile( $packInfo['download'], UPLOAD_PATH )
 		//	: $unpackPath = $packInfo['relative_path'];
@@ -176,8 +161,8 @@ class UpdateService extends Process
 			UNPACK_TMP_PATH
 		);
 
-		//创建版本信息
-		//isset
+		//更新或创建版本信息
+		$this->updateVersion( VERSION_PATH, OLD_VERSION_PATH );
 		
 		/*-------------------------------------------------------------------------------------*/
 		/*----- 检测系统 - 检测所有操作是否成功 -----------------------------------------------*/
@@ -209,7 +194,7 @@ class UpdateService extends Process
 		$this->scanRecycle( array( BACKUP_TMP_PATH, UNPACK_TMP_PATH ));
 
 		//查看版本信息是否创建或更新完成
-		
+		$this->scanVersion( OLD_VERSION_PATH );
 		
 		/*-------------------------------------------------------------------------------------*/
 
@@ -217,13 +202,26 @@ class UpdateService extends Process
 
 	}
 
-	//扫描当前版本
-	public function getVersion() {
-		$versionInfo = $this->readFile( VERSION_PATH );
+	//扫描旧的版本文件
+	// public function searchVersion() {
+	// 	$versionInfo = $this->readFile( VERSION_PATH );
 		
-		if ( empty( $versionInfo ))
+	// 	if ( empty( $versionInfo ))
+	// 		return VERSION_DEFAULT_INFO;
+	// 	return $versionInfo;
+	
+	// }
+
+	//获取旧的版本信息
+	public function getVersion() {
+		if( false == $this->checkFile( OLD_VERSION_PATH ))
 			return VERSION_DEFAULT_INFO;
-		return $versionInfo;
+		
+		$versionInfo = $this->readFile( OLD_VERSION_PATH );
+		if ( empty( $versionInfo ))
+	 		return VERSION_DEFAULT_INFO;
+
+	 	return $versionInfo;
 	}
 
 	//将路径拼接到数组中的全部路径的前面
@@ -235,7 +233,7 @@ class UpdateService extends Process
 	}
 
 	//睡眠 - 暂未用
-	private function sleepOperation( $pLong=1 ) {
+	private function sleepOperation( $pLong = 1 ) {
 		sleep( $pLong );
 	}
 

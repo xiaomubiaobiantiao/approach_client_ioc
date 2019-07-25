@@ -155,6 +155,7 @@ class UpdateFileService //extends CommonService
 		return array_unique( $tmpArr );
 	}
 
+	//字符串转换数组
 	private function strConversionArr( $pStr, $pChar = ',' ) {
 		return explode( $pChar, trim( $pStr ));
 	}

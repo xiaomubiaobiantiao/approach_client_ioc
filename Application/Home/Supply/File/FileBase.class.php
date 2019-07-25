@@ -105,16 +105,16 @@ class FileBase
 			return false;
 		
         while ( false != ( $file = readdir( $handle ))) {
+
             if ( $file == '.' || $file == '..' )
                 continue;
 
             $pNewPath = rtrim( $path.'/' ).'/'.$file;
-            if ( is_dir( $pNewPath )) {
-            	self::deleteDir( $pNewPath );
-            } else {
+
+            is_dir( $pNewPath )
+            	? self::deleteDir( $pNewPath )
+            	: self::deleteFile( $pNewPath );
             	//if( pathinfo( $pNewPath, PATHINFO_EXTENSION ) != 'zip' ) //遇到 zip 压缩文件跳过-之前用的,暂时未用
-            		self::deleteFile( $pNewPath );
-            }
         }
 
         if ( false == readdir( $handle ) ) {
@@ -144,11 +144,12 @@ class FileBase
 	        // is_dir( $path )
 	        // 	? $data['dirs'][] = $path
 	        // 	: $data['files'][] = $path;
-	        echo $path.'<br>';
+	        //echo $path.'<br>';
+	        $data[] = $path;
 	    }
-	    if( is_dir( $path ) ) echo '************* '.$path.' ***********';
+	    //if( is_dir( $path ) ) echo '************* '.$path.' ***********';
 	    closedir( $handle ); 
-	    
+	    return $data;
 	}
 
 	/**

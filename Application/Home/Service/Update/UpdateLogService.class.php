@@ -23,7 +23,8 @@ class UpdateLogService extends Logs
 			8 => 'Copy file backup ',
 			9 => 'Search a update file ',
 			10 => 'Search backup log ',
-			11 => 'Backup log '
+			11 => 'Backup log ',
+			12 => 'Version update'
 
 	);
 
@@ -40,9 +41,24 @@ class UpdateLogService extends Logs
 			10 => 'Copy a backup file ',
 			11 => 'Create a update file path ',
 			12 => 'Copy a update file ',
-			15 => 'Create Backup file log complete! '
+			15 => 'Create Backup file log complete! ',
+			16 => 'Version update complete! '
 
 	);
 
+	public function inforReceive ( $functionName = '', $param = '' ) {
+		echo 1111;
+		dump( $functionName );
+		dump( $param );
+		parent::inforReceive( $functionName = '', $param = '' );
+
+	}
+
+	public function successReceive( $param = '', $pStr = '' ) {
+		echo 2222;
+		dump( $param );
+		dump( $pStr );
+		parent::successReceive(  $param = '', $pStr = '' );
+	}
 	
 }

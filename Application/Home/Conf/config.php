@@ -31,14 +31,20 @@ define( 'LOCAL_LOG_PATH', 'Public/files/logs/' );
 define( 'IGNORE_DIRS', 'Public/files,ThinkPHP,Public/Ueditor,Application/Runtime' );
 
 //排除检测的文件  常值值字符串 ,号中间不能有空格
-define( 'IGNORE_FILES', '.git' );
+define( 'IGNORE_FILES', '.git,version.txt' );
 
 
-//数据文本存放位置
+
+//数据文本的存放位置
 define( 'DATABASE_TEXT', 'Public/data/database.txt' );
 
-//当前版本位置信息
-define( 'VERSION_PATH', 'Public/version.txt' );
+
+
+//新的版本文件默认位置信息
+define( 'VERSION_PATH', rtrim( UNPACK_TMP_PATH, '/' ).'/'.'version.txt' );
+
+//旧的版本文件默认位置信息
+define( 'OLD_VERSION_PATH', rtrim( UPDATE_PATH, '/' ).'/'.'Public/version.txt' );
 
 //版本信息默认值
 define( 'VERSION_DEFAULT_INFO', 'no version' );
