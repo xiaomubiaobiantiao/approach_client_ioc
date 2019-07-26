@@ -22,7 +22,7 @@ class UpdateDetectionLogService extends Detection
 			5 => 'Search download file ',
 			6 => 'Search delete file ',
 			7 => 'Search backup log files ',
-			8 => 'Search remove ',
+			8 => 'Search remove temp file ',
 			9 => 'Search version update',
 			10 => 'Search log update'
 	);
@@ -36,31 +36,40 @@ class UpdateDetectionLogService extends Detection
 			5 => 'Search download file complete! ',
 			6 => 'Search delete file complete! ',
 			7 => 'Search backup log files complete! ',
-			8 => 'Search remove complete! ',
+			8 => 'Search remove temp file complete! ',
 			9 => 'Search version update complete! ',
 			10 => 'Search log update complete! '
 	);
 
+	 /**
+     * 重写错误信息 - 并将错误信息写入错误日志 同时写入两个日志( LOCAL_LOG, LOCAL_UPDATE_ERROR )
+     * [inforReceive description]
+     * @param  string $pFunctionName [class and functionName]
+     * @param  int $pParam           [0,1,2...]
+     * @return [string]              [error: info]
+     */
 	public function inforReceive ( $pFunctionName = '', $pParam = '' ) {
 		$message = parent::inforReceive( $pFunctionName, $pParam );
 		$this->writeLog( $message, LOCAL_LOG );
 		$this->writeLog( $message, LOCAL_UPDATE_ERROR );
 	}
 
+	/**
+     * 重写正确信息 - 并将正确信息写入总日志 LOCAL_LOG
+     * [successReceive description]
+     * @param  string $pParam [class and functionName]
+     * @param  string $pStr   [0,1,2...]
+     * @return [string]       [success: info]
+     */
 	public function successReceive( $pParam = '', $pStr = '' ) {
 		$message = parent::successReceive( $pParam, $pStr );
 		$this->writeLog( $message, LOCAL_LOG );
 	}
 
-	//获取文件修改时间
-	public function scanFileInfo( $pFile ) {
-		if ( false == $this->scanFile( $pFile ))
-			return false;
-		$handle = fopen( $pFile, "r" );
-		$fileStat = fstat( $handle );
-		return $fileStat["mtime"];
-	}
+	
 
+	
 
+	
 
 }

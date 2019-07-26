@@ -1,0 +1,10 @@
+[2019-07-26 02:33:28] Error : Home\Service\Update\UpdateParentService::updateVersion 44 Public/files/update_tmp_pack/version.txt|D:/phpStudy/PHPTutorial/WWW/approach_test/Public/version.txt Version update
+[2019-07-26 02:33:30] Error : Home\Service\Update\UpdateParentService::scanVersion 193 2019-07-25 16:56:28|2019-07-26 14:33:30 Search version update
+[2019-07-26 02:33:40] Error : Home\Service\Update\UpdateParentService::updateVersion 44 Public/files/update_tmp_pack/version.txt|D:/phpStudy/PHPTutorial/WWW/approach_test/Public/version.txt Version update
+[2019-07-26 02:33:41] Error : Home\Service\Update\UpdateParentService::scanVersion 193 2019-07-25 16:56:28|2019-07-26 14:33:41 Search version update
+[2019-07-26 04:39:38] Error : Home\Service\Update\UpdateParentService::updateVersion 49 Public/files/update_tmp_pack/version.txt|D:\SpeedAMP\SpeedAMP1\htdocs/Public/version.txt Version update
+[2019-07-26 04:39:39] Error : Home\Service\Update\UpdateParentService::scanVersion 198 1970-01-01 08:00:00|2019-07-26 16:39:39 Search version update
+[2019-07-26 04:41:31] Error : Home\Service\Update\UpdateParentService::updateVersion 49 Public/files/update_tmp_pack/version.txt|D:\SpeedAMP\SpeedAMP1\htdocs/Public/version.txt Version update
+[2019-07-26 04:41:32] Error : Home\Service\Update\UpdateParentService::scanVersion 198 1970-01-01 08:00:00|2019-07-26 16:41:32 Search version update
+[2019-07-26 05:38:36] Error : Home\Service\Update\UpdateParentService::updateVersion 46 Public/files/update_tmp_pack/version.txt|D:\SpeedAMP\SpeedAMP1\htdocs/Public/version.txt Version update
+[2019-07-26 05:38:38] Error : Home\Service\Update\UpdateParentService::scanVersion 193 1970-01-01 08:00:00|2019-07-26 17:38:38 Search version update

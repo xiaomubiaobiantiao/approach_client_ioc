@@ -9,8 +9,9 @@ namespace Home\Service\Pack;
 use Home\Model\PackModel;
 use Home\Common\Service\CommonService;
 use Home\Service\Pack\PackDetectionLogService as PackLog;
+use Home\Common\Utility\FileBaseUtility as FileBase;
 //use Home\Common\Utility\UploadUtility as Upload;
-use Home\Common\Utility\DownloadUtility as Download;
+//use Home\Common\Utility\DownloadUtility as Download;
 
 class PackService // extends CommonService
 {
@@ -18,7 +19,7 @@ class PackService // extends CommonService
 	//初始化文本数据
 	public function __construct() {
 		$this->PackModel = new PackModel();
-		$this->download = new Download();
+		//$this->download = new Download();
 	}
 
 	/* --------------------------------------------------------------------------- */
@@ -59,6 +60,7 @@ class PackService // extends CommonService
 		$dataList[] = $pTypeId;
 		return $dataList;
 	}
+
 	/* --------------------------------------------------------------------------- */
 	
 	//下载更新包
@@ -67,9 +69,13 @@ class PackService // extends CommonService
 		//获取单个更新包信息
 		$packInfo = $this->packInfo( $pId );
 		//下载文件
-		$this->download->down( $packInfo['download'], UPLOAD_PATH )
-			? $this->download->successReceive( 1, UPLOAD_PATH )
-			: $this->download->inforReceive( __METHOD__.' '.__LINE__.' '.$pId.'|'.$packInfo['download'].' '.UPLOAD_PATH, 1 );
+		//$this->download->down( $packInfo['download'], UPLOAD_PATH )
+			// ? $this->download->successReceive( 1, UPLOAD_PATH )
+			// : $this->download->inforReceive( __METHOD__.' '.__LINE__.' '.$pId.'|'.$packInfo['download'].' '.UPLOAD_PATH, 1 );
+
+		$this->down( $packInfo['download'], UPLOAD_PATH )
+			? PackLog::successReceive( 5, UPLOAD_PATH )
+			: PackLog::inforReceive( __METHOD__.' '.__LINE__.' '.$pId.'|'.$packInfo['download'].' '.UPLOAD_PATH, 6 );
 
 		//组合下载后更新包的路径
 		$localPath = rtrim( UPLOAD_PATH, '/' ).'/'.$packInfo['pack_name'];
@@ -131,6 +137,10 @@ class PackService // extends CommonService
 	//返回一条压缩包相关信息
 	private function packInfo( $pId ) {
 		return $this->PackModel->getOnePackInfo( $pId );
+	}
+
+	private function down( $pUrl, $pFolder ) {
+		return FileBase::down( $pUrl, $pFolder );
 	}
 
 	//文件上传配置

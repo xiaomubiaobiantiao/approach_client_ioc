@@ -19,7 +19,7 @@ class Logs extends Controller implements Log
 	/**
 	 * 错误提示
 	 * [inforReceive description]
-	 * @param  [string] 			[functionName]
+	 * @param  [string] 			[class and functionName]
 	 * @param  [int] $param         [0,1,2...]
 	 * @return [string]             [error: info]
 	 */
@@ -32,7 +32,7 @@ class Logs extends Controller implements Log
 	/**
 	 * 成功提示
 	 * [successReceive description]
-	 * @param  [string] 			[functionName]
+	 * @param  [string] 			[class and functionName]
 	 * @param  [int] $param         [0,1,2...]
 	 * @return [string]             [success: info]
 	 */
@@ -56,5 +56,17 @@ class Logs extends Controller implements Log
 		fclose( $handle );
 		return true;
 	}
+
+	/**
+	 * 设置日志路径 - 暂未用 - 也未写完 - 用的可能性不大
+	 * [setLog description]
+	 * @param [string] $pLogPath [Log path]
+	 */
+	public function setLog( $pLogPath ) {
+		$this->logPath = $pLogPath;
+	}
+
+
+
 
 }

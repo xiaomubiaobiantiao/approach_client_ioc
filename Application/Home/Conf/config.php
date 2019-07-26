@@ -4,7 +4,8 @@
 
 //文件更新的路径
 
-define( 'UPDATE_PATH', 'D:/phpStudy/PHPTutorial/WWW/approach_test/' );
+//define( 'UPDATE_PATH', 'D:/phpStudy/PHPTutorial/WWW/approach_test/' );
+define( 'UPDATE_PATH', 'D:\SpeedAMP\SpeedAMP1\htdocs/' );
 
 //压缩包文件下载路径
 define( 'UPLOAD_PATH', 'Public/files/uploads_pack/' );

@@ -16,7 +16,7 @@ class UpdateLogService extends Logs
 			1 => 'Add log ',
 			2 => 'Open dir resources ',
 			3 => 'Zip file ',
-			4 => 'Is dir ',
+			4 => 'Is dir ', 
 			5 => 'Copy file update ',
 			6 => 'Delete tmp dir ',
 			7 => 'Create dir update ',
@@ -48,15 +48,39 @@ class UpdateLogService extends Logs
 
 	);
 
+	 /**
+     * 重写错误信息 - 并将错误信息写入错误日志 同时写入两个日志( LOCAL_LOG, LOCAL_UPDATE_ERROR )
+     * [inforReceive description]
+     * @param  string $pFunctionName [class and functionName]
+     * @param  int $pParam           [0,1,2...]
+     * @return [string]              [error: info]
+     */
 	public function inforReceive ( $pFunctionName = '', $pParam = '' ) {
 		$message = parent::inforReceive( $pFunctionName, $pParam );
 		$this->writeLog( $message, LOCAL_LOG );
 		$this->writeLog( $message, LOCAL_UPDATE_ERROR );
 	}
 
+	/**
+     * 重写正确信息 - 并将正确信息写入总日志 LOCAL_LOG
+     * [successReceive description]
+     * @param  string $pParam [class and functionName]
+     * @param  string $pStr   [0,1,2...]
+     * @return [string]       [success: info]
+     */
 	public function successReceive( $pParam = '', $pStr = '' ) {
 		$message = parent::successReceive( $pParam, $pStr );
 		$this->writeLog( $message, LOCAL_LOG );
+	}
+
+	//记录本次操作信息到日志 - 自定义日志
+	public function customLogFile( $pLogPath ) {
+		$this->writeLog( $this->getUpdateInfo(), $pLogPath );
+	}
+
+	//每更新一次,记录一次相关信息,如时间,地点,操作者,所属组等 - 目前只有时间
+	public function getUpdateInfo() {
+		return '['.date( 'Y-m-d h:i:s').'] '.' username: Yang'.' <|> '.'group: 1';
 	}
 
 	

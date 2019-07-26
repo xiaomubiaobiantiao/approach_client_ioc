@@ -6,29 +6,31 @@
  */
 namespace Home\Service\Update;
 
-//use Home\Common\Service\CommonService;
 use Home\Common\Utility\PclZipController as Zip;
-use Home\Common\Utility\DownloadUtility as Download;
 use Home\Common\Utility\FileBaseUtility as FileBase;
 use Home\Service\Update\UpdateDetectionLogService as Detection;
 use Home\Service\Update\UpdateLogService as ProcessLog;
 
-class UpdateParentService //extends CommonService
+class UpdateParentService
 {
 
 	public function __construct() {
 		$this->Proc = new ProcessLog();
 		$this->Detection = new Detection();
-		$this->Download = new Download();
 	}
 
 	protected function checkFile( $pVersionPath ) {
 		return FileBase::checkFile( $pVersionPath );
 	}
 
-	//下载文件
+	//下载文件 - 目前未用 将来可能也不会用
 	protected function downFile() {
-		$this->Download->down();
+		return FileBase::down();
+	}
+
+	//记录本次操作信息到记录日志 LOCAL_UPDATE_RECORD
+	protected function recordInfo( $pLogPath ) {
+		$this->Proc->customLogFile( $pLogPath );
 	}
 
 	//读取文件
@@ -36,8 +38,11 @@ class UpdateParentService //extends CommonService
 		return FileBase::readFile( $pFile );
 	}
 
-	//替换版本文件
+	//替换软件版本信息文件
 	protected function updateVersion( $pFilePath, $pNewPath ) {
+		//创建版本信息路径
+		FileBase::createDir( dirname( $pNewPath ));
+		//拷贝文件到版本信息路径
 		FileBase::copyFile( $pFilePath, $pNewPath )
 			? $this->Proc->successReceive( 16, $pFilePath.'|'.$pNewPath )
 			: $this->Proc->inforReceive(  __METHOD__.' '.__LINE__.' '.$pFilePath.'|'.$pNewPath, 12 );
@@ -77,7 +82,7 @@ class UpdateParentService //extends CommonService
 		}
 	}
 
-	//删除目录下的所有文件-
+	//删除目录下的所有文件
 	public function deleteTmpFile( $pPathArr ) {
 		foreach ( $pPathArr as $value ) {
 		FileBase::deleteDir( $value )
@@ -124,7 +129,6 @@ class UpdateParentService //extends CommonService
 		FileBase::writeFile( $pContent, $pAddLogFilePath )
 			? $this->Proc->successReceive( 4 )
 			: $this->Proc->inforReceive( __METHOD__.' '.__LINE__.' '.$pAddLogFilePath, 1 );
-		//$this->backUpPackFilePath = $pFilePath;
 		return $pAddLogFilePath;
 	}
 
@@ -133,7 +137,6 @@ class UpdateParentService //extends CommonService
 		FileBase::writeFile( $pContent, $pBackUpLogFilePath )
 			? $this->Proc->successReceive( 15 )
 			: $this->Proc->inforReceive( __METHOD__.' '.__LINE__.' '.$pBackUpLogFilePath, 11 );
-		//$this->backUpPackFilePath = $pFilePath;
 		return $pBackUpLogFilePath;
 	}
 
@@ -178,7 +181,7 @@ class UpdateParentService //extends CommonService
 
 	//检测记录全部操作信息的日志是否更新成功
 	public function scanLog( $pLogPath ) {
-		$mTime = $this->Detection->scanFileInfo( $pLogPath );
+		$mTime = FileBase::scanFileInfo( $pLogPath );
 		( time()-$mTime < 60*2 )
 			? $this->Detection->successReceive( 10, date("Y-m-d H:i:s",$mTime).'|'.date("Y-m-d H:i:s") )
 			: $this->Detection->inforReceive( __METHOD__.' '.__LINE__.' '.date("Y-m-d H:i:s",$mTime).'|'.date("Y-m-d H:i:s"), 10 );
@@ -186,7 +189,7 @@ class UpdateParentService //extends CommonService
 
 	//检测版本信息是否更新完成
 	public function scanVersion( $pVersionPath ) {
-		$mTime = $this->Detection->scanFileInfo( $pVersionPath );
+		$mTime = FileBase::scanFileInfo( $pVersionPath );
 		( time()-$mTime < 60*2 )
 			? $this->Detection->successReceive( 9, date("Y-m-d H:i:s",$mTime).'|'.date("Y-m-d H:i:s") )
 			: $this->Detection->inforReceive( __METHOD__.' '.__LINE__.' '.date("Y-m-d H:i:s",$mTime).'|'.date("Y-m-d H:i:s"), 9 );

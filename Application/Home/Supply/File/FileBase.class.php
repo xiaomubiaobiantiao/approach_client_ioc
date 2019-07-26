@@ -21,6 +21,15 @@ class FileBase
         return $data;
 	}
 
+	//获取文件修改时间
+	public function scanFileInfo( $pFile ) {
+		if ( false == self::checkFile( $pFile ))
+			return false;
+		$handle = fopen( $pFile, "r" );
+		$fileStat = fstat( $handle );
+		return $fileStat["mtime"];
+	}
+
 	//创建文件
 	public function createFile( $pFilePath ) {
 		return touch( $pFilePath );

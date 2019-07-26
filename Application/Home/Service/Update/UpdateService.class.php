@@ -66,7 +66,7 @@ class UpdateService extends Process
 
 	//更新压缩包的流程
 	public function updatePackProcess( $pId ) {
-				
+
 		//初始化程序所需目录结构
 		$this->initializeDir( 
 			array( 
@@ -101,32 +101,38 @@ class UpdateService extends Process
 		//dump($FileObj->lastResult);
 		//将需要替换的文件备份 - 添加全部日志 -添加备份日志
 		
+		//有需要备份的文件就执行以下操作
 		if ( false == empty( $PathObj->lastResult['backUpFileList'] )) {
 
+			//拷贝文件到备份临时目录
 			$this->copyBackUpFile( 
 				$PathObj->lastResult['backUpFilePathList'],
 				$PathObj->lastResult['backUpFileList'],
 				UPDATE_PATH,
 				BACKUP_TMP_PATH
 			);
-			
+
+			//创建备份文件日志 将需要备份的文件路径列表写入备份日志
 			$backUpLogFilePath = $this->createBackUpFileLog(
 				$this->matchZipFileRootPath( UPDATE_PATH, $PathObj->lastResult['backUpFileList'] ),
 				BACKUP_TMP_PATH . date('Y_m_d').'-'.time().'-back.log'
 			);
 
-			//将替换日志文件路径存储到 $PathObj 类 的 backUpLogFilePath
+			//将备份日志文件路径存储到 $PathObj 类 的 backUpLogFilePath
 			$PathObj->setBackUpLogPath( $backUpLogFilePath );
 
 			//将替换日志路径去掉临时路径信息
 			$tFilePath = str_replace( BACKUP_TMP_PATH, '', $PathObj->backUpLogFilePath );
+
 			//将替换日志路径写入到备份文件列表
 			$PathObj->pushBackUpList( $tFilePath );
 
 		}
 
-		//将需要追加的文件写入到一个追加文件日志中  - 添加全部日志 - 添加备份日志
+		//有需要追加的文件的文件就就执行以下操作
 		if ( false == empty( $PathObj->lastResult['addFileList'] )) {
+
+			//创建追加文件日志 将需要追加的文件路径列表写入追加日志
 			$addLogFilePath = $this->createAddFileLog(
 				$this->matchZipFileRootPath( UPDATE_PATH, $PathObj->lastResult['addFileList'] ),
 				BACKUP_TMP_PATH . date('Y_m_d').'-'.time().'-add.log'
@@ -135,19 +141,17 @@ class UpdateService extends Process
 			//将日志文件路径存储到 $PathObj 类 的 addLogFilePath
 			$PathObj->setAddLogPath( $addLogFilePath );
 
-			//将日志路径去掉临时路径信息
+			//将临时目录的日志路径去掉临时路径信息
 			$tFilePath = str_replace( BACKUP_TMP_PATH, '', $PathObj->addLogFilePath );
-			//将日志路径写入到备份文件列表
+			//将临时目录的日志路径写入到备份文件列表
 			$PathObj->pushBackUpList( $tFilePath );
-			//$PathObj->lastResult['backUpFileList'][] = 
 			
-
 			//为写入文件争取停顿时间1秒
-			//$this->sleepOperation( 1 );
+			$this->sleepOperation( 1 );
 
 		}
 
-		//将备份文件打包,并命名 - 添加全部日志 - 添加备份日志
+		//将备份文件打包 并命名 备份文件包括( 替换的文件,替换文件的日志,追加文件的日志 )
 		if ( false == empty( $PathObj->lastResult['backUpFileList'] )) {
 			$zipPath = $this->addZip( 
 				BACKUP_PATH.date('Y_m_d').'-'.time().'_b.zip',
@@ -211,7 +215,8 @@ class UpdateService extends Process
 		
 		/*-------------------------------------------------------------------------------------*/
 
-
+		//添加一条操作信息到记录日志
+		$this->recordInfo( LOCAL_UPDATE_RECORD );
 
 	}
 
