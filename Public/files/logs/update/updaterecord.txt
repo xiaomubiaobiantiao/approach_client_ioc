@@ -1,6 +1,0 @@
-[2019-07-26 04:20:30]usernamegroup
-[2019-07-26 04:22:01]  username: Yang <|> group: 1
-[2019-07-26 04:39:39]  username: Yang <|> group: 1
-[2019-07-26 04:41:32]  username: Yang <|> group: 1
-[2019-07-26 05:38:38]  username: Yang <|> group: 1
-[2019-07-26 05:39:19]  username: Yang <|> group: 1

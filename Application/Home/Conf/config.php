@@ -2,37 +2,41 @@
 //所有 常量值 路径后面必须加 / 符号	******** 例: Public/files/
 //排除检测的常量除外
 
+/* 被更新项目使用的常量 */
 //文件更新的路径
+$path = 'D:/phpStudy/PHPTutorial/WWW/zzhy/aggde_test/';
 
-//define( 'UPDATE_PATH', 'D:/phpStudy/PHPTutorial/WWW/approach_test/' );
-define( 'UPDATE_PATH', 'D:\SpeedAMP\SpeedAMP1\htdocs/' );
-
-//压缩包文件下载路径
-define( 'UPLOAD_PATH', 'Public/files/uploads_pack/' );
+define( 'UPDATE_PATH', $path );
 
 //文件压缩包备份的路径 里面包含需要备份的文件和更新时追加的文件的记录文档
-define( 'BACKUP_PATH', 'Public/files/backup_pack/' );
+define( 'BACKUP_PATH', UPDATE_PATH.'Public/files/backup_pack/' );
+
+//记录全部信息的日志名称
+define( 'LOCAL_LOG', UPDATE_PATH.'Public/files/logs/log.txt' );
+
+//记录更新信息错误的日志名称
+define( 'LOCAL_UPDATE_ERROR', UPDATE_PATH.'Public/files/logs/update/updaterror.txt' );
+//记录更新次数的日志名称
+define( 'LOCAL_UPDATE_RECORD', UPDATE_PATH.'Public/files/logs/update/updaterecord.txt' );
+
+//记录恢复信息错误的日志名称
+define( 'LOCAL_RESTORE_ERROR', UPDATE_PATH.'Public/files/logs/restore/restorerror.txt' );
+//记录恢复次数日志的名称
+define( 'LOCAL_RESTORE_RECORD', UPDATE_PATH.'Public/files/logs/restore/restorecord.txt' );
+
+
+
+
+/* 更新程序使用的常量 */
+//压缩包文件下载路径
+define( 'UPLOAD_PATH', 'Public/files/uploads_pack/' );
 
 //文件备份的临时路径 最后会被自动删除
 define( 'BACKUP_TMP_PATH', 'Public/files/backup_tmp_pack/' );
 
 //文件解压缩的临时路径 最后会被自动删除
-define( 'UNPACK_TMP_PATH', 'Public/files/update_tmp_pack/' );
+define( 'UNPACK_TMP_PATH', 'Public/files/unpack_tmp_pack/' );
 
-
-
-//记录全部信息的日志名称
-define( 'LOCAL_LOG', 'Public/files/logs/log.txt' );
-
-//记录更新信息错误的日志名称
-define( 'LOCAL_UPDATE_ERROR', 'Public/files/logs/update/updaterror.txt' );
-//记录更新次数的日志名称
-define( 'LOCAL_UPDATE_RECORD', 'Public/files/logs/update/updaterecord.txt' );
-
-//记录恢复信息错误的日志名称
-define( 'LOCAL_RESTORE_ERROR', 'Public/files/logs/restore/restorerror.txt' );
-//记录恢复次数日志的名称
-define( 'LOCAL_RESTORE_RECORD', 'Public/files/logs/restore/restorecord.txt' );
 
 
 

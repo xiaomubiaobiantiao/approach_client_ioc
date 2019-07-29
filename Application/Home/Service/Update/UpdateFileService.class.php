@@ -7,12 +7,10 @@
  */
 namespace Home\Service\Update;
 
-//use Home\Common\Service\CommonService;
-//use Home\Common\Utility\PclZipController;
 use Home\Service\Index\UpdateLogService as Log;
 use Home\Common\Utility\DetectionUtility as Detection;
 
-class UpdateFileService //extends CommonService
+class UpdateFileService
 {
 
 	//初始化更新包文件 与 原有文件 的数组结构

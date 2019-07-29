@@ -140,7 +140,7 @@ class FileBase
 
 	}
 
-	//扫描目录下的所有文件 - 临时用 - 暂未用
+	//扫描目录下的所有文件 - 不是递归扫描
 	public function checkAllFile( $pDir ) {
 
 	    $handle = opendir( $pDir );
@@ -151,17 +151,9 @@ class FileBase
 	        	continue;
 	        //递归检测目录
 	        $path = rtrim( $pDir, '/' ).'/'.$file;
-	        if ( is_dir( $path )) {
-	        	self::checkAllFile( $path );
-	        }
-	        //分类文件与文件夹
-	        // is_dir( $path )
-	        // 	? $data['dirs'][] = $path
-	        // 	: $data['files'][] = $path;
-	        //echo $path.'<br>';
-	        $data[] = $path;
+			
+			$data[] = $path;
 	    }
-	    //if( is_dir( $path ) ) echo '************* '.$path.' ***********';
 	    closedir( $handle ); 
 	    return $data;
 	}

@@ -9,7 +9,7 @@ namespace Home\Service\Update;
 use Home\Model\PackModel;
 use Home\Service\Update\UpdateParentService as Process;
 use Home\Service\Update\UpdateFileService as GetPath;
-
+use Home\Common\Utility\PclZipController as PclZip;
 class UpdateService extends Process
 {
 
@@ -66,7 +66,7 @@ class UpdateService extends Process
 
 	//更新压缩包的流程
 	public function updatePackProcess( $pId ) {
-
+		
 		//初始化程序所需目录结构
 		$this->initializeDir( 
 			array( 
