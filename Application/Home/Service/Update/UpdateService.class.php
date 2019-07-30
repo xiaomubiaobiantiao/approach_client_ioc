@@ -96,10 +96,10 @@ class UpdateService extends Process
 		//检测压缩包文件 和 项目的文件
 		$PathObj = new GetPath( array( UNPACK_TMP_PATH, UPDATE_PATH ));
 
-		dump( $PathObj->fileOperation );
+		// dump( $PathObj->fileOperation );
 		//对比文件后得出需要替换的文件列表和需要追加的文件列表
-		dump($PathObj->lastResult);
-		die();
+		// dump($PathObj->lastResult);
+		// die();
 		//将需要替换的文件备份 - 添加全部日志 -添加备份日志
 		
 		//有需要备份的文件就执行以下操作

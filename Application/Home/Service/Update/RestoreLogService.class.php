@@ -13,7 +13,7 @@ class RestoreLogService extends Logs
 {
 
 	public $errorInfo = array(
-			1 => 'Add log ',
+			1 => 'Crate add log ',
 			2 => 'Open dir resources ',
 			3 => 'Zip file ',
 			4 => 'Is dir ', 
@@ -25,7 +25,8 @@ class RestoreLogService extends Logs
 			10 => 'Search backup log ',
 			11 => 'Backup log ',
 			12 => 'Version update',
-			15 => 'Create log'
+			15 => 'Create log',
+			16 => 'Create del file '
 
 	);
 
@@ -44,7 +45,8 @@ class RestoreLogService extends Logs
 			12 => 'Copy a update file ',
 			15 => 'Create Backup file log complete! ',
 			16 => 'Version update complete! ',
-			17 => 'Create log complete! '
+			17 => 'Create log complete! ',
+			18 => 'Create del file log complete!'
 
 	);
 
@@ -58,7 +60,7 @@ class RestoreLogService extends Logs
 	public function inforReceive ( $pFunctionName = '', $pParam = '' ) {
 		$message = parent::inforReceive( $pFunctionName, $pParam );
 		$this->writeLog( $message, LOCAL_LOG );
-		$this->writeLog( $message, LOCAL_UPDATE_ERROR );
+		$this->writeLog( $message, LOCAL_RESTORE_ERROR );
 	}
 
 	/**

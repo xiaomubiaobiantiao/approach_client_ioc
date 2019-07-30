@@ -210,7 +210,7 @@ class FileBase
 	}
 
 	//删除文件
-	protected function deleteFile( $pFile ) {
+	public function deleteFile( $pFile ) {
 		return unlink( $pFile );
 	}
 

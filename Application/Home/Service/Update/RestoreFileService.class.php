@@ -33,7 +33,8 @@ class RestoreFileService
 
 	//初始化路径最终结果集
 	public $lastResult = array( 
-		'backUpLogFileList'=>array(),		//备份文件内的全部文件列表 (结束后会被垃圾回收清除)
+		'backUpLogFileList'=>array(),		//全部日志内的所有文件列表 (不包括删除日志)
+		'backUpFileList'=>array(),			//需要恢复的文件列表 (结束后会被垃圾回收清除)
 		'backUpFilePathList'=>array(),		//需要恢复的文件路径 (不包括文件名 创建目录的时候用)
 		'mustBackUpFileList'=>array(),		//必须备份的文件列表 (最后会被压缩成zip文件备份 并写到备份日志里面)
 		'mustBackUpFilePathList'=>array(),	//必须备份的文件路径 (不包括文件名 创建目录的时候用)
@@ -44,8 +45,11 @@ class RestoreFileService
 	//备份 - 追加文件列表的日志路径
 	public $addLogFilePath = '';
 
-	//备份 - 替换文件列表的备份日志路径
+	//备份 - 记录被替换文件列表的日志路径
 	public $backUpLogFilePath = '';
+
+	//备份 - 记录项目被删除列表的日志路径
+	public $delLogFilePath = '';
 
 	//备份 - 
 	//备份的zip压缩包路径 - 压缩包信息包含
@@ -197,6 +201,11 @@ class RestoreFileService
 		$this->backUpLogFilePath = $pBackUpLogPath;
 	}
 
+	//设置删除文件列表路径
+	public function setDelLogPath( $pDelLogPath ) {
+		$this->delLogFilePath = $pDelLogPath;
+	}	
+
 	//设置备份压缩包路径
 	public function setBackUpZipPath( $pBackUpPath ) {
 		$this->backUpPackFilePath = $pBackUpPath;
@@ -262,25 +271,15 @@ class RestoreFileService
 	}
 
 	//设置需要替换的文件和目录,追加的文件和目录,还有需要更新的全部文件
-	private function fileReplace( $pArr1, $pOldRootDir ) {
-		$this->lastResult['backUpLogFileList'] = $pArr1['all_log'];
-		$this->lastResult['backUpFilePathList'] = $pArr1['back_log'];
-		$this->lastResult['mustBackUpFileList']= $pArr1['all_log'];
-		$this->lastResult['mustBackUpFilePathList']  = $this->distinctPath( $pArr1['all_log'] );
-		$this->lastResult['addFileList'] = $pArr1['del_log'];
-		$this->lastResult['deleteFileList'] = $pArr1['add_log'];
+	private function fileReplace( $pArr ) {
+		$this->lastResult['backUpLogFileList'] = $pArr['all_log'];
+		$this->lastResult['backUpFileList'] = $pArr['back_log'];
+		$this->lastResult['backUpFilePathList'] = $this->distinctPath( $pArr['back_log'] );
+		$this->lastResult['mustBackUpFileList']= $pArr['all_log'];
+		$this->lastResult['mustBackUpFilePathList']  = $this->distinctPath( $pArr['all_log'] );
+		$this->lastResult['addFileList'] = $pArr['del_log'];
+		$this->lastResult['deleteFileList'] = $pArr['add_log'];
 	}
-
-	//设置需要替换的文件和目录,追加的文件和目录,还有需要更新的全部文件
-	// private function fileReplace( $pArr1, $pOldRootDir ) {
-	// 	$this->lastResult['backUpLogPathList']=$this->addPathToArr( $pArr1['all_log'], $pArr1['root_dir'] );
-	// 	$this->lastResult['backUpFilePathList']=$this->addPathToArr( $pArr1['back_log'], $pArr1['root_dir'] );
-	// 	$this->lastResult['mustBackUpFileList']=$this->addPathToArr( $pArr1['all_log'], $pOldRootDir );
-	// 	$backUpPath = $this->addPathToArr( $pArr1['all_log'], $pOldRootDir );
-	// 	$this->lastResult['mustBackUpFilePathList'] = $this->distinctPath( $backUpPath );
-	// 	$this->lastResult['addFileList']=$this->addPathToArr( $pArr1['del_log'], $pOldRootDir );
-	// 	$this->lastResult['deleteFileList']=$this->addPathToArr( $pArr1['all_log'], $pOldRootDir );
-	// }
 
 	//去掉文件名,去掉重复的路径并返回
 	private function distinctPath( $pFilePathArr ) {

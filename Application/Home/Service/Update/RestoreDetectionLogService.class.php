@@ -51,7 +51,7 @@ class RestoreDetectionLogService extends Detection
 	public function inforReceive ( $pFunctionName = '', $pParam = '' ) {
 		$message = parent::inforReceive( $pFunctionName, $pParam );
 		$this->writeLog( $message, LOCAL_LOG );
-		$this->writeLog( $message, LOCAL_UPDATE_ERROR );
+		$this->writeLog( $message, LOCAL_RESTORE_ERROR );
 	}
 
 	/**

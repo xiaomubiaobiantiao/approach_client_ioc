@@ -82,7 +82,7 @@ class RestoreParentService
 		}
 	}
 
-	//删除目录下的所有文件
+	//删除临时目录下的所有文件
 	public function deleteTmpFile( $pPathArr ) {
 		foreach ( $pPathArr as $value ) {
 		FileBase::deleteDir( $value )
@@ -107,7 +107,7 @@ class RestoreParentService
 		$this->Proc->successReceive( 6 );
 	}
 
-	//copy更新文件操作流程 先循环创建目录,再循环创建文件
+	//copy恢复文件操作流程 先循环创建目录,再循环创建文件
 	public function copyUpdateFile( $pFilePathArr, $pFileArr, $pUpdatePath, $pBackUpPath ) {
 		foreach ( $pFilePathArr as $value ) {
 			FileBase::createDir( $pUpdatePath.$value );
@@ -121,6 +121,15 @@ class RestoreParentService
 				: $this->Proc->inforReceive( __METHOD__.' '.__LINE__.' '.$pUpdatePath.$value.' '.$pUpdatePath.$value, 5 );	
 		}
 		$this->Proc->successReceive( 5 );
+	}
+
+	//delete 删除项目文件流程 - 成功和失败的 日志 说明没有写
+	public function deleteProjectFile( $pPathArr ) {
+		foreach ( $pPathArr as $value ) {
+			FileBase::deleteFile( $value )
+				? $this->Proc->successReceive( 3, $value )
+				: $this->Proc->inforReceive( __METHOD__.' '.__LINE__.' '.$value, 6 );
+		}
 	}
 
 	//--------------------------------------------------------------------------------------
@@ -138,6 +147,14 @@ class RestoreParentService
 			? $this->Proc->successReceive( 15 )
 			: $this->Proc->inforReceive( __METHOD__.' '.__LINE__.' '.$pBackUpLogFilePath, 11 );
 		return $pBackUpLogFilePath;
+	}
+
+	//将需要删除的文件列表写入到删除文件日志中 - 成功失败 日志说明未写
+	public function createDelFileLog( $pContent, $pDelLogFilePath ) {
+		FileBase::writeFile( $pContent, $pDelLogFilePath )
+			? $this->Proc->successReceive( 18 )
+			: $this->Proc->inforReceive( __METHOD__.' '.__LINE__.' '.$pDelLogFilePath, 16 );
+		return $pDelLogFilePath;
 	}
 
 	//检测更新后的文件是否存在

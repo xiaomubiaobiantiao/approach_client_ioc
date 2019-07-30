@@ -6,7 +6,7 @@
  */
 namespace Home\Service\Update;
 
-use Home\Service\Update\UpdateParentService as Process;
+use Home\Service\Update\RestoreParentService as Process;
 use Home\Service\Update\RestoreFileService as GetPath;
 use Home\Common\Utility\PclZipController as PclZip;
 use Home\Common\Utility\FileBaseUtility as FileBase;
@@ -67,11 +67,11 @@ class RestoreService extends Process
 
 	//更新压缩包的流程
 	public function restoreBackUpProcess( $pBackUpFile ) {
-
+		
 		//初始化程序所需目录结构
 		$this->initializeDir(
 			array( 
-				BACKUP_PATH, BACKUP_TMP_PATH, UNPACK_TMP_PATH, 
+				BACKUP_PATH, BACKUP_TMP_PATH, UNPACK_TMP_PATH, RESTORE_BACKUP_PATH,
 				dirname( LOCAL_LOG ), 
 				dirname( LOCAL_UPDATE_ERROR ), 
 				dirname( LOCAL_RESTORE_ERROR )
@@ -89,7 +89,7 @@ class RestoreService extends Process
 		//检测压缩包文件 和 项目的文件
 		$PathObj = new GetPath( array( UNPACK_TMP_PATH, UPDATE_PATH ));
 		//dump( $PathObj->fileOperation );
-		dump( $PathObj->lastResult );
+		// dump( $PathObj->lastResult );
 		//dump( $PathObj->fileOperation);
 		
 		//有需要备份的文件就执行以下操作
@@ -141,13 +141,14 @@ class RestoreService extends Process
 
 		//有需要删除的文件就执行以下操作
 		if ( false == empty( $PathObj->lastResult['deleteFileList'] )) {
-
-			$this->deleteFile(
-
+			
+			//删除项目文件流程
+			$this->deleteProjectFile(
+				$this->matchZipFileRootPath( UPDATE_PATH, $PathObj->lastResult['deleteFileList'] )
 			);
 
 			//创建追加文件日志 将需要追加的文件路径列表写入追加日志
-			$addLogFilePath = $this->createAddFileLog(
+			$DelLogFilePath = $this->createDelFileLog(
 				$this->matchZipFileRootPath( UPDATE_PATH, $PathObj->lastResult['deleteFileList'] ),
 				BACKUP_TMP_PATH . date('Y_m_d').'-'.time().'-del.log'
 			);
@@ -155,41 +156,35 @@ class RestoreService extends Process
 			//将追加日志文件路径存储到 $PathObj 类 的 addLogFilePath
 			$PathObj->setDelLogPath( $DelLogFilePath );
 			//将记录追加文件列表的 日志的路径 去掉临时路径信息 add.log
-			$tFilePath = str_replace( BACKUP_TMP_PATH, '', $PathObj->DelLogFilePath );
+			$tFilePath = str_replace( BACKUP_TMP_PATH, '', $PathObj->delLogFilePath );
 			//将临时目录的日志路径写入到备份文件列表
 			$PathObj->pushBackUpList( $tFilePath );
 
 		}
 
 		//将备份文件打包 并命名 备份文件包括( 替换的文件,替换文件的日志,追加文件的日志 )
-		if ( false == empty( $PathObj->lastResult['backUpFileList'] )) {
+		if ( false == empty( $PathObj->lastResult['mustBackUpFileList'] )) {
 			$zipPath = $this->addZip( 
-				BACKUP_PATH.date('Y_m_d').'-'.time().'_b.zip',
-				$this->matchZipFileRootPath( BACKUP_TMP_PATH, $PathObj->lastResult['backUpFileList'] )
+				RESTORE_BACKUP_PATH.date('Y_m_d').'-'.time().'_b.zip',
+				$this->matchZipFileRootPath( BACKUP_TMP_PATH, $PathObj->lastResult['mustBackUpFileList'] )
 			);
 
 			//将备份文件路径存储到 $PathObj 类 的 backUpPackFilePath
 			$PathObj->setBackUpZipPath( $zipPath );
 		}
-
-		//将备份文件添加至文件 - 添加全部日志 - 添加备份日志
-
 		
-		// dump($PathObj->fileOperation);
-		// dump($PathObj->lastResult);
-		// die();
-		
-		//开始更新文件 - 添加全部日志 - 添加更新日志
+		//开始还原文件 - 添加全部日志 - 添加还原日志
 		$this->copyUpdateFile(
-			$PathObj->lastResult['updateFilePathList'],
-			$PathObj->lastResult['updateAllFileList'],
+			$PathObj->lastResult['backUpFilePathList'],
+			$PathObj->lastResult['backUpFileList'],
 			UPDATE_PATH,
 			UNPACK_TMP_PATH
 		);
 
 		//更新或创建版本信息
 		$this->updateVersion( VERSION_PATH, OLD_VERSION_PATH );
-		
+		dump( $PathObj->fileOperation );
+		dump( $PathObj->lastResult );
 		/*-------------------------------------------------------------------------------------*/
 		/*----- 检测系统 - 检测所有操作是否成功 -----------------------------------------------*/
 		/*-------------------------------------------------------------------------------------*/
@@ -207,7 +202,7 @@ class RestoreService extends Process
 			$this->scanBackUpZip( $PathObj->backUpPackFilePath );
 
 		//将全部更新文件加上绝对路径信息
-		$tAllFileList = $this->matchZipFileRootPath( UPDATE_PATH, $PathObj->lastResult['updateAllFileList'] );
+		$tAllFileList = $this->matchZipFileRootPath( UPDATE_PATH, $PathObj->lastResult['backUpFileList'] );
 		//检测更新后的文件是否存在
 		$this->scanUpdateFile( $tAllFileList );
 
@@ -226,7 +221,7 @@ class RestoreService extends Process
 		/*-------------------------------------------------------------------------------------*/
 
 		//添加一条操作信息到记录日志
-		$this->recordInfo( LOCAL_UPDATE_RECORD );
+		$this->recordInfo( LOCAL_RESTORE_RECORD );
 
 	}
 
