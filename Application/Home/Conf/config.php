@@ -4,12 +4,15 @@
 
 /* 被更新项目使用的常量 */
 //文件更新的路径
-$path = 'D:/phpStudy/PHPTutorial/WWW/zzhy/aggde_test/';
+$path = 'D:/phpStudy/PHPTutorial/WWW/approach_test/';
 
 define( 'UPDATE_PATH', $path );
 
 //文件压缩包备份的路径 里面包含需要备份的文件和更新时追加的文件的记录文档
 define( 'BACKUP_PATH', UPDATE_PATH.'Public/files/backup_pack/' );
+
+define( 'RESTORE_BACKUP_PATH', UPDATE_PATH.'Public/files/resore_backup_pack/' );
+
 
 //记录全部信息的日志名称
 define( 'LOCAL_LOG', UPDATE_PATH.'Public/files/logs/log.txt' );
@@ -39,9 +42,14 @@ define( 'UNPACK_TMP_PATH', 'Public/files/unpack_tmp_pack/' );
 
 
 
-
 //排除检测的目录  常值值字符串 ,号中间不能有空格, 路径开头末尾不能有 / 符号
-define( 'IGNORE_DIRS', 'Public/files,ThinkPHP,Public/Ueditor,Application/Runtime' );
+define( 
+	'IGNORE_DIRS', 
+	UPDATE_PATH.'Public/files,'
+	.UPDATE_PATH.'ThinkPHP,'
+	.UPDATE_PATH.'Public/Ueditor,'
+	.UPDATE_PATH.'Application/Runtime' 
+);
 
 //排除检测的文件  常值值字符串 ,号中间不能有空格
 define( 'IGNORE_FILES', '.git,version.txt' );

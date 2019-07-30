@@ -16,14 +16,16 @@ class RestoreFileService
 	//初始化备份包文件 与 原有文件 的数组结构
 	public $fileOperation = array(
 		'backUp'=>array( 
-			'root_dir'=>array(), 
-			'log_path'=>array(), 
-			'files'=>array(), 
-			'add'=>array(), 
-			'back'=>array()
+			'root_dir' =>array(), //备份文件所在路径
+			'files'    =>array(), //备份文件路径列表 - 更新时备份的真实存在的文件
+			'all_log'  =>array(), //全部日志路径列表 - 追加/备份日志列表 - 不包括删除日志
+			'add_log'  =>array(), //追加日志路径列表 - 更新时追加的文件列表
+			'back_log' =>array(), //备份日志路径列表 - 更新时备份的文件路径列表
+			'del_log'  =>array()  //删除日志路径列表 - 更新时删除的文件
 		),
 
 		'old'=>array( 'root_dir'=>array(), 'files'=>array(), 'dirs'=>array() )
+
 	);
 
 	//备份包根目录与程序根目录的路径 参数为 2 个, 第1个是备份包的路径, 第2个是需要替换的程序的路径
@@ -31,10 +33,11 @@ class RestoreFileService
 
 	//初始化路径最终结果集
 	public $lastResult = array( 
-		'backUpLogPathList'=>array(),		//备份文件内的全部文件列表 (结束后会被垃圾回收清除)
+		'backUpLogFileList'=>array(),		//备份文件内的全部文件列表 (结束后会被垃圾回收清除)
 		'backUpFilePathList'=>array(),		//需要恢复的文件路径 (不包括文件名 创建目录的时候用)
 		'mustBackUpFileList'=>array(),		//必须备份的文件列表 (最后会被压缩成zip文件备份 并写到备份日志里面)
 		'mustBackUpFilePathList'=>array(),	//必须备份的文件路径 (不包括文件名 创建目录的时候用)
+		'addFileList'=>array(),				//需要追加的文件列表 (写到删除日志里面)
 		'deleteFileList'=>array()			//需要删除的文件列表 (写到删除日志里面)
 	);
 
@@ -51,32 +54,45 @@ class RestoreFileService
 	//3 替换日志
 	public $backUpPackFilePath = '';
 
+	//最终返回结果
+	public $lastReturn = true;
+
 	//构造
 	public function __construct( $pArr ) {
 		if ( false == empty( $pArr )) {
 			$this->dirArr = $pArr;
-			$this->readBackUpLogProcess();
-
-			$pathName = array_keys( $this->fileOperation );
-			$this->myReaddir( $this->dirArr[1], $pathName[1] );
-
-			//匹配最终操作路径结果集
-			$this->fileReplace(
-				$this->fileOperation['backUp'],
-				$this->fileOperation['old']['root_dir'][0]
-			);
-
-			//读取真实备份文件到 fileOperation['backUp']['files']
-			$this->readAllFile( $this->dirArr[0] );
-
-			//对比备份日志与备份文件是否相同
-			$this->replaceLogAndBackUp();
-		
-			//对比备份日志和追加日志与要恢复的项目目录文件是否相同
-			$bool = $this->replaceLogAndProject();
-			dump( $bool );
-
+			$this->testingProcess();
 		}
+	}
+
+	//文件检测流程
+	public function testingProcess() {
+
+		$this->readBackUpLogProcess();
+		$pathName = array_keys( $this->fileOperation );
+		$this->myReaddir( $this->dirArr[1], $pathName[1] );
+
+		//匹配最终操作路径结果集
+		$this->fileReplace(
+			$this->fileOperation['backUp'],
+			$this->fileOperation['old']['root_dir'][0]
+		);
+
+		//读取真实备份文件到 fileOperation['backUp']['files']
+		$this->readAllFile( $this->dirArr[0] );
+
+		//对比备份日志与备份文件是否相同
+		$bool_1 = $this->replaceLogAndBackUp();
+
+		//对比备份日志和追加日志与要恢复的项目目录文件是否相同
+		$bool_2 = $this->replaceLogAndProject();
+		
+		//都为真时才返回真 - 用设置值的方式来设置 set 目前是临时用
+		if ( $bool_1 && $bool_2 )
+			return true;
+
+		return false;
+
 	}
 
 	//读取备份日志信息流程
@@ -104,12 +120,15 @@ class RestoreFileService
 
 	//对比备份日志和追加日志与要恢复的项目目录文件是否相同
 	public function replaceLogAndProject() {
-		$countLogs = count( $this->fileOperation['backUp']['log_path'] );
-		$countFiles = count( $this->fileOperation['old']['files'] );
-		$result = array_intersect(
-			$this->fileOperation['backUp']['log_path'],
-			$this->fileOperation['old']['files']
+
+		$data = $this->clearDelLogPath(
+			$this->fileOperation['backUp']['all_log'],
+			$this->fileOperation['backUp']['del_log']
 		);
+
+		$countLogs = count( $data );
+		$countFiles = count( $this->fileOperation['old']['files'] );
+		$result = array_intersect( $data, $this->fileOperation['old']['files'] );
 
 		$countResult = count($result);
 		if ( $countResult != $countLogs ) 
@@ -118,19 +137,35 @@ class RestoreFileService
 		return true;
 	}
 
-	//打开文件并读取文件路径
+	/**
+	 * 将 del_log 里面的文件列表从 all_log 临时里清除 - 返回去除 $pArr2里元素的 $pArr1
+	 * [clearDelLogPath 返回数组差集]
+	 * @param  [array] $pArr1 [Beginning an array]
+	 * @param  [array] $pArr2 [Need to compare an array]
+	 * @return [array]        [An array of difference set]
+	 */
+	public function clearDelLogPath( $pArr1, $pArr2 ) {
+		return array_diff( $pArr1, $pArr2 );
+	}
+
+	//打开文件并读取文件路径 分别读取 add 与 back 字样的日志内容
 	public function readPath( $pFileArr ) {
 		foreach ( $pFileArr as $value ) {
-			strstr( $value, 'add' )
-				? $this->fileOperation['backUp']['add'] = $this->readFile( $value, $this->dirArr[1] )
-				: $this->fileOperation['backUp']['back'] = $this->readFile( $value, $this->dirArr[1] );
-			
-			$allFile = array_merge_recursive( 
-				$this->fileOperation['backUp']['add'], 
-				$this->fileOperation['backUp']['back'] 
-			);
-			$this->fileOperation['backUp']['log_path'] = $allFile;
+			if ( strstr( $value, 'add' )) {
+				$this->fileOperation['backUp']['add_log'] = $this->readFile( $value, $this->dirArr[1]);
+			} elseif ( strstr( $value, 'back' )) {
+				$this->fileOperation['backUp']['back_log'] = $this->readFile( $value,$this->dirArr[1]);
+			} else {
+				$this->fileOperation['backUp']['del_log'] = $this->readFile( $value, $this->dirArr[1]);
+			}
 		}
+		//将两个数组合并为一个数组
+		$allFile = array_merge_recursive( 
+			$this->fileOperation['backUp']['add_log'], 
+			$this->fileOperation['backUp']['back_log'] 
+		);
+		//赋值数组到全部日志
+		$this->fileOperation['backUp']['all_log'] = $allFile;
 	}
 
 	//扫描备份日志与追加日志里面的文件路径
@@ -169,7 +204,7 @@ class RestoreFileService
 
 	//添加文件到备份列表
 	public function pushBackUpList( $pFilePath ) {
-		$this->lastResult['backUpFileList'][] = $pFilePath;
+		$this->lastResult['mustBackUpFileList'][] = $pFilePath;
 	}
 
 	/**
@@ -228,13 +263,24 @@ class RestoreFileService
 
 	//设置需要替换的文件和目录,追加的文件和目录,还有需要更新的全部文件
 	private function fileReplace( $pArr1, $pOldRootDir ) {
-		$this->lastResult['backUpLogPathList']=$this->addPathToArr( $pArr1['log_path'], $pArr1['root_dir'] );
-		$this->lastResult['backUpFilePathList']=$this->addPathToArr( $pArr1['back'], $pArr1['root_dir'] );
-		$this->lastResult['mustBackUpFileList']=$this->addPathToArr( $pArr1['log_path'], $pOldRootDir );
-		$backUpPath = $this->addPathToArr( $pArr1['log_path'], $pOldRootDir );
-		$this->lastResult['mustBackUpFilePathList'] = $this->distinctPath( $backUpPath );
-		$this->lastResult['deleteFileList']=$this->addPathToArr( $pArr1['log_path'], $pOldRootDir );
+		$this->lastResult['backUpLogFileList'] = $pArr1['all_log'];
+		$this->lastResult['backUpFilePathList'] = $pArr1['back_log'];
+		$this->lastResult['mustBackUpFileList']= $pArr1['all_log'];
+		$this->lastResult['mustBackUpFilePathList']  = $this->distinctPath( $pArr1['all_log'] );
+		$this->lastResult['addFileList'] = $pArr1['del_log'];
+		$this->lastResult['deleteFileList'] = $pArr1['add_log'];
 	}
+
+	//设置需要替换的文件和目录,追加的文件和目录,还有需要更新的全部文件
+	// private function fileReplace( $pArr1, $pOldRootDir ) {
+	// 	$this->lastResult['backUpLogPathList']=$this->addPathToArr( $pArr1['all_log'], $pArr1['root_dir'] );
+	// 	$this->lastResult['backUpFilePathList']=$this->addPathToArr( $pArr1['back_log'], $pArr1['root_dir'] );
+	// 	$this->lastResult['mustBackUpFileList']=$this->addPathToArr( $pArr1['all_log'], $pOldRootDir );
+	// 	$backUpPath = $this->addPathToArr( $pArr1['all_log'], $pOldRootDir );
+	// 	$this->lastResult['mustBackUpFilePathList'] = $this->distinctPath( $backUpPath );
+	// 	$this->lastResult['addFileList']=$this->addPathToArr( $pArr1['del_log'], $pOldRootDir );
+	// 	$this->lastResult['deleteFileList']=$this->addPathToArr( $pArr1['all_log'], $pOldRootDir );
+	// }
 
 	//去掉文件名,去掉重复的路径并返回
 	private function distinctPath( $pFilePathArr ) {
@@ -263,11 +309,11 @@ class RestoreFileService
 	}
 
 	//添加路径信息到指定数组
-	private function addPathToArr( $pFilePathArr, $pPath ) {
-		foreach ( $pFilePathArr as $key=>$value )
-			$pFilePathArr[$key] = $pPath.$value;
-		return $pFilePathArr;
-	}
+	// private function addPathToArr( $pFilePathArr, $pPath ) {
+	// 	foreach ( $pFilePathArr as $key=>$value )
+	// 		$pFilePathArr[$key] = $pPath.$value;
+	// 	return $pFilePathArr;
+	// }
 
 	//读取所有备份文件到 $this->fileOperation['backUp']['files'] 数组中 并去除备份文件临时路径
 	private function readAllFile( $pDir ) {

@@ -158,7 +158,9 @@ class RestoreService extends Process
 			$tFilePath = str_replace( BACKUP_TMP_PATH, '', $PathObj->DelLogFilePath );
 			//将临时目录的日志路径写入到备份文件列表
 			$PathObj->pushBackUpList( $tFilePath );
-
+			
+			//为写入文件争取停顿时间1秒
+			$this->sleepOperation( 1 );
 		}
 
 		//将备份文件打包 并命名 备份文件包括( 替换的文件,替换文件的日志,追加文件的日志 )
