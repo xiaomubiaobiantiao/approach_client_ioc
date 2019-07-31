@@ -152,6 +152,29 @@ class UpdateService extends Process
 
 		}
 
+		//有需要删除的文件就执行以下操作
+		if ( false == empty( $PathObj->lastResult['deleteFileList'] )) {
+			
+			//删除项目文件流程
+			$this->deleteProjectFile(
+				$this->matchZipFileRootPath( UPDATE_PATH, $PathObj->lastResult['deleteFileList'] )
+			);
+
+			//创建删除文件日志 将需要删除的文件路径列表写入删除日志
+			$DelLogFilePath = $this->createDelFileLog(
+				$this->matchZipFileRootPath( UPDATE_PATH, $PathObj->lastResult['deleteFileList'] ),
+				BACKUP_TMP_PATH . date('Y_m_d').'-'.time().'-del.log'
+			);
+
+			//将删除日志文件路径存储到 $PathObj 类 的 delLogFilePath
+			$PathObj->setDelLogPath( $DelLogFilePath );
+			//将记录删除文件列表的 日志的路径 去掉临时路径信息 *-del.log
+			$tFilePath = str_replace( BACKUP_TMP_PATH, '', $PathObj->delLogFilePath );
+			//将临时目录的删除日志路径写入到备份文件列表
+			$PathObj->pushBackUpList( $tFilePath );
+
+		}
+
 		//将备份文件打包 并命名 备份文件包括( 替换的文件,替换文件的日志,追加文件的日志 )
 		if ( false == empty( $PathObj->lastResult['backUpFileList'] )) {
 			$zipPath = $this->addZip( 

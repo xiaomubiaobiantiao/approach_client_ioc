@@ -123,6 +123,15 @@ class UpdateParentService
 		$this->Proc->successReceive( 5 );
 	}
 
+	//delete 删除项目文件流程 - 成功和失败的 日志 说明没有写
+	public function deleteProjectFile( $pPathArr ) {
+		foreach ( $pPathArr as $value ) {
+			FileBase::deleteFile( $value )
+				? $this->Proc->successReceive( 3, $value )
+				: $this->Proc->inforReceive( __METHOD__.' '.__LINE__.' '.$value, 6 );
+		}
+	}
+
 	//--------------------------------------------------------------------------------------
 	//将需要追加的文件列表写入到追加文件日志中
 	public function createAddFileLog( $pContent, $pAddLogFilePath ) {
@@ -140,6 +149,14 @@ class UpdateParentService
 		return $pBackUpLogFilePath;
 	}
 
+	//将需要删除的文件列表写入到删除文件日志中 - 成功失败 日志说明未写
+	public function createDelFileLog( $pContent, $pDelLogFilePath ) {
+		FileBase::writeFile( $pContent, $pDelLogFilePath )
+			? $this->Proc->successReceive( 18 )
+			: $this->Proc->inforReceive( __METHOD__.' '.__LINE__.' '.$pDelLogFilePath, 16 );
+		return $pDelLogFilePath;
+	}
+	
 	//检测更新后的文件是否存在
 	public function scanUpdateFile( $pFilePathArr ) {
 		foreach ( $pFilePathArr as $value ) {
@@ -166,7 +183,7 @@ class UpdateParentService
 	//检测备份 zip 压缩包是否存在
 	public function scanBackUpZip( $pBackUpZipPath ) {
 		$this->Detection->scanFile( $pBackUpZipPath )
-			? $this->Detection->successReceive( 3, $pBackUpPath )
+			? $this->Detection->successReceive( 3, $pBackUpZipPath )
 			: $this->Detection->inforReceive( __METHOD__.' '.__LINE__.' '.$pBackUpZipPath, 3 );
 	}
 

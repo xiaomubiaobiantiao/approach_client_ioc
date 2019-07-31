@@ -56,6 +56,7 @@ class RestoreFileService
 	//1 需要替换的文件
 	//2 追加日志
 	//3 替换日志
+	//4 删除日志
 	public $backUpPackFilePath = '';
 
 	//最终返回结果
@@ -172,7 +173,7 @@ class RestoreFileService
 		$this->fileOperation['backUp']['all_log'] = $allFile;
 	}
 
-	//扫描备份日志与追加日志里面的文件路径
+	//扫描备份日志与追加日志文件的路径
 	public function searchBackUpAndAddLog( $pDir ) {
 		$handle = opendir( $pDir );
         //循环资源文件
@@ -306,13 +307,6 @@ class RestoreFileService
         fclose( $handle );
         return $data;
 	}
-
-	//添加路径信息到指定数组
-	// private function addPathToArr( $pFilePathArr, $pPath ) {
-	// 	foreach ( $pFilePathArr as $key=>$value )
-	// 		$pFilePathArr[$key] = $pPath.$value;
-	// 	return $pFilePathArr;
-	// }
 
 	//读取所有备份文件到 $this->fileOperation['backUp']['files'] 数组中 并去除备份文件临时路径
 	private function readAllFile( $pDir ) {

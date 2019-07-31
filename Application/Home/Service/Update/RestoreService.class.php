@@ -147,15 +147,15 @@ class RestoreService extends Process
 				$this->matchZipFileRootPath( UPDATE_PATH, $PathObj->lastResult['deleteFileList'] )
 			);
 
-			//创建追加文件日志 将需要追加的文件路径列表写入追加日志
+			//创建删除文件日志 将需要追加的文件路径列表写入删除日志
 			$DelLogFilePath = $this->createDelFileLog(
 				$this->matchZipFileRootPath( UPDATE_PATH, $PathObj->lastResult['deleteFileList'] ),
 				BACKUP_TMP_PATH . date('Y_m_d').'-'.time().'-del.log'
 			);
 
-			//将追加日志文件路径存储到 $PathObj 类 的 addLogFilePath
+			//将删除日志文件路径存储到 $PathObj 类 的 delLogFilePath
 			$PathObj->setDelLogPath( $DelLogFilePath );
-			//将记录追加文件列表的 日志的路径 去掉临时路径信息 add.log
+			//将记录删除文件列表的 日志的路径 去掉临时路径信息 *-del.log
 			$tFilePath = str_replace( BACKUP_TMP_PATH, '', $PathObj->delLogFilePath );
 			//将临时目录的日志路径写入到备份文件列表
 			$PathObj->pushBackUpList( $tFilePath );
@@ -189,17 +189,21 @@ class RestoreService extends Process
 		/*----- 检测系统 - 检测所有操作是否成功 -----------------------------------------------*/
 		/*-------------------------------------------------------------------------------------*/
 
-		//备份文件列表不为空 则检测需要备份的文件压缩包是否存在
+		//备份文件列表存在 则检测需要备份的文件压缩包是否创建成功
 		if ( isset( $backUpLogFilePath ))
 			$this->scanBackUpLog( $PathObj->backUpLogFilePath );
 
-		//追加文件列表不为空 则检测追加日志是否存在 - 如果追加列表为空则不检测
+		//追加文件列表存在 则检测追加日志是否创建成功 - 如果追加列表为空则不检测
 		if (  isset( $addLogFilePath ))
 			$this->scanAddFileLog( $PathObj->addLogFilePath );
 
-		//备份文件列表不为空 则检测需要备份的文件压缩包是否存在
+		//备份文件列表存在 则检测需要备份的文件压缩包是否创建成功
 		if ( isset( $zipPath ))
 			$this->scanBackUpZip( $PathObj->backUpPackFilePath );
+
+		//删除文件列表存在 则检测需要删除的文件日志是否创建成功
+		if ( isset( $DelLogFilePath ))
+			$this->scandelFileLog( $PathObj->delLogFilePath );
 
 		//将全部更新文件加上绝对路径信息
 		$tAllFileList = $this->matchZipFileRootPath( UPDATE_PATH, $PathObj->lastResult['backUpFileList'] );

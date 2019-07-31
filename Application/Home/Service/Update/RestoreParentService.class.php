@@ -183,8 +183,15 @@ class RestoreParentService
 	//检测备份 zip 压缩包是否存在
 	public function scanBackUpZip( $pBackUpZipPath ) {
 		$this->Detection->scanFile( $pBackUpZipPath )
-			? $this->Detection->successReceive( 3, $pBackUpPath )
+			? $this->Detection->successReceive( 3, $pBackUpZipPath )
 			: $this->Detection->inforReceive( __METHOD__.' '.__LINE__.' '.$pBackUpZipPath, 3 );
+	}
+
+	//检测追加文件日志是否存在
+	public function scanBackUpZip( $pDelLogPath ) {
+		$this->Detection->scanFile( $pDelLogPath )
+			? $this->Detection->successReceive( 2, $pDelLogPath )
+			: $this->Detection->inforReceive( __METHOD__.' '.__LINE__.' '.$pDelLogPath, 2 );
 	}
 
 	//检测垃圾是否清理完成 - 不需要的临时文件
@@ -195,6 +202,8 @@ class RestoreParentService
 				: $this->Detection->inforReceive( __METHOD__.' '.__LINE__.' '.$value, 8 );
 		}
 	}
+
+
 
 	//检测记录全部操作信息的日志是否更新成功
 	public function scanLog( $pLogPath ) {

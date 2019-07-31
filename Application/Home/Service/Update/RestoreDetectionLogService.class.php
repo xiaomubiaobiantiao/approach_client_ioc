@@ -15,30 +15,32 @@ class RestoreDetectionLogService extends Detection
 
 	protected $errorInfo = array(
 
-			1 => 'Search update file ',
-			2 => 'Search additional log files',
-			3 => 'Search backup zip ',
-			4 => 'Search version ',
-			5 => 'Search download file ',
-			6 => 'Search delete file ',
-			7 => 'Search backup log files ',
-			8 => 'Search remove temp file ',
-			9 => 'Search version update',
-			10 => 'Search log update'
+			1 => 'restore Search update file ',
+			2 => 'restore Search additional log files',
+			3 => 'restore Search backup zip ',
+			4 => 'restore Search version ',
+			5 => 'restore Search download file ',
+			6 => 'restore Search delete tmp file ',
+			7 => 'restore Search backup log files ',
+			8 => 'restore Search remove temp file ',
+			9 => 'restore Search version update',
+			10 => 'restore Search log update',
+			11 => 'restore Search del log update'
 	);
 
 	protected $successInfo = array(
 
-			1 => 'Search update file complete! ',
-			2 => 'Search additional log files complete! ',
-			3 => 'Search backup zip complete! ',
-			4 => 'Search version complete! ',
-			5 => 'Search download file complete! ',
-			6 => 'Search delete file complete! ',
-			7 => 'Search backup log files complete! ',
-			8 => 'Search remove temp file complete! ',
-			9 => 'Search version update complete! ',
-			10 => 'Search log update complete! '
+			1 => 'restore Search update file complete! ',
+			2 => 'restore Search additional log files complete! ',
+			3 => 'restore Search backup zip complete! ',
+			4 => 'restore Search version complete! ',
+			5 => 'restore Search download file complete! ',
+			6 => 'restore Search delete tmp file complete! ',
+			7 => 'restore Search backup log files complete! ',
+			8 => 'restore Search remove temp file complete! ',
+			9 => 'restore Search version update complete! ',
+			10 => 'restore Search log update complete! ',
+			11 => 'restore Search del log complete! '
 	);
 
 	 /**

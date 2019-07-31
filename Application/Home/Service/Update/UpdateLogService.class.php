@@ -24,8 +24,10 @@ class UpdateLogService extends Logs
 			9 => 'Search a update file ',
 			10 => 'Search backup log ',
 			11 => 'Backup log ',
-			12 => 'Version update',
-			15 => 'Create log'
+			12 => 'Version update ',
+			15 => 'Create log ',
+			16 => 'Create del file '
+
 
 	);
 
@@ -44,7 +46,8 @@ class UpdateLogService extends Logs
 			12 => 'Copy a update file ',
 			15 => 'Create Backup file log complete! ',
 			16 => 'Version update complete! ',
-			17 => 'Create log complete! '
+			17 => 'Create log complete! ',
+			18 => 'Create del file log complete!'
 
 	);
 

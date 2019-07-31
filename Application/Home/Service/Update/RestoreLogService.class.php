@@ -13,40 +13,42 @@ class RestoreLogService extends Logs
 {
 
 	public $errorInfo = array(
-			1 => 'Crate add log ',
-			2 => 'Open dir resources ',
-			3 => 'Zip file ',
-			4 => 'Is dir ', 
-			5 => 'Copy file update ',
-			6 => 'Delete tmp dir ',
-			7 => 'Create dir update ',
-			8 => 'Copy file backup ',
-			9 => 'Search a update file ',
-			10 => 'Search backup log ',
-			11 => 'Backup log ',
-			12 => 'Version update',
-			15 => 'Create log',
-			16 => 'Create del file '
+			1 => 'restore Crate add log ',
+			2 => 'restore Open dir resources ',
+			3 => 'restore Zip file ',
+			4 => 'restore Is dir ', 
+			5 => 'restore Copy file update ',
+			6 => 'restore Delete tmp dir ',
+			7 => 'restore Create dir update ',
+			8 => 'restore Copy file backup ',
+			9 => 'restore Search a update file ',
+			10 => 'restore Search backup log ',
+			11 => 'restore Backup log ',
+			12 => 'restore Version update',
+			15 => 'restore Create log',
+			16 => 'restore Create del file ',
+			16 => 'restore Delete file ',
 
 	);
 
 	public $successInfo = array(
-			1 => 'Create zip complete! ',
-			2 => 'Unzip complete! ',
-			3 => 'Delete tmp dir complete! ',
-			4 => 'Create add file log complete! ',
-			5 => 'Copy update file complete! ',
-			6 => 'Copy backup file complete! ',
-			7 => 'Search a update file ',
-			8 => 'Search backup log complete! ',
-			9 => 'Create a backup file path ',
-			10 => 'Copy a backup file ',
-			11 => 'Create a update file path ',
-			12 => 'Copy a update file ',
-			15 => 'Create Backup file log complete! ',
-			16 => 'Version update complete! ',
-			17 => 'Create log complete! ',
-			18 => 'Create del file log complete!'
+			1 => 'restore Create zip complete! ',
+			2 => 'restore Unzip complete! ',
+			3 => 'restore Delete tmp dir complete! ',
+			4 => 'restore Create add file log complete! ',
+			5 => 'restore Copy update file complete! ',
+			6 => 'restore Copy backup file complete! ',
+			7 => 'restore Search a update file ',
+			8 => 'restore Search backup log complete! ',
+			9 => 'restore Create a backup file path ',
+			10 => 'restore Copy a backup file ',
+			11 => 'restore Create a update file path ',
+			12 => 'restore Copy a update file ',
+			15 => 'restore Create Backup file log complete! ',
+			16 => 'restore Version update complete! ',
+			17 => 'restore Create log complete! ',
+			18 => 'restore Create del file log complete! ',
+			19 => 'restore Delete a file '
 
 	);
 
