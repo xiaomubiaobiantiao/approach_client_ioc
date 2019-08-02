@@ -25,7 +25,8 @@ class RestoreDetectionLogService extends Detection
 			8 => 'restore Search remove temp file ',
 			9 => 'restore Search version update',
 			10 => 'restore Search log update',
-			11 => 'restore Search del log update'
+			11 => 'restore Search del log ',
+			12 => 'restore Search a del file '
 	);
 
 	protected $successInfo = array(
@@ -40,7 +41,8 @@ class RestoreDetectionLogService extends Detection
 			8 => 'restore Search remove temp file complete! ',
 			9 => 'restore Search version update complete! ',
 			10 => 'restore Search log update complete! ',
-			11 => 'restore Search del log complete! '
+			11 => 'restore Search del log complete! ',
+			12 => 'restore Search a del file '
 	);
 
 	 /**

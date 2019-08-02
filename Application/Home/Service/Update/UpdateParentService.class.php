@@ -123,12 +123,12 @@ class UpdateParentService
 		$this->Proc->successReceive( 5 );
 	}
 
-	//delete 删除项目文件流程 - 成功和失败的 日志 说明没有写
+	//delete 删除项目文件流程
 	public function deleteProjectFile( $pPathArr ) {
 		foreach ( $pPathArr as $value ) {
 			FileBase::deleteFile( $value )
-				? $this->Proc->successReceive( 3, $value )
-				: $this->Proc->inforReceive( __METHOD__.' '.__LINE__.' '.$value, 6 );
+				? $this->Proc->successReceive( 19, $value )
+				: $this->Proc->inforReceive( __METHOD__.' '.__LINE__.' '.$value, 17 );
 		}
 	}
 
@@ -185,6 +185,22 @@ class UpdateParentService
 		$this->Detection->scanFile( $pBackUpZipPath )
 			? $this->Detection->successReceive( 3, $pBackUpZipPath )
 			: $this->Detection->inforReceive( __METHOD__.' '.__LINE__.' '.$pBackUpZipPath, 3 );
+	}
+
+	//检测删除后的文件是否存在
+	public function scanDelFile( $pFilePathArr ) {
+		foreach ( $pFilePathArr as $value ) {
+			false == $this->Detection->scanFile( $value )
+				? $this->Detection->successReceive( 12, $value )
+				: $this->Detection->inforReceive( __METHOD__.' '.__LINE__.' '.$value, 12 );
+		}
+	}
+
+	//检测更新时需要删除文件的日志备份文件是否存在
+	public function scanDelFileLog( $pDelLogPath ) {
+		$this->Detection->scanFile( $pDelLogPath )
+			? $this->Detection->successReceive( 11, $pDelLogPath )
+			: $this->Detection->inforReceive( __METHOD__.' '.__LINE__.' '.$pDelLogPath, 11 );
 	}
 
 	//检测垃圾是否清理完成 - 不需要的临时文件

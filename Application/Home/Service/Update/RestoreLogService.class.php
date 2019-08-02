@@ -28,6 +28,7 @@ class RestoreLogService extends Logs
 			15 => 'restore Create log',
 			16 => 'restore Create del file ',
 			16 => 'restore Delete file ',
+			17 => 'restore Del project file'
 
 	);
 
@@ -48,7 +49,8 @@ class RestoreLogService extends Logs
 			16 => 'restore Version update complete! ',
 			17 => 'restore Create log complete! ',
 			18 => 'restore Create del file log complete! ',
-			19 => 'restore Delete a file '
+			19 => 'restore Delete a file ',
+			19 => 'restore Del a project file '
 
 	);
 

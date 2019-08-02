@@ -198,11 +198,11 @@ class UpdateFileService
 	    return $data;
 	}
 
-	//打开文件并读取文件路径 分别读取 add 与 back 字样的日志内容
+	//打开文件并读取文件路径 当前只读取包含 del 的 log 文件
 	private function readPath( $pFileArr ) {
 		foreach ( $pFileArr as $value ) {
 			if ( strstr( $value, 'del' )) 
-				return $this->readFile( $value );
+				return $this->readFile( $value, $this->dirArr[1] );
 		}
 	}
 

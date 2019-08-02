@@ -187,11 +187,20 @@ class RestoreParentService
 			: $this->Detection->inforReceive( __METHOD__.' '.__LINE__.' '.$pBackUpZipPath, 3 );
 	}
 
-	//检测追加文件日志是否存在
-	public function scanBackUpZip( $pDelLogPath ) {
+	//检测删除后的文件是否存在
+	public function scanDelFile( $pFilePathArr ) {
+		foreach ( $pFilePathArr as $value ) {
+			false == $this->Detection->scanFile( $value )
+				? $this->Detection->successReceive( 12, $value )
+				: $this->Detection->inforReceive( __METHOD__.' '.__LINE__.' '.$value, 12 );
+		}
+	}
+
+	//检测恢复时需要删除文件的日志是否存在
+	public function scanDelFileLog( $pDelLogPath ) {
 		$this->Detection->scanFile( $pDelLogPath )
-			? $this->Detection->successReceive( 2, $pDelLogPath )
-			: $this->Detection->inforReceive( __METHOD__.' '.__LINE__.' '.$pDelLogPath, 2 );
+			? $this->Detection->successReceive( 11, $pDelLogPath )
+			: $this->Detection->inforReceive( __METHOD__.' '.__LINE__.' '.$pDelLogPath, 11 );
 	}
 
 	//检测垃圾是否清理完成 - 不需要的临时文件
@@ -202,8 +211,6 @@ class RestoreParentService
 				: $this->Detection->inforReceive( __METHOD__.' '.__LINE__.' '.$value, 8 );
 		}
 	}
-
-
 
 	//检测记录全部操作信息的日志是否更新成功
 	public function scanLog( $pLogPath ) {

@@ -24,7 +24,9 @@ class UpdateDetectionLogService extends Detection
 			7 => 'Search backup log files ',
 			8 => 'Search remove temp file ',
 			9 => 'Search version update',
-			10 => 'Search log update'
+			10 => 'Search log update',
+			11 => 'Search del log ',
+			12 => 'Search a del file '
 	);
 
 	protected $successInfo = array(
@@ -38,7 +40,9 @@ class UpdateDetectionLogService extends Detection
 			7 => 'Search backup log files complete! ',
 			8 => 'Search remove temp file complete! ',
 			9 => 'Search version update complete! ',
-			10 => 'Search log update complete! '
+			10 => 'Search log update complete! ',
+			11 => 'Search del log complete! ',
+			12 => 'Search a del file '
 	);
 
 	 /**

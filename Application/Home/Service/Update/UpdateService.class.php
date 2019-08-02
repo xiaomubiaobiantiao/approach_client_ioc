@@ -79,7 +79,7 @@ class UpdateService extends Process
 
 		//初始化日志文件
 		$this->initializeLog(
-			array( LOCAL_LOG,LOCAL_UPDATE_ERROR, LOCAL_UPDATE_RECORD, LOCAL_RESTORE_ERROR, LOCAL_RESTORE_RECORD )
+			array( LOCAL_LOG, LOCAL_UPDATE_ERROR, LOCAL_UPDATE_RECORD, LOCAL_RESTORE_ERROR, LOCAL_RESTORE_RECORD )
 		);
 
 		//打开数据库 取出更新包相应 ID
@@ -96,10 +96,10 @@ class UpdateService extends Process
 		//检测压缩包文件 和 项目的文件
 		$PathObj = new GetPath( array( UNPACK_TMP_PATH, UPDATE_PATH ));
 
-		// dump( $PathObj->fileOperation );
+		 // dump( $PathObj->fileOperation );
 		//对比文件后得出需要替换的文件列表和需要追加的文件列表
-		// dump($PathObj->lastResult);
-		// die();
+		 // dump($PathObj->lastResult);
+		 // die();
 		//将需要替换的文件备份 - 添加全部日志 -添加备份日志
 		
 		//有需要备份的文件就执行以下操作
@@ -166,7 +166,7 @@ class UpdateService extends Process
 				BACKUP_TMP_PATH . date('Y_m_d').'-'.time().'-del.log'
 			);
 
-			//将删除日志文件路径存储到 $PathObj 类 的 delLogFilePath
+			//设置记录删除文件日志的路径 - 将删除日志文件路径存储到 $PathObj 类 的 delLogFilePath
 			$PathObj->setDelLogPath( $DelLogFilePath );
 			//将记录删除文件列表的 日志的路径 去掉临时路径信息 *-del.log
 			$tFilePath = str_replace( BACKUP_TMP_PATH, '', $PathObj->delLogFilePath );
@@ -175,7 +175,7 @@ class UpdateService extends Process
 
 		}
 
-		//将备份文件打包 并命名 备份文件包括( 替换的文件,替换文件的日志,追加文件的日志 )
+		//将备份文件打包 并命名 备份文件包括( 替换的文件,替换文件的日志,追加文件的日志, 删除文件的日志 )
 		if ( false == empty( $PathObj->lastResult['backUpFileList'] )) {
 			$zipPath = $this->addZip( 
 				BACKUP_PATH.date('Y_m_d').'-'.time().'_b.zip',
@@ -208,17 +208,26 @@ class UpdateService extends Process
 		/*----- 检测系统 - 检测所有操作是否成功 -----------------------------------------------*/
 		/*-------------------------------------------------------------------------------------*/
 
-		//备份文件列表不为空 则检测需要备份的文件压缩包是否存在
+		//备份文件列表存在 则检测需要备份的文件压缩包是否创建成功
 		if ( isset( $backUpLogFilePath ))
 			$this->scanBackUpLog( $PathObj->backUpLogFilePath );
 
-		//追加文件列表不为空 则检测追加日志是否存在 - 如果追加列表为空则不检测
+		//追加文件列表存在 则检测追加日志是否创建成功 - 如果追加列表为空则不检测
 		if (  isset( $addLogFilePath ))
 			$this->scanAddFileLog( $PathObj->addLogFilePath );
 
-		//备份文件列表不为空 则检测需要备份的文件压缩包是否存在
+		//备份文件列表存在 则检测需要备份的文件压缩包是否创建成功
 		if ( isset( $zipPath ))
 			$this->scanBackUpZip( $PathObj->backUpPackFilePath );
+
+		//删除文件列表存在 则检测需要删除的文件日志是否创建成功 并查看文件是否删除成功
+		if ( isset( $DelLogFilePath )) {
+			$this->scanDelFileLog( $PathObj->delLogFilePath );
+			//检测需要删除的文件是否存在
+			$tDelFileList = $this->matchZipFileRootPath( UPDATE_PATH, $PathObj->lastResult['deleteFileList'] );
+			//检测被删除的的文件是否存在
+			$this->scanDelFile( $tAllFileList );
+		}
 
 		//将全部更新文件加上绝对路径信息
 		$tAllFileList = $this->matchZipFileRootPath( UPDATE_PATH, $PathObj->lastResult['updateAllFileList'] );

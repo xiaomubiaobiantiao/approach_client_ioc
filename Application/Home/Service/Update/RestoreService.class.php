@@ -80,7 +80,7 @@ class RestoreService extends Process
 
 		//初始化日志文件
 		$this->initializeLog(
-			array( LOCAL_LOG,LOCAL_UPDATE_ERROR, LOCAL_UPDATE_RECORD, LOCAL_RESTORE_ERROR, LOCAL_RESTORE_RECORD )
+			array( LOCAL_LOG, LOCAL_UPDATE_ERROR, LOCAL_UPDATE_RECORD, LOCAL_RESTORE_ERROR, LOCAL_RESTORE_RECORD )
 		);
 
 		//根据ID解压文件到默认文件夹,自带创建目录的功能
@@ -162,7 +162,7 @@ class RestoreService extends Process
 
 		}
 
-		//将备份文件打包 并命名 备份文件包括( 替换的文件,替换文件的日志,追加文件的日志 )
+		//将备份文件打包 并命名 备份文件包括( 替换的文件,替换文件的日志,追加文件的日志, 删除文件的日志 )
 		if ( false == empty( $PathObj->lastResult['mustBackUpFileList'] )) {
 			$zipPath = $this->addZip( 
 				RESTORE_BACKUP_PATH.date('Y_m_d').'-'.time().'_b.zip',
@@ -201,9 +201,14 @@ class RestoreService extends Process
 		if ( isset( $zipPath ))
 			$this->scanBackUpZip( $PathObj->backUpPackFilePath );
 
-		//删除文件列表存在 则检测需要删除的文件日志是否创建成功
-		if ( isset( $DelLogFilePath ))
-			$this->scandelFileLog( $PathObj->delLogFilePath );
+		//删除文件列表存在 则检测需要删除的文件日志是否创建成功 并查看文件是否删除成功
+		if ( isset( $DelLogFilePath )) {
+			$this->scanDelFileLog( $PathObj->delLogFilePath );
+			//检测需要删除的文件是否存在
+			$tDelFileList = $this->matchZipFileRootPath( UPDATE_PATH, $PathObj->lastResult['deleteFileList'] );
+			//检测被删除的的文件是否存在
+			$this->scanDelFile( $tAllFileList );
+		}
 
 		//将全部更新文件加上绝对路径信息
 		$tAllFileList = $this->matchZipFileRootPath( UPDATE_PATH, $PathObj->lastResult['backUpFileList'] );
