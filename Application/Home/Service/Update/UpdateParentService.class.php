@@ -126,9 +126,14 @@ class UpdateParentService
 	//delete 删除项目文件流程
 	public function deleteProjectFile( $pPathArr ) {
 		foreach ( $pPathArr as $value ) {
-			FileBase::deleteFile( $value )
-				? $this->Proc->successReceive( 19, $value )
-				: $this->Proc->inforReceive( __METHOD__.' '.__LINE__.' '.$value, 17 );
+			if ( is_file( $value )) {
+				FileBase::deleteFile( $value )
+					? $this->Proc->successReceive( 19, $value )
+					: $this->Proc->inforReceive( __METHOD__.' '.__LINE__.' '.$value, 17 );
+			} else {
+				$this->Proc->successReceive( 20, $value );
+			}
+			
 		}
 	}
 

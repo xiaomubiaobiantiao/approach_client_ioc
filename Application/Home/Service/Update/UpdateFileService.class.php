@@ -29,8 +29,11 @@ class UpdateFileService
 		'backUpFileList'=>array(),			//需要备份的文件列表 (最后会被压缩成zip文件备份 并写到备份日志里面)
 		'backUpFilePathList'=>array(),		//需要备份的文件路径 (不包括文件名 创建目录的时候用)
 		'addFileList'=>array(),				//需要追加的文件列表 (写到追加日志里面)
-		'deleteFileList'=>array()			//需要删除的文件列表 (写到删除日志里面)
+		'deleteFileList'=>array(),			//需要删除的文件列表 (写到删除日志里面)
 	);
+
+	//初始化更新包里面的日志列表 - 目前只可能有删除日志 - 或者没有日志
+	public $logs = array();
 
 	//备份 - 追加文件列表的日志路径
 	public $addLogFilePath = '';
@@ -132,7 +135,12 @@ class UpdateFileService
 	        	$i++;
 	        	$this->myReaddir( $path, $arrName );
 	        }
-	        //分类文件与文件夹
+
+	        //过滤压缩包里的日志文件 并添加到 $this->logs 数组
+	        if ( $this->is_log( $path ))
+	        	continue;
+
+			//分类文件与文件夹
 	        is_dir( $path )
 	        	? $this->fileOperation[$arrName]['dirs'][] = str_replace( $this->fileOperation[$arrName]['root_dir'][0], '', $path )
 	        	: $this->fileOperation[$arrName]['files'][] = str_replace( $this->fileOperation[$arrName]['root_dir'][0], '', $path );
@@ -169,44 +177,51 @@ class UpdateFileService
 		return explode( $pChar, trim( $pStr ));
 	}
 
+	/**
+	 * 扫描压缩包里的日志文件
+	 * [is_log description]
+	 * @param  [string]  $pFile [文件路径]
+	 * @return boolean        [true or false]
+	 */
+	private function is_log( $pFile ) {
+		$fileAttr = pathinfo( $pFile );
+		if( $fileAttr['extension'] == 'log' ) {
+			$this->logs[] = $pFile;
+			return true;
+		}
+		return false;
+	}
+
 	/* ------------------------------------------------------------------------------------- */
 	/* ------------- 读取读取压缩包内删除日志的流程 ---------------------------------------- */
 	/* ------------------------------------------------------------------------------------- */
 	//以下流程本不需要这么多步骤 - 为了以后方便开发 - 需要删除文件的可能性很小 但也不排除 方便阅读文件操作过程
-	//读取压缩包内删除日志信息流程
+	//读取压缩包里日志内容流程
 	private function readLogProcess( $pDir ) {
-		$data = $this->searchDelLog( $pDir );
-		return false == empty( $data ) ? $this->readPath( $data ) : false;
+		return false == empty( $this->logs ) ? $this->readPath( $this->logs, $this->dirArr[0] ) : false;
 	}
 
-	//del 扫描删除日志文件的路径
-	private function searchDelLog( $pDir ) {
-		$handle = opendir( $pDir );
-        //循环资源文件
-	    while ( false !== ( $file = readdir( $handle ))) {
-	    	//跳过不需要检测的文件
-	        if ( $file == '.' || $file == '..' )
-	        	continue;
-	        //递归检测目录
-	        $path = rtrim( $pDir, '/' ).'/'.$file;
-
-			$fileAttr = pathinfo( $file );
-			if ( $fileAttr['extension'] == 'log' )
-				$data[] = $path;
-	    }
-	    closedir( $handle );
-	    return $data;
-	}
-
-	//打开文件并读取文件路径 当前只读取包含 del 的 log 文件
-	private function readPath( $pFileArr ) {
+	/**
+	 * 打开文件并读取文件路径 当前只读取包含 del 的 log 文件
+	 * [readPath description]
+	 * @param  [array] $pFileArr [日志路径数组]
+	 * @param  [string] $pPath    [日志内容里面要清除的路径字符串]
+	 * @return [array]           [已清除指定路径的数组]
+	 */
+	private function readPath( $pFileArr, $pPath ) {
 		foreach ( $pFileArr as $value ) {
 			if ( strstr( $value, 'del' )) 
-				return $this->readFile( $value, $this->dirArr[1] );
+				return $this->readFile( $value, $pPath );
 		}
 	}
 
-	//读取文件内容 - 并清除备份路径 - 方便对比路径 - 只为本类用
+	/**
+	 * 读取文件内容 - 并清除原始数据的绝对路径 - 方便对比路径 - 只为本类用
+	 * [readFile description]
+	 * @param  [string] $pFileArr [路径信息]
+	 * @param  [string] $pPath    [要清除的路径字符串]
+	 * @return [array]           [已清除指定路径的数组]
+	 */
 	private function readFile( $pFile, $pPath ) {
 		$handle = fopen( $pFile, "rb" );
         while ( !feof( $handle )){

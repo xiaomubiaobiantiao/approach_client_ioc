@@ -28,6 +28,9 @@ class RestoreFileService
 
 	);
 
+	//初始化用来存储备份包里面的日志信息
+	public $logs = array();
+
 	//备份包根目录与程序根目录的路径 参数为 2 个, 第1个是备份包的路径, 第2个是需要替换的程序的路径
 	public $dirArr = array();
 
@@ -102,8 +105,8 @@ class RestoreFileService
 
 	//读取备份日志信息流程
 	public function readBackUpLogProcess() {
-		$data = $this->searchBackUpAndAddLog( $this->dirArr[0] );
-		$this->readPath( $data );
+		$this->logs = $this->searchBackUpAndAddLog( $this->dirArr[0] );
+		$this->readPath( $this->logs );
 		$this->fileOperation['backUp']['root_dir'] = $this->dirArr[0];
 	}
 
@@ -116,7 +119,7 @@ class RestoreFileService
 			$this->fileOperation['backUp']['files']
 		);
 
-		$countResult = count($result);
+		$countResult = count( $result );
 		if ( $countResult != $countLogs || $countResult != $countFiles ) 
 			return false;
 
