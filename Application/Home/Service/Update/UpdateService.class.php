@@ -96,12 +96,22 @@ class UpdateService extends Process
 		//检测压缩包文件 和 项目的文件
 		$PathObj = new GetPath( array( UNPACK_TMP_PATH, UPDATE_PATH ));
 
-		  // dump( $PathObj->fileOperation );
-		//对比文件后得出需要替换的文件列表和需要追加的文件列表
-		  // dump($PathObj->lastResult);
-		  // die();
+		// dump( $PathObj->fileOperation );
+		// //对比文件后得出需要替换的文件列表和需要追加的文件列表
+		// dump($PathObj->lastResult);
+		// die();
 		//将需要替换的文件备份 - 添加全部日志 -添加备份日志
 		
+		//如果版本信息不存在 创建版本信息
+		if ( false == is_file( OLD_VERSION_PATH ))
+			$this->createVersion( VERSION_DEFAULT_INFO.'-'.date('Y-m-d H:i:s',time()), OLD_VERSION_PATH );	
+	
+		//将版本信息加入到备份文件列表
+		$PathObj->pushBackUpList( str_replace( UPDATE_PATH, '', OLD_VERSION_PATH ));
+		// dump( $PathObj->lastResult['backUpFileList'] );
+		// echo is_file( 'D:/phpStudy/PHPTutorial/WWW/approach_test/Public/version.txt' );
+		// copy( 'D:/phpStudy/PHPTutorial/WWW/approach_test/Public/version.txt', 'Public/files/backup_tmp_pack/Public/version.txt' );
+		// die();
 		//有需要备份的文件就执行以下操作
 		if ( false == empty( $PathObj->lastResult['backUpFileList'] )) {
 
@@ -161,13 +171,13 @@ class UpdateService extends Process
 			);
 
 			//创建删除文件日志 将需要删除的文件路径列表写入删除日志
-			$DelLogFilePath = $this->createDelFileLog(
+			$tDelLogFilePath = $this->createDelFileLog(
 				$this->matchZipFileRootPath( UPDATE_PATH, $PathObj->lastResult['deleteFileList'] ),
 				BACKUP_TMP_PATH . date('Y_m_d').'-'.time().'-del.log'
 			);
 
 			//设置记录删除文件日志的路径 - 将删除日志文件路径存储到 $PathObj 类 的 delLogFilePath
-			$PathObj->setDelLogPath( $DelLogFilePath );
+			$PathObj->setDelLogPath( $tDelLogFilePath );
 			//将记录删除文件列表的 日志的路径 去掉临时路径信息 *-del.log
 			$tFilePath = str_replace( BACKUP_TMP_PATH, '', $PathObj->delLogFilePath );
 			//将临时目录的删除日志路径写入到备份文件列表
@@ -200,10 +210,10 @@ class UpdateService extends Process
 			UPDATE_PATH,
 			UNPACK_TMP_PATH
 		);
-
+		
 		//更新或创建版本信息 - 版本信息如果没有 - 需先创建一个对方的起始版本信息留到备份处
 		$this->updateVersion( VERSION_PATH, OLD_VERSION_PATH );
-		
+
 		/*-------------------------------------------------------------------------------------*/
 		/*----- 检测系统 - 检测所有操作是否成功 -----------------------------------------------*/
 		/*-------------------------------------------------------------------------------------*/
@@ -221,12 +231,12 @@ class UpdateService extends Process
 			$this->scanBackUpZip( $PathObj->backUpPackFilePath );
 
 		//删除文件列表存在 则检测需要删除的文件日志是否创建成功 并查看文件是否删除成功
-		if ( isset( $DelLogFilePath )) {
+		if ( isset( $tDelLogFilePath )) {
 			$this->scanDelFileLog( $PathObj->delLogFilePath );
-			//检测需要删除的文件是否存在
+			
 			$tDelFileList = $this->matchZipFileRootPath( UPDATE_PATH, $PathObj->lastResult['deleteFileList'] );
 			//检测被删除的的文件是否存在
-			$this->scanDelFile( $tAllFileList );
+			$this->scanDelFile( $tDelFileList );
 		}
 
 		//将全部更新文件加上绝对路径信息

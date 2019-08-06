@@ -156,12 +156,12 @@ class UpdateFileService
 
 	//设置需要替换的文件和目录,追加的文件和目录,还有需要更新的全部文件
 	private function fileReplace( $pArr1, $pArr2 ) {
+		$this->lastResult['deleteFileList'] = $this->readLogProcess( $this->dirArr[0] );
 		$this->lastResult['updateAllFileList'] = $pArr2;
 		$this->lastResult['updateFilePathList'] = $this->distinctPath( $this->lastResult['updateAllFileList'] );
-		$this->lastResult['backUpFileList'] = array_intersect( $pArr1, $pArr2 );
+		$this->lastResult['backUpFileList'] = array_merge_recursive( array_intersect( $pArr1, $pArr2 ), $this->lastResult['deleteFileList'] );
 		$this->lastResult['backUpFilePathList'] = $this->distinctPath( $this->lastResult['backUpFileList'] );
 		$this->lastResult['addFileList'] = array_diff( $pArr2, $this->lastResult['backUpFileList'] );
-		$this->lastResult['deleteFileList'] = $this->readLogProcess( $this->dirArr[0] );
 	}
 
 	//去掉文件名,去掉重复的路径并返回

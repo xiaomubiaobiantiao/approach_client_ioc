@@ -27,7 +27,8 @@ class UpdateLogService extends Logs
 			12 => 'Version update ',
 			15 => 'Create log ',
 			16 => 'Create del log file ',
-			17 => 'Del project file' 
+			17 => 'Del project del file' ,
+			18 => 'Create version info '
 
 
 	);
@@ -50,7 +51,8 @@ class UpdateLogService extends Logs
 			17 => 'Create log complete! ',
 			18 => 'Create del file log complete! ',
 			19 => 'Del a project file ',
-			20 => 'Dont find Del a project file ',
+			20 => 'Dont find Del a del-log project file ',
+			21 => 'Create version info complete! '
 
 	);
 

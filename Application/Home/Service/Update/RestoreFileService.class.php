@@ -76,15 +76,13 @@ class RestoreFileService
 	//文件检测流程
 	public function testingProcess() {
 
+		//读取备份日志信息流程
 		$this->readBackUpLogProcess();
 		$pathName = array_keys( $this->fileOperation );
 		$this->myReaddir( $this->dirArr[1], $pathName[1] );
 
 		//匹配最终操作路径结果集
-		$this->fileReplace(
-			$this->fileOperation['backUp'],
-			$this->fileOperation['old']['root_dir'][0]
-		);
+		$this->fileReplace( $this->fileOperation['backUp'] );
 
 		//读取真实备份文件到 fileOperation['backUp']['files']
 		$this->readAllFile( $this->dirArr[0] );
@@ -105,7 +103,7 @@ class RestoreFileService
 
 	//读取备份日志信息流程
 	public function readBackUpLogProcess() {
-		$this->logs = $this->searchBackUpAndAddLog( $this->dirArr[0] );
+		$this->logs = $this->searchAllLog( $this->dirArr[0] );
 		$this->readPath( $this->logs );
 		$this->fileOperation['backUp']['root_dir'] = $this->dirArr[0];
 	}
@@ -156,7 +154,7 @@ class RestoreFileService
 		return array_diff( $pArr1, $pArr2 );
 	}
 
-	//打开文件并读取文件路径 分别读取 add 与 back 字样的日志内容
+	//打开文件并读取文件路径 分别读取 add 与 back del 字样的日志内容
 	public function readPath( $pFileArr ) {
 		foreach ( $pFileArr as $value ) {
 			if ( strstr( $value, 'add' )) {
@@ -176,8 +174,8 @@ class RestoreFileService
 		$this->fileOperation['backUp']['all_log'] = $allFile;
 	}
 
-	//扫描备份日志与追加日志文件的路径
-	public function searchBackUpAndAddLog( $pDir ) {
+	//扫描全部日志路径: 备份日志 追加日志 删除日志
+	public function searchAllLog( $pDir ) {
 		$handle = opendir( $pDir );
         //循环资源文件
 	    while ( false !== ( $file = readdir( $handle ))) {
@@ -276,11 +274,13 @@ class RestoreFileService
 
 	//设置需要替换的文件和目录,追加的文件和目录,还有需要更新的全部文件
 	private function fileReplace( $pArr ) {
+		// dump( $pArr );
+		// die();
 		$this->lastResult['backUpLogFileList'] = $pArr['all_log'];
 		$this->lastResult['backUpFileList'] = $pArr['back_log'];
-		$this->lastResult['backUpFilePathList'] = $this->distinctPath( $pArr['back_log'] );
-		$this->lastResult['mustBackUpFileList']= $pArr['all_log'];
-		$this->lastResult['mustBackUpFilePathList']  = $this->distinctPath( $pArr['all_log'] );
+		$this->lastResult['backUpFilePathList'] = $this->distinctPath( $this->lastResult['backUpFileList'] );
+		$this->lastResult['mustBackUpFileList'] = array_diff( $pArr['all_log'], $pArr['del_log'] );
+		$this->lastResult['mustBackUpFilePathList'] = $this->distinctPath( $this->lastResult['mustBackUpFileList'] );
 		$this->lastResult['addFileList'] = $pArr['del_log'];
 		$this->lastResult['deleteFileList'] = $pArr['add_log'];
 	}

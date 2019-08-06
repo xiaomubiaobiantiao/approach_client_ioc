@@ -38,10 +38,18 @@ class UpdateParentService
 		return FileBase::readFile( $pFile );
 	}
 
+	//如果版本信息不存在,创建版本信息
+	protected function createVersion( $pContent, $pVersionFile ) {
+		//创建版本信息路径
+		FileBase::createDir( dirname( $pVersionFile ));
+		//创建初始版本信息文件
+		FileBase::writeFile( $pContent, $pVersionFile )
+			? $this->Proc->successReceive( 21, $pVersionFile )
+			: $this->Proc->inforReceive(  __METHOD__.' '.__LINE__.' '.$pVersionFile, 18 );
+	}
+
 	//替换软件版本信息文件
 	protected function updateVersion( $pFilePath, $pNewPath ) {
-		//创建版本信息路径
-		FileBase::createDir( dirname( $pNewPath ));
 		//拷贝文件到版本信息路径
 		FileBase::copyFile( $pFilePath, $pNewPath )
 			? $this->Proc->successReceive( 16, $pFilePath.'|'.$pNewPath )

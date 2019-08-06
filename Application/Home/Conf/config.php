@@ -65,7 +65,7 @@ define( 'DATABASE_TEXT', 'Public/data/database.txt' );
 define( 'VERSION_PATH', rtrim( UNPACK_TMP_PATH, '/' ).'/'.'version.txt' );
 
 //旧的版本文件默认位置信息
-define( 'OLD_VERSION_PATH', rtrim( UPDATE_PATH, '/' ).'/'.'Public/version.txt' );
+define( 'OLD_VERSION_PATH', rtrim( UPDATE_PATH, '/' ).'/'.'version.txt' );
 
 //版本信息默认值
 define( 'VERSION_DEFAULT_INFO', 'no version' );
