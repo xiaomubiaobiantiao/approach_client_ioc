@@ -43,8 +43,23 @@ class UpdateController extends Controller
 		$this->display( 'Update/index' );
 	}
 
+
 	//更新文件
 	public function update() {
+
+		echo $_SERVER["HTTP_REFERER"];
+		//die();
+		//http://localhost:81/index.php/Home/Update/index.html
+		// 操作完成3秒后跳转到 /Article/index
+		//$this->success( '操作完成', 'redirectNew', 1 );
+		//重定向到New模块的Category操作
+		//$this->redirect('New/category', array('cate_id' => 2), 5, '页面跳转中...');
+		//只指定地址,而不指向某个模块操作的方法
+		//redirect('Home/Progress/index', 1, '页面跳转中...');
+		$this->redirect('Progress/index');
+		//header("Location: http://bbs. lampbrother.net");
+
+		die();
 
 		$vid = I( 'version_id' );
 
