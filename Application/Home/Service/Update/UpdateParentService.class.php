@@ -126,7 +126,7 @@ class UpdateParentService
 		foreach ( $pFileArr as $value ) {
 			FileBase::copyFile( $pBackUpPath.$value, $pUpdatePath.$value )
 				? $this->Proc->successReceive( 12, $pUpdatePath.$value )
-				: $this->Proc->inforReceive( __METHOD__.' '.__LINE__.' '.$pUpdatePath.$value.' '.$pUpdatePath.$value, 5 );	
+				: $this->Proc->inforReceive( __METHOD__.' '.__LINE__.' '.$pUpdatePath.$value.' '.$pUpdatePath.$value, 5 );
 		}
 		$this->Proc->successReceive( 5 );
 	}
@@ -186,7 +186,7 @@ class UpdateParentService
 			: $this->Detection->inforReceive( __METHOD__.' '.__LINE__.' '.$pAddLogPath, 2 );
 	}
 
-	//检测替换文件日志是否存在
+	//检测备份文件日志是否存在
 	public function scanBackUpLog( $pBackUpLogPath ) {
 		$this->Detection->scanFile( $pBackUpLogPath )
 			? $this->Detection->successReceive( 7, $pBackUpLogPath )
@@ -209,7 +209,7 @@ class UpdateParentService
 		}
 	}
 
-	//检测更新时需要删除文件的日志备份文件是否存在
+	//检测更新时记录删除文件的日志文件是否存在
 	public function scanDelFileLog( $pDelLogPath ) {
 		$this->Detection->scanFile( $pDelLogPath )
 			? $this->Detection->successReceive( 11, $pDelLogPath )

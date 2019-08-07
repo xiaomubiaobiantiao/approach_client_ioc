@@ -140,7 +140,7 @@ class FileBase
 
 	}
 
-	//扫描目录下的所有文件 - 不是递归扫描
+	//扫描目录下的所有文件 - 不是递归扫描 - 只扫描一维
 	public function checkAllFile( $pDir ) {
 
 	    $handle = opendir( $pDir );

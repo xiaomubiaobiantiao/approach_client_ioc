@@ -4,10 +4,10 @@
  * @author Michael
  * DateTime: 19-6-27 09:37:00
  */
-namespace Home\Service\Update;
+namespace Home\Service\Restore;
 
-use Home\Service\Update\RestoreParentService as Process;
-use Home\Service\Update\RestoreFileService as GetPath;
+use Home\Service\Restore\RestoreParentService as Process;
+use Home\Service\Restore\RestoreFileService as GetPath;
 use Home\Common\Utility\PclZipController as PclZip;
 use Home\Common\Utility\FileBaseUtility as FileBase;
 
@@ -100,15 +100,15 @@ class RestoreService extends Process
 			//拷贝文件到备份临时目录
 			$this->copyBackUpFile( 
 				$PathObj->lastResult['mustBackUpFilePathList'],
-				$PathObj->lastResult['mustBackUpFileList'],
+				$backUpFileLogList,
 				UPDATE_PATH,
 				BACKUP_TMP_PATH
 			);
 
 			//创建备份文件日志 将需要备份的文件路径列表写入备份日志
 			$backUpLogFilePath = $this->createBackUpFileLog(
-				$this->matchZipFileRootPath( UPDATE_PATH, $PathObj->lastResult['mustBackUpFileList'] ),
-				BACKUP_TMP_PATH . date('Y_m_d').'-'.time().'-back.log'
+				$this->matchZipFileRootPath( UPDATE_PATH, $backUpFileLogList ),
+				BACKUP_TMP_PATH . date('Y_m_d').'-'.time().'-restore.log'
 			);
 			// dump( $backUpLogFilePath );
 			//将备份日志文件路径存储到 $PathObj 类 的 backUpLogFilePath
@@ -150,13 +150,13 @@ class RestoreService extends Process
 			);
 
 			//创建删除文件日志 将需要追加的文件路径列表写入删除日志
-			$tDelLogFilePath = $this->createDelFileLog(
+			$DelLogFilePath = $this->createDelFileLog(
 				$this->matchZipFileRootPath( UPDATE_PATH, $PathObj->lastResult['deleteFileList'] ),
 				BACKUP_TMP_PATH . date('Y_m_d').'-'.time().'-del.log'
 			);
 
 			//将删除日志文件路径存储到 $PathObj 类 的 delLogFilePath
-			$PathObj->setDelLogPath( $tDelLogFilePath );
+			$PathObj->setDelLogPath( $DelLogFilePath );
 			//将记录删除文件列表的 日志的路径 去掉临时路径信息 *-del.log
 			$tFilePath = str_replace( BACKUP_TMP_PATH, '', $PathObj->delLogFilePath );
 			//将临时目录的日志路径写入到备份文件列表
@@ -204,7 +204,7 @@ class RestoreService extends Process
 			$this->scanBackUpZip( $PathObj->backUpPackFilePath );
 
 		//删除文件列表存在 则检测需要删除的文件日志是否创建成功 并查看文件是否删除成功
-		if ( isset( $tDelLogFilePath )) {
+		if ( isset( $DelLogFilePath )) {
 			$this->scanDelFileLog( $PathObj->delLogFilePath );
 			//检测需要删除的文件是否存在
 			$tDelFileList = $this->matchZipFileRootPath( UPDATE_PATH, $PathObj->lastResult['deleteFileList'] );

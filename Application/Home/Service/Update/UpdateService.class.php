@@ -67,20 +67,8 @@ class UpdateService extends Process
 	//更新压缩包的流程
 	public function updatePackProcess( $pId ) {
 		
-		//初始化程序所需目录结构
-		$this->initializeDir( 
-			array( 
-				BACKUP_PATH, BACKUP_TMP_PATH, UNPACK_TMP_PATH, 
-				dirname( LOCAL_LOG ), 
-				dirname( LOCAL_UPDATE_ERROR ), 
-				dirname( LOCAL_RESTORE_ERROR )
-			)
-		);
-
-		//初始化日志文件
-		$this->initializeLog(
-			array( LOCAL_LOG, LOCAL_UPDATE_ERROR, LOCAL_UPDATE_RECORD, LOCAL_RESTORE_ERROR, LOCAL_RESTORE_RECORD )
-		);
+		//初始化程序所需目录结构和日志文件
+		$this->initializeFile();
 
 		//打开数据库 取出更新包相应 ID
 		$packInfo = $this->packInfo( $pId );
@@ -96,22 +84,14 @@ class UpdateService extends Process
 		//检测压缩包文件 和 项目的文件
 		$PathObj = new GetPath( array( UNPACK_TMP_PATH, UPDATE_PATH ));
 
-		// dump( $PathObj->fileOperation );
-		// //对比文件后得出需要替换的文件列表和需要追加的文件列表
-		// dump($PathObj->lastResult);
-		// die();
-		//将需要替换的文件备份 - 添加全部日志 -添加备份日志
-		
 		//如果版本信息不存在 创建版本信息
 		if ( false == is_file( OLD_VERSION_PATH ))
 			$this->createVersion( VERSION_DEFAULT_INFO.'-'.date('Y-m-d H:i:s',time()), OLD_VERSION_PATH );	
 	
 		//将版本信息加入到备份文件列表
 		$PathObj->pushBackUpList( str_replace( UPDATE_PATH, '', OLD_VERSION_PATH ));
-		// dump( $PathObj->lastResult['backUpFileList'] );
-		// echo is_file( 'D:/phpStudy/PHPTutorial/WWW/approach_test/Public/version.txt' );
-		// copy( 'D:/phpStudy/PHPTutorial/WWW/approach_test/Public/version.txt', 'Public/files/backup_tmp_pack/Public/version.txt' );
-		// die();
+
+		//将需要替换的文件备份 - 添加全部日志 -添加备份日志
 		//有需要备份的文件就执行以下操作
 		if ( false == empty( $PathObj->lastResult['backUpFileList'] )) {
 
@@ -195,13 +175,6 @@ class UpdateService extends Process
 			//将备份文件路径存储到 $PathObj 类 的 backUpPackFilePath
 			$PathObj->setBackUpZipPath( $zipPath );
 		}
-
-		//将备份文件添加至文件 - 添加全部日志 - 添加备份日志
-
-		
-		// dump($PathObj->fileOperation);
-		// dump($PathObj->lastResult);
-		// die();
 		
 		//开始更新文件 - 添加全部日志 - 添加更新日志
 		$this->copyUpdateFile(
@@ -263,16 +236,6 @@ class UpdateService extends Process
 
 	}
 
-	//扫描旧的版本文件
-	// public function searchVersion() {
-	// 	$versionInfo = $this->readFile( VERSION_PATH );
-		
-	// 	if ( empty( $versionInfo ))
-	// 		return VERSION_DEFAULT_INFO;
-	// 	return $versionInfo;
-	
-	// }
-
 	//获取旧的版本信息
 	public function getVersion() {
 		if( false == $this->checkFile( OLD_VERSION_PATH ))
@@ -301,6 +264,24 @@ class UpdateService extends Process
 	//返回一条压缩包相关信息
 	private function packInfo( $pId ) {
 		return $this->PackModel->getOnePackInfo( $pId );
+	}
+
+	//初始化程序所需目录结构和日志文件
+	private function initializeFile() {
+		//初始化程序所需目录结构
+		$this->initializeDir( 
+			array( 
+				BACKUP_PATH, BACKUP_TMP_PATH, UNPACK_TMP_PATH, 
+				dirname( LOCAL_LOG ), 
+				dirname( LOCAL_UPDATE_ERROR ), 
+				dirname( LOCAL_RESTORE_ERROR )
+			)
+		);
+
+		//初始化日志文件
+		$this->initializeLog(
+			array( LOCAL_LOG, LOCAL_UPDATE_ERROR, LOCAL_UPDATE_RECORD, LOCAL_RESTORE_ERROR, LOCAL_RESTORE_RECORD )
+		);
 	}
 
 	//斜杠 '/' 修正 防止路径拼接错误 - 暂时未用 以后会移到类外部的

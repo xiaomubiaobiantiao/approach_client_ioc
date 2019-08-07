@@ -8,7 +8,7 @@ namespace Home\Controller;
 
 use Think\Controller;
 use Home\Service\Update\UpdateService;
-use Home\Service\Update\RestoreService;
+use Home\Service\Restore\RestoreService;
 
 class UpdateController extends Controller
 {
@@ -34,7 +34,7 @@ class UpdateController extends Controller
 		$datalist[3] = $this->UpdateService->getVersion();
 		$this->assign( 'datalist', $datalist );
 
-		//加载还原文件
+		//加载备份文件 - 还原
 		$backupList = $this->RestoreService->getBackUpZipList();
 		if ( false == empty( $backupList ))
 			$this->assign( 'backuplist', $backupList );
@@ -64,8 +64,11 @@ class UpdateController extends Controller
 	//恢复备份 - 还原
 	public function restore() {
 		$backUpFile = I( 'backupath' );
-		$this->RestoreService->restoreBackUpProcess( $backUpFile );
-		//echo $this->RestoreService->getBackUpZipList();
+		if ( is_file( $backUpFile )) {
+			$this->RestoreService->restoreBackUpProcess( $backUpFile );
+			//$this->redirect( 'Update/reductionBackup' );
+		}
+		//$this->redirect( 'Update/reductionBackup' );
 	}
 
 	

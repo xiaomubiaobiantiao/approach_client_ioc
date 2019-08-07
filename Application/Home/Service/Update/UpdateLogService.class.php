@@ -1,6 +1,6 @@
 <?php
 /**
- * 全部日志信息
+ * 文件操作日志信息
  * Created by Sublime Text
  * @author Michael
  * DateTime: 19-6-27 09:37:00
@@ -13,46 +13,46 @@ class UpdateLogService extends Logs
 {
 
 	public $errorInfo = array(
-			1 => 'Add log ',
-			2 => 'Open dir resources ',
-			3 => 'Zip file ',
-			4 => 'Is dir ', 
-			5 => 'Copy file update ',
-			6 => 'Delete tmp dir ',
-			7 => 'Create dir update ',
-			8 => 'Copy file backup ',
-			9 => 'Search a update file ',
-			10 => 'Search backup log ',
-			11 => 'Backup log ',
-			12 => 'Version update ',
-			15 => 'Create log ',
-			16 => 'Create del log file ',
-			17 => 'Del project del file' ,
-			18 => 'Create version info '
+			1 => 'Create add log file',			//创建追加日志文件失败
+			2 => 'Open dir resources ',			//打开目录资源失败
+			3 => 'Create zip file ',			//创建压缩文件失败
+			4 => 'Is dir ', 					//不是目录 失败
+			5 => 'Copy a update file ',			//复制更新文件失败
+			6 => 'Delete tmp dir ',				//删除临时目录失败
+			7 => 'Create dir update ',			//创建更新目录失败
+			8 => 'Copy a backup file ',			//复制备份文件失败
+			9 => 'Search a update file ',		//搜索一个更新文件失败 - 目前未用
+			10 => 'Search backup log ',			//搜索备份日志失败 - 目前未用
+			11 => 'Create Backup log ',			//创建备份日志失败
+			12 => 'Version update ',			//版本信息更新失败
+			15 => 'Initialize a log file ',		//初始化一个日志文件失败
+			16 => 'Create del log file ',		//创建删除文件日志失败
+			17 => 'Del project del file' ,		//删除项目文件失败 - 需要更新的项目
+			18 => 'Create default version info '//创建默认版本信息失败
 
 
 	);
 
 	public $successInfo = array(
-			1 => 'Create zip complete! ',
-			2 => 'Unzip complete! ',
-			3 => 'Delete tmp dir complete! ',
-			4 => 'Create add file log complete! ',
-			5 => 'Copy update file complete! ',
-			6 => 'Copy backup file complete! ',
-			7 => 'Search a update file ',
-			8 => 'Search backup log complete! ',
-			9 => 'Create a backup file path ',
-			10 => 'Copy a backup file ',
-			11 => 'Create a update file path ',
-			12 => 'Copy a update file ',
-			15 => 'Create Backup file log complete! ',
-			16 => 'Version update complete! ',
-			17 => 'Create log complete! ',
-			18 => 'Create del file log complete! ',
-			19 => 'Del a project file ',
-			20 => 'Dont find Del a del-log project file ',
-			21 => 'Create version info complete! '
+			1 => 'Create zip complete! ',					//创建压缩文件成功
+			2 => 'Unzip complete! ',						//解压缩文件成功
+			3 => 'Delete tmp dir complete! ',				//删除临时目录成功
+			4 => 'Create add file log complete! ',			//创建更新时追加文件的日志成功
+			5 => 'Copy update file complete! ',				//复制更新文件成功
+			6 => 'Copy backup file complete! ',				//复制备份文件成功
+			7 => 'Search a update file ',					//搜索一个更新文件成功-目前未用
+			8 => 'Search backup log complete! ',			//搜索备份日志成功 - 目前未用
+			9 => 'Create a backup file path ',				//创建一个备份文件目录成功
+			10 => 'Copy a backup file ',					//复制一个备份文件成功
+			11 => 'Create a update file path ',				//创建一个更新文件目录成功
+			12 => 'Copy a update file ',					//复制一个备份文件日志成功
+			15 => 'Create Backup file log complete! ',		//创建备份文件日志成功
+			16 => 'Version update complete! ',				//版本信息更新成功
+			17 => 'Initialize log complete! ',				//初始化一个日志文件成功
+			18 => 'Create del file log complete! ',			//创建删除文件日志成功
+			19 => 'Del a project file ',					//删除项目中的一个文件成功
+			20 => 'Dont find Del a del-log project file ',	//需要删除的项目文件不存在 - 也成功
+			21 => 'Create default version info complete! '	//创建默认版本信息成功
 
 	);
 
@@ -67,6 +67,7 @@ class UpdateLogService extends Logs
 		$message = parent::inforReceive( $pFunctionName, $pParam );
 		$this->writeLog( $message, LOCAL_LOG );
 		$this->writeLog( $message, LOCAL_UPDATE_ERROR );
+		
 	}
 
 	/**

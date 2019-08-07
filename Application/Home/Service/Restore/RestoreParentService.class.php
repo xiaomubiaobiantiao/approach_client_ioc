@@ -4,12 +4,12 @@
  * @author Michael
  * DateTime: 19-6-27 09:37:00
  */
-namespace Home\Service\Update;
+namespace Home\Service\Restore;
 
 use Home\Common\Utility\PclZipController as Zip;
 use Home\Common\Utility\FileBaseUtility as FileBase;
-use Home\Service\Update\RestoreDetectionLogService as Detection;
-use Home\Service\Update\RestoreLogService as ProcessLog;
+use Home\Service\Restore\RestoreDetectionLogService as Detection;
+use Home\Service\Restore\RestoreLogService as ProcessLog;
 
 class RestoreParentService
 {
@@ -124,11 +124,25 @@ class RestoreParentService
 	}
 
 	//delete 删除项目文件流程 - 成功和失败的 日志 说明没有写
+	// public function deleteProjectFile( $pPathArr ) {
+	// 	foreach ( $pPathArr as $value ) {
+	// 		FileBase::deleteFile( $value )
+	// 			? $this->Proc->successReceive( 20, $value )
+	// 			: $this->Proc->inforReceive( __METHOD__.' '.__LINE__.' '.$value, 17 );
+	// 	}
+	// }
+
+	//delete 删除项目文件流程
 	public function deleteProjectFile( $pPathArr ) {
 		foreach ( $pPathArr as $value ) {
-			FileBase::deleteFile( $value )
-				? $this->Proc->successReceive( 3, $value )
-				: $this->Proc->inforReceive( __METHOD__.' '.__LINE__.' '.$value, 6 );
+			if ( is_file( $value )) {
+				FileBase::deleteFile( $value )
+					? $this->Proc->successReceive( 19, $value )
+					: $this->Proc->inforReceive( __METHOD__.' '.__LINE__.' '.$value, 17 );
+			} else {
+				$this->Proc->successReceive( 20, $value );
+			}
+			
 		}
 	}
 

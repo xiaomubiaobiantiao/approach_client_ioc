@@ -1,14 +1,14 @@
 <?php
 /**
- * 路径处理系统
+ * 路径处理系统 - 负责文件遍历后对比目录与文件结构得出最后可操作的文件结果集
  * Created by Sublime Text
  * @author Michael
  * DateTime: 19-6-27 09:37:00
  */
 namespace Home\Service\Update;
 
-use Home\Service\Index\UpdateLogService as Log;
-use Home\Common\Utility\DetectionUtility as Detection;
+use Home\Service\Update\UpdateLogService as Log;
+// use Home\Common\Utility\DetectionUtility as Detection;
 
 class UpdateFileService
 {
