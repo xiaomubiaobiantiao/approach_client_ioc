@@ -100,11 +100,16 @@ class RestoreParentService
 				: $this->Proc->inforReceive( __METHOD__.' '.__LINE__.' '.$pBackUpPath.$value, 7 );
 		}
 		foreach ( $pFileArr as $value ) {
-			FileBase::copyFile( $pUpdatePath.$value, $pBackUpPath.$value )
-				? $this->Proc->successReceive( 10, $pBackUpPath.$value )
-				: $this->Proc->inforReceive( __METHOD__.' '.__LINE__.' '.$pUpdatePath.$value.' '.$pBackUpPath.$value.' ', 8 );
+			if ( is_file( $pUpdatePath.$value )) {
+				FileBase::copyFile( $pUpdatePath.$value, $pBackUpPath.$value )
+					? $this->Proc->successReceive( 10, $pBackUpPath.$value )
+					: $this->Proc->inforReceive( __METHOD__.' '.__LINE__.' '.$pUpdatePath.$value.' '.$pBackUpPath.$value.' ', 8 );
+			} else {
+				$data[] = $value;
+			}
 		}
 		$this->Proc->successReceive( 6 );
+		return $data;
 	}
 
 	//copy恢复文件操作流程 先循环创建目录,再循环创建文件
@@ -133,17 +138,19 @@ class RestoreParentService
 	// }
 
 	//delete 删除项目文件流程
-	public function deleteProjectFile( $pPathArr ) {
+	public function deleteProjectFile( $pPath, $pPathArr ) {
 		foreach ( $pPathArr as $value ) {
-			if ( is_file( $value )) {
-				FileBase::deleteFile( $value )
-					? $this->Proc->successReceive( 19, $value )
-					: $this->Proc->inforReceive( __METHOD__.' '.__LINE__.' '.$value, 17 );
+			if ( is_file( $pPath.$value )) {
+				FileBase::deleteFile( $pPath.$value )
+					? $this->Proc->successReceive( 19, $pPath.$value )
+					: $this->Proc->inforReceive( __METHOD__.' '.__LINE__.' '.$pPath.$value, 17 );
 			} else {
-				$this->Proc->successReceive( 20, $value );
+				//如果需要删除的文件不存在,也报成功 - 并记录返回相应不存在的文件
+				$this->Proc->successReceive( 20, $pPath.$value );
+				$data[] = $value;
 			}
-			
 		}
+		return $data;
 	}
 
 	//--------------------------------------------------------------------------------------

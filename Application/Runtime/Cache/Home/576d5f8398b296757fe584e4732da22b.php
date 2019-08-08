@@ -9,6 +9,7 @@
 <script type="text/javascript" src="/Public/js/jquery.idTabs.min.js"></script>
 <script type="text/javascript" src="/Public/js/select-ui.min.js"></script>
 
+
 <script type="text/javascript">
 $(document).ready(function(e) {
     $(".select1").uedSelect({
@@ -79,7 +80,7 @@ $(document).ready(function(e) {
 
         <li><label>选择版本<b>*</b></label>
             <div class="vocation">
-                <input id="submit" type="submit" value="提交" >
+                <input id="submit" class="btn" type="submit" value="更新" >
             </div>
         </li>
         </form>
@@ -92,6 +93,8 @@ $(document).ready(function(e) {
 
     <div id="tab2" class="tabson">
     
+    <div class="formtext">系统 <b>当前版本</b> <?php echo ($datalist[3]); ?></div>
+
     <ul class="seachform">
     
   
@@ -112,9 +115,9 @@ $(document).ready(function(e) {
             </div>
         </li>
 
-        <li><label>选择版本<b>*</b></label>
+        <li>
             <div class="vocation">
-                <input type="submit" value="提交" >
+                <input type="submit" class="btn" value="还原" >
             </div>
         </li>
         </form>

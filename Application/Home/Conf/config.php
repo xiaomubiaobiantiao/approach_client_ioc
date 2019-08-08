@@ -4,7 +4,8 @@
 
 /* 被更新项目使用的常量 */
 //文件更新的路径
-$path = 'D:/phpStudy/PHPTutorial/WWW/approach_test/';
+//$path = 'D:/phpStudy/PHPTutorial/WWW/approach_test/';
+$path = 'E:/download/';
 
 define( 'UPDATE_PATH', $path );
 
@@ -39,6 +40,9 @@ define( 'BACKUP_TMP_PATH', 'Public/files/backup_tmp_pack/' );
 
 //文件解压缩的临时路径 最后会被自动删除
 define( 'UNPACK_TMP_PATH', 'Public/files/unpack_tmp_pack/' );
+
+//本地项目文件结构存放位置
+define( 'PROJECT_STRUCTURE', 'Public/files/project_file/' );
 
 
 

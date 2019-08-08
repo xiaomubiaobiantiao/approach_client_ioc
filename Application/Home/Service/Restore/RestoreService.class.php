@@ -41,17 +41,22 @@ class RestoreService extends Process
 
 		//检测压缩包文件 和 项目的文件
 		$PathObj = new GetPath( array( UNPACK_TMP_PATH, UPDATE_PATH ));
-
+		// dump($PathObj->fileOperation);
+		// dump($PathObj->lastResult);
+		// die( 'aaa');
 		//有需要备份的文件就执行以下操作
 		if ( false == empty( $PathObj->lastResult['mustBackUpFileList'] )) {
 
 			//拷贝文件到备份临时目录
-			$this->copyBackUpFile( 
+			$tData = $this->copyBackUpFile( 
 				$PathObj->lastResult['mustBackUpFilePathList'],
 				$PathObj->lastResult['mustBackUpFileList'],
 				UPDATE_PATH,
 				BACKUP_TMP_PATH
 			);
+
+			if ( false == empty( $tData ))
+				$PathObj->lastResult['mustBackUpFileList']=array_diff( $PathObj->lastResult['mustBackUpFileList'], $tData);
 
 			//创建备份文件日志 将需要备份的文件路径列表写入备份日志
 			$backUpLogFilePath = $this->createBackUpFileLog(
@@ -93,9 +98,11 @@ class RestoreService extends Process
 		if ( false == empty( $PathObj->lastResult['deleteFileList'] )) {
 			
 			//删除项目文件流程
-			$this->deleteProjectFile(
-				$this->matchZipFileRootPath( UPDATE_PATH, $PathObj->lastResult['deleteFileList'] )
-			);
+			$tData = $this->deleteProjectFile( UPDATE_PATH, $PathObj->lastResult['deleteFileList'] );
+
+			//返回值不为空时 - 去除删除文件列表里面与返回值相同的文件
+			if ( false == empty( $tData ))
+				$PathObj->lastResult['deleteFileList']=array_diff( $PathObj->lastResult['deleteFileList'], $tData);
 
 			//创建删除文件日志 将需要追加的文件路径列表写入删除日志
 			$tDelLogFilePath = $this->createDelFileLog(
@@ -114,6 +121,7 @@ class RestoreService extends Process
 
 		//将备份文件打包 并命名 备份文件包括( 替换的文件,替换文件的日志,追加文件的日志, 删除文件的日志 )
 		if ( false == empty( $PathObj->lastResult['mustBackUpFileList'] )) {
+			
 			$zipPath = $this->addZip( 
 				RESTORE_BACKUP_PATH.date('Y_m_d').'-'.time().'_r.zip',
 				$this->matchZipFileRootPath( BACKUP_TMP_PATH, $PathObj->lastResult['mustBackUpFileList'] )

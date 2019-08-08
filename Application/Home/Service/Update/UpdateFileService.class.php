@@ -97,7 +97,7 @@ class UpdateFileService
 	}
 
 	/**
-	 * 获取目录下所有文件的路径
+	 * 获取目录下所有文件的路径 - 只对本类数据结构有效
 	 * [myReaddir get path infor on files and dirs]
 	 * @param  [string] $dir     [any path]
 	 * @param  [array] $arrName [case: 'name'=>array( 'root_dir'=>array(), files'=>array(), 'dirs'=>aray() )]
@@ -161,7 +161,11 @@ class UpdateFileService
 		$this->lastResult['updateFilePathList'] = $this->distinctPath( $this->lastResult['updateAllFileList'] );
 		$this->lastResult['backUpFileList'] = array_merge_recursive( array_intersect( $pArr1, $pArr2 ), $this->lastResult['deleteFileList'] );
 		$this->lastResult['backUpFilePathList'] = $this->distinctPath( $this->lastResult['backUpFileList'] );
-		$this->lastResult['addFileList'] = array_diff( $pArr2, $this->lastResult['backUpFileList'] );
+
+		false == empty( $this->lastResult['backUpFileList'] )
+			? $this->lastResult['addFileList'] = array_diff( $pArr2, $this->lastResult['backUpFileList'] )
+			: $this->lastResult['addFileList'] = $pArr2;
+		//$this->lastResult['addFileList'] = array_diff( $pArr2, $this->lastResult['backUpFileList'] );
 	}
 
 	//去掉文件名,去掉重复的路径并返回

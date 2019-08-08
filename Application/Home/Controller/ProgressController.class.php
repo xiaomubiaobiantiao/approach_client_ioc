@@ -1,5 +1,6 @@
 <?php
 /**
+ * 进度条 - 临时类
  * Created by Sublime Text
  * @author Michael
  * DateTime: 19-6-27 09:37:00
@@ -16,7 +17,10 @@ class ProgressController extends Controller
 		$this->display( 'Progress/index' );
 	}
 
-
+	//失败页
+	public function error() {
+		$this->display( 'Progress/index' );	
+	}
 
 
 }

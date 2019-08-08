@@ -26,10 +26,10 @@ class CommonService
 
     }
 
-	//字符串转换成数组
-    //IndexFileService在用
+	// 字符串转换成数组
+    // IndexFileService
 	// private function strConversionArr( $pStr, $pChar = ',' ) {
-	// 	return explode( $pChar, trim( $pStr ));
+	//     return explode( $pChar, trim( $pStr ));
 	// }
 
 	//模拟 array_column 函数, 因为 array_column 只能用于5.5以上版本,具体使用方法参考手册

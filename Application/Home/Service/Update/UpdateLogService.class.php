@@ -67,7 +67,7 @@ class UpdateLogService extends Logs
 		$message = parent::inforReceive( $pFunctionName, $pParam );
 		$this->writeLog( $message, LOCAL_LOG );
 		$this->writeLog( $message, LOCAL_UPDATE_ERROR );
-		
+		$this->redirect('Common/error');
 	}
 
 	/**

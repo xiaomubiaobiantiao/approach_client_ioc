@@ -104,7 +104,7 @@ class FileBase
 			self::createDir( dirname( $pPath ));
 			mkdir( $pPath, 0777 );
 		}
-	} 
+	}
 
 	//递归删除目录
 	public function deleteDir( $path ) {
@@ -149,17 +149,42 @@ class FileBase
 	    	//跳过不需要检测的文件
 	        if ( $file == '.' || $file == '..' )
 	        	continue;
-	        //递归检测目录
+	        
 	        $path = rtrim( $pDir, '/' ).'/'.$file;
-			
 			$data[] = $path;
 	    }
 	    closedir( $handle ); 
 	    return $data;
 	}
 
+	//扫描目录下的所有文件 - 递归扫描 - 合并成一维数组
+	public function checkFiles( $pDir ) {
+		$handle = opendir( $pDir );
+        //循环资源文件
+	    while ( false !== ( $file = readdir( $handle ))) {
+	    	//跳过不需要检测的文件
+	        if ( $file == '.' || $file == '..' )
+	        	continue;
+	        
+	        $path = rtrim( $pDir, '/' ).'/'.$file;
+			
+			//递归检测目录
+	        if ( is_dir( $path )) {
+	        	$result = self::checkFiles( $path );
+	        	foreach ( $result as $value )
+					$data[] = $value;
+	        }
+
+	        //if ( is_file( $path ))
+				$data[] = $path;
+
+	    }
+	    closedir( $handle ); 
+	    return $data;
+	}
+
 	/**
-	 * 检测文件是否存在-多个文件可以数组的形式传递 - 暂时未用
+	 * 检测传入的文件是否存在-多个文件可以数组的形式传递 - 暂时未用
 	 * [detectionAllFile]
 	 * @param  [String or Array] $pAnyFile [ path or multiple paths ]
 	 * @return [bool]       [true | false]

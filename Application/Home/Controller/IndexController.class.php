@@ -1,5 +1,8 @@
 <?php
-// 本类由系统自动生成，仅供测试用途
+/**
+ * @author hupengyin
+ * DateTime: 19-6-27 09:37:00
+ */
 namespace Home\Controller;
 use Think\Controller;
 class IndexController extends Controller {

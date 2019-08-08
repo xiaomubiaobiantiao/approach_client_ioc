@@ -1,4 +1,8 @@
 <?php
+/**
+ * @author hupengyin
+ * DateTime: 19-6-27 09:37:00
+ */
 namespace Home\Controller;
 use Think\Controller;
 class LoginController extends Controller{

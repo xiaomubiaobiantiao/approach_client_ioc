@@ -274,12 +274,18 @@ class RestoreFileService
 
 	//设置需要替换的文件和目录,追加的文件和目录,还有需要更新的全部文件
 	private function fileReplace( $pArr ) {
+		//$pArr['del_log'][] = 'Application/test_aaa/files/123123/filename.txt';
+		//dump( $pArr['del_log'] );
 		// dump( $pArr );
 		// die();
 		$this->lastResult['backUpLogFileList'] = $pArr['all_log'];
 		$this->lastResult['backUpFileList'] = $pArr['back_log'];
 		$this->lastResult['backUpFilePathList'] = $this->distinctPath( $this->lastResult['backUpFileList'] );
-		$this->lastResult['mustBackUpFileList'] = array_diff( $pArr['all_log'], $pArr['del_log'] );
+
+		false == empty( $pArr['del_log'] )
+			? $this->lastResult['mustBackUpFileList'] = array_diff( $pArr['all_log'], $pArr['del_log'] )
+			: $this->lastResult['mustBackUpFileList'] = $pArr['all_log'];
+
 		$this->lastResult['mustBackUpFilePathList'] = $this->distinctPath( $this->lastResult['mustBackUpFileList'] );
 		$this->lastResult['addFileList'] = $pArr['del_log'];
 		$this->lastResult['deleteFileList'] = $pArr['add_log'];

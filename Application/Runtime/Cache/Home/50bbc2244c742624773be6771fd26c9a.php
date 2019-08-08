@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"> 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>漂亮的Bootstrap百分比进度条动画代码</title>
+<title>更新中...</title>
 
 <link href="/Public/css/progress/bootstrap.min.css" rel="stylesheet">
 

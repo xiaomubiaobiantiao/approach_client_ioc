@@ -48,6 +48,7 @@ class PackDetectionLogService extends Detection
 	public function inforReceive ( $pFunctionName = '', $pParam = '' ) {
 		$message = parent::inforReceive( $pFunctionName, $pParam );
 		echo $message;
+		die();
 		//$this->writeLog( $message, LOCAL_LOG );
 	}
 

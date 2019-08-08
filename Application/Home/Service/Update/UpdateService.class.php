@@ -66,7 +66,7 @@ class UpdateService extends Process
 
 	//更新压缩包的流程
 	public function updatePackProcess( $pId ) {
-		
+
 		//初始化程序所需目录结构和日志文件
 		$this->initializeFile();
 
@@ -83,7 +83,7 @@ class UpdateService extends Process
 
 		//检测压缩包文件 和 项目的文件
 		$PathObj = new GetPath( array( UNPACK_TMP_PATH, UPDATE_PATH ));
-
+	
 		//如果版本信息不存在 创建版本信息
 		if ( false == is_file( OLD_VERSION_PATH ))
 			$this->createVersion( VERSION_DEFAULT_INFO.'-'.date('Y-m-d H:i:s',time()), OLD_VERSION_PATH );	
@@ -96,12 +96,15 @@ class UpdateService extends Process
 		if ( false == empty( $PathObj->lastResult['backUpFileList'] )) {
 
 			//拷贝文件到备份临时目录
-			$this->copyBackUpFile( 
+			$tData = $this->copyBackUpFile( 
 				$PathObj->lastResult['backUpFilePathList'],
 				$PathObj->lastResult['backUpFileList'],
 				UPDATE_PATH,
 				BACKUP_TMP_PATH
 			);
+
+			if ( false == empty( $tData ))
+				$PathObj->lastResult['backUpFileList']=array_diff( $PathObj->lastResult['backUpFileList'], $tData);
 
 			//创建备份文件日志 将需要备份的文件路径列表写入备份日志
 			$backUpLogFilePath = $this->createBackUpFileLog(
@@ -146,9 +149,11 @@ class UpdateService extends Process
 		if ( false == empty( $PathObj->lastResult['deleteFileList'] )) {
 			
 			//删除项目文件流程
-			$this->deleteProjectFile(
-				$this->matchZipFileRootPath( UPDATE_PATH, $PathObj->lastResult['deleteFileList'] )
-			);
+			$tData = $this->deleteProjectFile( UPDATE_PATH, $PathObj->lastResult['deleteFileList'] );
+
+			//返回值不为空时 - 去除删除文件列表里面与返回值相同的文件
+			if ( false == empty( $tData ))
+				$PathObj->lastResult['deleteFileList']=array_diff( $PathObj->lastResult['deleteFileList'], $tData);
 
 			//创建删除文件日志 将需要删除的文件路径列表写入删除日志
 			$tDelLogFilePath = $this->createDelFileLog(
@@ -167,6 +172,7 @@ class UpdateService extends Process
 
 		//将备份文件打包 并命名 备份文件包括( 替换的文件,替换文件的日志,追加文件的日志, 删除文件的日志 )
 		if ( false == empty( $PathObj->lastResult['backUpFileList'] )) {
+
 			$zipPath = $this->addZip( 
 				BACKUP_PATH.date('Y_m_d').'-'.time().'_b.zip',
 				$this->matchZipFileRootPath( BACKUP_TMP_PATH, $PathObj->lastResult['backUpFileList'] )
@@ -234,6 +240,7 @@ class UpdateService extends Process
 		//添加一条操作信息到记录日志
 		$this->recordInfo( LOCAL_UPDATE_RECORD );
 
+
 	}
 
 	//获取旧的版本信息
@@ -299,6 +306,13 @@ class UpdateService extends Process
 			$define[$key] = rtrim( $value, '/' ).'/';
 		return $define;
 
+	}
+
+	//去掉数组中路径前的指定路径
+	public function clearSpecificPath( $pPath, $pArr ) {
+		foreach ( $pArr as $value )
+			$data[] = str_replace( $pPath, '', $value );
+		return $data;
 	}
 
 

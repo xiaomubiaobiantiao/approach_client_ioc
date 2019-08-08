@@ -34,9 +34,10 @@ class PclZipController //extends Controller
 		//去掉临时路径再创建压缩文件
 		$v_list = $zip->add( $pFilePathArr, PCLZIP_OPT_REMOVE_PATH, BACKUP_TMP_PATH );
 
-		if ( $v_list == 0 )
-			return false;	//$zip->errorInfo( true ) 报错信息-备用
-		
+		if ( $v_list == 0 ) {
+			//return false;
+			die( "Error : " . $zip->errorInfo( true )); //报错信息-备用
+		}
 		return true;
 	}
 

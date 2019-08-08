@@ -7,9 +7,7 @@
  */
 namespace Home\Model;
 
-use Home\Common\Model\CommonModel;
-
-class PackModel extends CommonModel
+class PackModel
 {
 
 	//全部数据
