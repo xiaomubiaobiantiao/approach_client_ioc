@@ -9,7 +9,7 @@ namespace Home\Service\Restore;
 use Home\Service\Restore\RestoreParentService as Process;
 use Home\Service\Restore\RestoreFileService as GetPath;
 use Home\Common\Utility\PclZipController as PclZip;
-use Home\Common\Utility\FileBaseUtility as FileBase;
+//use Home\Common\Utility\FileBaseUtility as FileBase;
 
 class RestoreService extends Process
 {
@@ -19,35 +19,48 @@ class RestoreService extends Process
 	}
 
 	/* --------------------------------------------------------------------------- */
-	/* ----- æœ¬æ–‡æ•°æ®æ“ä½œ -------------------------------------------------------- */
+	/* ----- ±¾ÎÄÊı¾İ²Ù×÷ -------------------------------------------------------- */
 	/* --------------------------------------------------------------------------- */
 
-	//è·å–å¤‡ä»½æ–‡ä»¶åˆ—è¡¨
+	//»ñÈ¡±¸·İÎÄ¼şÁĞ±í
 	public function getBackUpZipList() {
-		if ( is_dir( BACKUP_PATH ))
-			return FileBase::checkAllFile( BACKUP_PATH );
+		if ( is_dir( BACKUP_PATH )) {
+			//return FileBase::checkAllFile( BACKUP_PATH );
+			$backUpList = $this->checkDirFile( BACKUP_PATH );
+			foreach ( $backUpList as $key=>$value ) {
+				$str = explode( '-', basename( $value ));
+				$str = explode( '_', $str[1] );
+				$mTime[] = $str[0];
+			}
+			$fileMtime = $this->orderByData( $mTime );
+			foreach ( $backUpList as $key=>$value ) {
+				if ( strstr( $value, $fileMtime[0]))
+					return $value;
+			}
+		}
+			
 	}
 
 	/* --------------------------------------------------------------------------- */
 
-	//æ›´æ–°å‹ç¼©åŒ…çš„æµç¨‹
+	//¸üĞÂÑ¹Ëõ°üµÄÁ÷³Ì
 	public function restoreBackUpProcess( $pBackUpFile ) {
 		
-		//åˆå§‹åŒ–ç¨‹åºæ‰€éœ€ç›®å½•ç»“æ„å’Œæ—¥å¿—æ–‡ä»¶
+		//³õÊ¼»¯³ÌĞòËùĞèÄ¿Â¼½á¹¹ºÍÈÕÖ¾ÎÄ¼ş
 		$this->initializeFile();
 
-		//æ ¹æ®IDè§£å‹æ–‡ä»¶åˆ°é»˜è®¤æ–‡ä»¶å¤¹,è‡ªå¸¦åˆ›å»ºç›®å½•çš„åŠŸèƒ½
+		//¸ù¾İID½âÑ¹ÎÄ¼şµ½Ä¬ÈÏÎÄ¼ş¼Ğ,×Ô´ø´´½¨Ä¿Â¼µÄ¹¦ÄÜ
 		$this->unZip( $pBackUpFile, UNPACK_TMP_PATH );
 
-		//æ£€æµ‹å‹ç¼©åŒ…æ–‡ä»¶ å’Œ é¡¹ç›®çš„æ–‡ä»¶
+		//¼ì²âÑ¹Ëõ°üÎÄ¼ş ºÍ ÏîÄ¿µÄÎÄ¼ş
 		$PathObj = new GetPath( array( UNPACK_TMP_PATH, UPDATE_PATH ));
 		// dump($PathObj->fileOperation);
 		// dump($PathObj->lastResult);
 		// die( 'aaa');
-		//æœ‰éœ€è¦å¤‡ä»½çš„æ–‡ä»¶å°±æ‰§è¡Œä»¥ä¸‹æ“ä½œ
+		//ÓĞĞèÒª±¸·İµÄÎÄ¼ş¾ÍÖ´ĞĞÒÔÏÂ²Ù×÷
 		if ( false == empty( $PathObj->lastResult['mustBackUpFileList'] )) {
 
-			//æ‹·è´æ–‡ä»¶åˆ°å¤‡ä»½ä¸´æ—¶ç›®å½•
+			//¿½±´ÎÄ¼şµ½±¸·İÁÙÊ±Ä¿Â¼
 			$tData = $this->copyBackUpFile( 
 				$PathObj->lastResult['mustBackUpFilePathList'],
 				$PathObj->lastResult['mustBackUpFileList'],
@@ -55,71 +68,72 @@ class RestoreService extends Process
 				BACKUP_TMP_PATH
 			);
 
+			//Èç¹ûĞèÒª±¸·İµÄÎÄ¼şÓĞ²»´æÔÚµÄ,¾Í½«Ëü´ÓĞèÒªÑ¹ËõµÄ±¸·İÁĞ±íÀïÃæÈ¥³ı
 			if ( false == empty( $tData ))
 				$PathObj->lastResult['mustBackUpFileList']=array_diff( $PathObj->lastResult['mustBackUpFileList'], $tData);
 
-			//åˆ›å»ºå¤‡ä»½æ–‡ä»¶æ—¥å¿— å°†éœ€è¦å¤‡ä»½çš„æ–‡ä»¶è·¯å¾„åˆ—è¡¨å†™å…¥å¤‡ä»½æ—¥å¿—
+			//´´½¨±¸·İÎÄ¼şÈÕÖ¾ ½«ĞèÒª±¸·İµÄÎÄ¼şÂ·¾¶ÁĞ±íĞ´Èë±¸·İÈÕÖ¾
 			$backUpLogFilePath = $this->createBackUpFileLog(
 				$this->matchZipFileRootPath( UPDATE_PATH, $PathObj->lastResult['mustBackUpFileList'] ),
 				BACKUP_TMP_PATH . date('Y_m_d').'-'.time().'-back.log'
 			);
 			// dump( $backUpLogFilePath );
-			//å°†å¤‡ä»½æ—¥å¿—æ–‡ä»¶è·¯å¾„å­˜å‚¨åˆ° $PathObj ç±» çš„ backUpLogFilePath
+			//½«±¸·İÈÕÖ¾ÎÄ¼şÂ·¾¶´æ´¢µ½ $PathObj Àà µÄ backUpLogFilePath
 			$PathObj->setBackUpLogPath( $backUpLogFilePath );
-			//å°†è®°å½•å¤‡ä»½æ–‡ä»¶åˆ—è¡¨çš„ æ—¥å¿—çš„è·¯å¾„ å»æ‰ä¸´æ—¶è·¯å¾„ä¿¡æ¯ back.log
+			//½«¼ÇÂ¼±¸·İÎÄ¼şÁĞ±íµÄ ÈÕÖ¾µÄÂ·¾¶ È¥µôÁÙÊ±Â·¾¶ĞÅÏ¢ back.log
 			$tFilePath = str_replace( BACKUP_TMP_PATH, '', $PathObj->backUpLogFilePath );
-			//å°†æ›¿æ¢æ—¥å¿—è·¯å¾„å†™å…¥åˆ°å¤‡ä»½æ–‡ä»¶åˆ—è¡¨
+			//½«Ìæ»»ÈÕÖ¾Â·¾¶Ğ´Èëµ½±¸·İÎÄ¼şÁĞ±í
 			$PathObj->pushBackUpList( $tFilePath );
 
 		}
 		
-		//æœ‰éœ€è¦è¿½åŠ çš„æ–‡ä»¶å°±å°±æ‰§è¡Œä»¥ä¸‹æ“ä½œ
+		//ÓĞĞèÒª×·¼ÓµÄÎÄ¼ş¾Í¾ÍÖ´ĞĞÒÔÏÂ²Ù×÷
 		if ( false == empty( $PathObj->lastResult['addFileList'] )) {
 
-			//åˆ›å»ºè¿½åŠ æ–‡ä»¶æ—¥å¿— å°†éœ€è¦è¿½åŠ çš„æ–‡ä»¶è·¯å¾„åˆ—è¡¨å†™å…¥è¿½åŠ æ—¥å¿—
+			//´´½¨×·¼ÓÎÄ¼şÈÕÖ¾ ½«ĞèÒª×·¼ÓµÄÎÄ¼şÂ·¾¶ÁĞ±íĞ´Èë×·¼ÓÈÕÖ¾
 			$addLogFilePath = $this->createAddFileLog(
 				$this->matchZipFileRootPath( UPDATE_PATH, $PathObj->lastResult['addFileList'] ),
 				BACKUP_TMP_PATH . date('Y_m_d').'-'.time().'-add.log'
 			);
 
-			//å°†è¿½åŠ æ—¥å¿—æ–‡ä»¶è·¯å¾„å­˜å‚¨åˆ° $PathObj ç±» çš„ addLogFilePath
+			//½«×·¼ÓÈÕÖ¾ÎÄ¼şÂ·¾¶´æ´¢µ½ $PathObj Àà µÄ addLogFilePath
 			$PathObj->setAddLogPath( $addLogFilePath );
-			//å°†è®°å½•è¿½åŠ æ–‡ä»¶åˆ—è¡¨çš„ æ—¥å¿—çš„è·¯å¾„ å»æ‰ä¸´æ—¶è·¯å¾„ä¿¡æ¯ add.log
+			//½«¼ÇÂ¼×·¼ÓÎÄ¼şÁĞ±íµÄ ÈÕÖ¾µÄÂ·¾¶ È¥µôÁÙÊ±Â·¾¶ĞÅÏ¢ add.log
 			$tFilePath = str_replace( BACKUP_TMP_PATH, '', $PathObj->addLogFilePath );
-			//å°†ä¸´æ—¶ç›®å½•çš„æ—¥å¿—è·¯å¾„å†™å…¥åˆ°å¤‡ä»½æ–‡ä»¶åˆ—è¡¨
+			//½«ÁÙÊ±Ä¿Â¼µÄÈÕÖ¾Â·¾¶Ğ´Èëµ½±¸·İÎÄ¼şÁĞ±í
 			$PathObj->pushBackUpList( $tFilePath );
 			
-			//ä¸ºå†™å…¥æ–‡ä»¶äº‰å–åœé¡¿æ—¶é—´1ç§’
+			//ÎªĞ´ÈëÎÄ¼şÕùÈ¡Í£¶ÙÊ±¼ä1Ãë
 			$this->sleepOperation( 1 );
 
 		}
 
-		//æœ‰éœ€è¦åˆ é™¤çš„æ–‡ä»¶å°±æ‰§è¡Œä»¥ä¸‹æ“ä½œ
+		//ÓĞĞèÒªÉ¾³ıµÄÎÄ¼ş¾ÍÖ´ĞĞÒÔÏÂ²Ù×÷
 		if ( false == empty( $PathObj->lastResult['deleteFileList'] )) {
 			
-			//åˆ é™¤é¡¹ç›®æ–‡ä»¶æµç¨‹
+			//É¾³ıÏîÄ¿ÎÄ¼şÁ÷³Ì
 			$tData = $this->deleteProjectFile( UPDATE_PATH, $PathObj->lastResult['deleteFileList'] );
 
-			//è¿”å›å€¼ä¸ä¸ºç©ºæ—¶ - å»é™¤åˆ é™¤æ–‡ä»¶åˆ—è¡¨é‡Œé¢ä¸è¿”å›å€¼ç›¸åŒçš„æ–‡ä»¶
+			//·µ»ØÖµ²»Îª¿ÕÊ± - È¥³ıÉ¾³ıÎÄ¼şÁĞ±íÀïÃæÓë·µ»ØÖµÏàÍ¬µÄÎÄ¼ş
 			if ( false == empty( $tData ))
 				$PathObj->lastResult['deleteFileList']=array_diff( $PathObj->lastResult['deleteFileList'], $tData);
 
-			//åˆ›å»ºåˆ é™¤æ–‡ä»¶æ—¥å¿— å°†éœ€è¦è¿½åŠ çš„æ–‡ä»¶è·¯å¾„åˆ—è¡¨å†™å…¥åˆ é™¤æ—¥å¿—
+			//´´½¨É¾³ıÎÄ¼şÈÕÖ¾ ½«ĞèÒª×·¼ÓµÄÎÄ¼şÂ·¾¶ÁĞ±íĞ´ÈëÉ¾³ıÈÕÖ¾
 			$tDelLogFilePath = $this->createDelFileLog(
 				$this->matchZipFileRootPath( UPDATE_PATH, $PathObj->lastResult['deleteFileList'] ),
 				BACKUP_TMP_PATH . date('Y_m_d').'-'.time().'-del.log'
 			);
 
-			//å°†åˆ é™¤æ—¥å¿—æ–‡ä»¶è·¯å¾„å­˜å‚¨åˆ° $PathObj ç±» çš„ delLogFilePath
+			//½«É¾³ıÈÕÖ¾ÎÄ¼şÂ·¾¶´æ´¢µ½ $PathObj Àà µÄ delLogFilePath
 			$PathObj->setDelLogPath( $tDelLogFilePath );
-			//å°†è®°å½•åˆ é™¤æ–‡ä»¶åˆ—è¡¨çš„ æ—¥å¿—çš„è·¯å¾„ å»æ‰ä¸´æ—¶è·¯å¾„ä¿¡æ¯ *-del.log
+			//½«¼ÇÂ¼É¾³ıÎÄ¼şÁĞ±íµÄ ÈÕÖ¾µÄÂ·¾¶ È¥µôÁÙÊ±Â·¾¶ĞÅÏ¢ *-del.log
 			$tFilePath = str_replace( BACKUP_TMP_PATH, '', $PathObj->delLogFilePath );
-			//å°†ä¸´æ—¶ç›®å½•çš„æ—¥å¿—è·¯å¾„å†™å…¥åˆ°å¤‡ä»½æ–‡ä»¶åˆ—è¡¨
+			//½«ÁÙÊ±Ä¿Â¼µÄÈÕÖ¾Â·¾¶Ğ´Èëµ½±¸·İÎÄ¼şÁĞ±í
 			$PathObj->pushBackUpList( $tFilePath );
 
 		}
 
-		//å°†å¤‡ä»½æ–‡ä»¶æ‰“åŒ… å¹¶å‘½å å¤‡ä»½æ–‡ä»¶åŒ…æ‹¬( æ›¿æ¢çš„æ–‡ä»¶,æ›¿æ¢æ–‡ä»¶çš„æ—¥å¿—,è¿½åŠ æ–‡ä»¶çš„æ—¥å¿—, åˆ é™¤æ–‡ä»¶çš„æ—¥å¿— )
+		//½«±¸·İÎÄ¼ş´ò°ü ²¢ÃüÃû ±¸·İÎÄ¼ş°üÀ¨( Ìæ»»µÄÎÄ¼ş,Ìæ»»ÎÄ¼şµÄÈÕÖ¾,×·¼ÓÎÄ¼şµÄÈÕÖ¾, É¾³ıÎÄ¼şµÄÈÕÖ¾ )
 		if ( false == empty( $PathObj->lastResult['mustBackUpFileList'] )) {
 			
 			$zipPath = $this->addZip( 
@@ -127,11 +141,11 @@ class RestoreService extends Process
 				$this->matchZipFileRootPath( BACKUP_TMP_PATH, $PathObj->lastResult['mustBackUpFileList'] )
 			);
 
-			//å°†å¤‡ä»½æ–‡ä»¶è·¯å¾„å­˜å‚¨åˆ° $PathObj ç±» çš„ backUpPackFilePath
+			//½«±¸·İÎÄ¼şÂ·¾¶´æ´¢µ½ $PathObj Àà µÄ backUpPackFilePath
 			$PathObj->setBackUpZipPath( $zipPath );
 		}
 		
-		//å¼€å§‹è¿˜åŸæ–‡ä»¶ - æ·»åŠ å…¨éƒ¨æ—¥å¿— - æ·»åŠ è¿˜åŸæ—¥å¿—
+		//¿ªÊ¼»¹Ô­ÎÄ¼ş - Ìí¼ÓÈ«²¿ÈÕÖ¾ - Ìí¼Ó»¹Ô­ÈÕÖ¾
 		$this->copyUpdateFile(
 			$PathObj->lastResult['backUpFilePathList'],
 			$PathObj->lastResult['backUpFileList'],
@@ -139,59 +153,59 @@ class RestoreService extends Process
 			UNPACK_TMP_PATH
 		);
 
-		//æ›´æ–°æˆ–åˆ›å»ºç‰ˆæœ¬ä¿¡æ¯
+		//¸üĞÂ»ò´´½¨°æ±¾ĞÅÏ¢
 		$this->updateVersion( VERSION_PATH, OLD_VERSION_PATH );
 		
 		/*-------------------------------------------------------------------------------------*/
-		/*----- æ£€æµ‹ç³»ç»Ÿ - æ£€æµ‹æ‰€æœ‰æ“ä½œæ˜¯å¦æˆåŠŸ -----------------------------------------------*/
+		/*----- ¼ì²âÏµÍ³ - ¼ì²âËùÓĞ²Ù×÷ÊÇ·ñ³É¹¦ -----------------------------------------------*/
 		/*-------------------------------------------------------------------------------------*/
 
-		//å¤‡ä»½æ–‡ä»¶åˆ—è¡¨å­˜åœ¨ åˆ™æ£€æµ‹éœ€è¦å¤‡ä»½çš„æ–‡ä»¶å‹ç¼©åŒ…æ˜¯å¦åˆ›å»ºæˆåŠŸ
+		//±¸·İÎÄ¼şÁĞ±í´æÔÚ Ôò¼ì²â±¸·İÈÕÖ¾ÊÇ·ñ´´½¨³É¹¦
 		if ( isset( $backUpLogFilePath ))
 			$this->scanBackUpLog( $PathObj->backUpLogFilePath );
 
-		//è¿½åŠ æ–‡ä»¶åˆ—è¡¨å­˜åœ¨ åˆ™æ£€æµ‹è¿½åŠ æ—¥å¿—æ˜¯å¦åˆ›å»ºæˆåŠŸ - å¦‚æœè¿½åŠ åˆ—è¡¨ä¸ºç©ºåˆ™ä¸æ£€æµ‹
+		//×·¼ÓÎÄ¼şÁĞ±í´æÔÚ Ôò¼ì²â×·¼ÓÈÕÖ¾ÊÇ·ñ´´½¨³É¹¦ - Èç¹û×·¼ÓÁĞ±íÎª¿ÕÔò²»¼ì²â
 		if (  isset( $addLogFilePath ))
 			$this->scanAddFileLog( $PathObj->addLogFilePath );
 
-		//å¤‡ä»½æ–‡ä»¶åˆ—è¡¨å­˜åœ¨ åˆ™æ£€æµ‹éœ€è¦å¤‡ä»½çš„æ–‡ä»¶å‹ç¼©åŒ…æ˜¯å¦åˆ›å»ºæˆåŠŸ
+		//±¸·İÎÄ¼şÁĞ±í´æÔÚ Ôò¼ì²âĞèÒª±¸·İµÄÎÄ¼şÑ¹Ëõ°üÊÇ·ñ´´½¨³É¹¦
 		if ( isset( $zipPath ))
 			$this->scanBackUpZip( $PathObj->backUpPackFilePath );
 
-		//åˆ é™¤æ–‡ä»¶åˆ—è¡¨å­˜åœ¨ åˆ™æ£€æµ‹éœ€è¦åˆ é™¤çš„æ–‡ä»¶æ—¥å¿—æ˜¯å¦åˆ›å»ºæˆåŠŸ å¹¶æŸ¥çœ‹æ–‡ä»¶æ˜¯å¦åˆ é™¤æˆåŠŸ
+		//É¾³ıÎÄ¼şÁĞ±í´æÔÚ Ôò¼ì²âĞèÒªÉ¾³ıµÄÎÄ¼şÈÕÖ¾ÊÇ·ñ´´½¨³É¹¦ ²¢²é¿´ÎÄ¼şÊÇ·ñÉ¾³ı³É¹¦
 		if ( isset( $tDelLogFilePath )) {
 			$this->scanDelFileLog( $PathObj->delLogFilePath );
-			//æ£€æµ‹éœ€è¦åˆ é™¤çš„æ–‡ä»¶æ˜¯å¦å­˜åœ¨
+			//¼ì²âĞèÒªÉ¾³ıµÄÎÄ¼şÊÇ·ñ´æÔÚ
 			$tDelFileList = $this->matchZipFileRootPath( UPDATE_PATH, $PathObj->lastResult['deleteFileList'] );
-			//æ£€æµ‹è¢«åˆ é™¤çš„çš„æ–‡ä»¶æ˜¯å¦å­˜åœ¨
+			//¼ì²â±»É¾³ıµÄµÄÎÄ¼şÊÇ·ñ´æÔÚ
 			$this->scanDelFile( $tAllFileList );
 		}
 
-		//å°†å…¨éƒ¨æ›´æ–°æ–‡ä»¶åŠ ä¸Šç»å¯¹è·¯å¾„ä¿¡æ¯
+		//½«È«²¿¸üĞÂÎÄ¼ş¼ÓÉÏ¾ø¶ÔÂ·¾¶ĞÅÏ¢
 		$tAllFileList = $this->matchZipFileRootPath( UPDATE_PATH, $PathObj->lastResult['backUpFileList'] );
-		//æ£€æµ‹æ›´æ–°åçš„æ–‡ä»¶æ˜¯å¦å­˜åœ¨
+		//¼ì²â¸üĞÂºóµÄÎÄ¼şÊÇ·ñ´æÔÚ
 		$this->scanUpdateFile( $tAllFileList );
 
-		//æŸ¥çœ‹æ—¥å¿—æ˜¯å¦æ›´æ–°æˆåŠŸ
+		//²é¿´ÈÕÖ¾ÊÇ·ñ¸üĞÂ³É¹¦
 		$this->scanLog( LOCAL_LOG );
 		
-		//åˆ é™¤ä¸´æ—¶ç›®å½•å’Œå¤‡ä»½ç›®å½•é‡Œçš„æ‰€æœ‰æ–‡ä»¶
+		//É¾³ıÁÙÊ±Ä¿Â¼ºÍ±¸·İÄ¿Â¼ÀïµÄËùÓĞÎÄ¼ş
 		$this->deleteTmpFile( array( BACKUP_TMP_PATH, UNPACK_TMP_PATH ));
 
-		//æœç´¢åƒåœ¾å›æ”¶æ˜¯å¦æ¸…ç†å®Œæˆ
+		//ËÑË÷À¬»ø»ØÊÕÊÇ·ñÇåÀíÍê³É
 		$this->scanRecycle( array( BACKUP_TMP_PATH, UNPACK_TMP_PATH ));
 
-		//æŸ¥çœ‹ç‰ˆæœ¬ä¿¡æ¯æ˜¯å¦åˆ›å»ºæˆ–æ›´æ–°å®Œæˆ
+		//²é¿´°æ±¾ĞÅÏ¢ÊÇ·ñ´´½¨»ò¸üĞÂÍê³É
 		$this->scanVersion( OLD_VERSION_PATH );
 		
 		/*-------------------------------------------------------------------------------------*/
 
-		//æ·»åŠ ä¸€æ¡æ“ä½œä¿¡æ¯åˆ°è®°å½•æ—¥å¿—
+		//Ìí¼ÓÒ»Ìõ²Ù×÷ĞÅÏ¢µ½¼ÇÂ¼ÈÕÖ¾
 		$this->recordInfo( LOCAL_RESTORE_RECORD );
 
 	}
 
-	//è·å–æ—§çš„ç‰ˆæœ¬ä¿¡æ¯
+	//»ñÈ¡¾ÉµÄ°æ±¾ĞÅÏ¢
 	public function getVersion() {
 		if( false == $this->checkFile( OLD_VERSION_PATH ))
 			return VERSION_DEFAULT_INFO;
@@ -203,21 +217,21 @@ class RestoreService extends Process
 	 	return $versionInfo;
 	}
 
-	//å°†è·¯å¾„æ‹¼æ¥åˆ°æ•°ç»„ä¸­çš„å…¨éƒ¨è·¯å¾„çš„å‰é¢
+	//½«Â·¾¶Æ´½Óµ½Êı×éÖĞµÄÈ«²¿Â·¾¶µÄÇ°Ãæ
 	private function matchZipFileRootPath( $pPath, $pArr ) {
 		foreach ( $pArr as $value )
 			$data[] = $pPath.$value;
 		return $data;
 	}
 
-	//ç¡çœ  - æš‚æœªç”¨
+	//Ë¯Ãß - ÔİÎ´ÓÃ
 	private function sleepOperation( $pLong = 1 ) {
 		sleep( $pLong );
 	}
 
-	//åˆå§‹åŒ–ç¨‹åºæ‰€éœ€ç›®å½•ç»“æ„å’Œæ—¥å¿—æ–‡ä»¶
+	//³õÊ¼»¯³ÌĞòËùĞèÄ¿Â¼½á¹¹ºÍÈÕÖ¾ÎÄ¼ş
 	private function initializeFile() {
-		//åˆå§‹åŒ–ç¨‹åºæ‰€éœ€ç›®å½•ç»“æ„
+		//³õÊ¼»¯³ÌĞòËùĞèÄ¿Â¼½á¹¹
 		$this->initializeDir(
 			array( 
 				BACKUP_PATH, BACKUP_TMP_PATH, UNPACK_TMP_PATH, RESTORE_BACKUP_PATH,
@@ -227,11 +241,34 @@ class RestoreService extends Process
 			)
 		);
 
-		//åˆå§‹åŒ–æ—¥å¿—æ–‡ä»¶
+		//³õÊ¼»¯ÈÕÖ¾ÎÄ¼ş
 		$this->initializeLog(
 			array( LOCAL_LOG, LOCAL_UPDATE_ERROR, LOCAL_UPDATE_RECORD, LOCAL_RESTORE_ERROR, LOCAL_RESTORE_RECORD )
 		);
 	}
 
+	//°´Ê±¼äÅÅĞòÊı¾İ - Ä¬ÈÏ´Ó´óµ½Ğ¡
+	private function orderByData( $pDataArr, $pStr = '>'  ) {
+		$data = $pDataArr;
+		$count = count( $data );
+		for ( $i=0; $i<$count; $i++ ) {
+			for ( $j=0; $j<$i; $j++ ) {
+				if ( $pStr == '>' ) {
+					if ( $data[$i] > $data[$j] ) {
+						$tmp = $data[$i];
+						$data[$i] = $data[$j];
+						$data[$j] = $tmp;
+					}
+				} else {
+					if ( $data[$i] < $data[$j] ) {
+						$tmp = $data[$i];
+						$data[$i] = $data[$j];
+						$data[$j] = $tmp;
+					}
+				}
+			}
+		}
+		return $data;
+	}
 
 }

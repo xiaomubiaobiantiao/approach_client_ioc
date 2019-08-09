@@ -19,6 +19,7 @@ class UpdateParentService
 		$this->Detection = new Detection();
 	}
 
+	//查看版本信息
 	protected function checkFile( $pVersionPath ) {
 		return FileBase::checkFile( $pVersionPath );
 	}

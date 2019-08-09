@@ -24,6 +24,9 @@ class UpdateController extends Controller
 	//主页面 - 视图
 	public function index() {
 
+		//$this->display( 'Common/out' );
+		//die();
+
 		//加载更新文件
 		$typeId = I( 'type_id' );
 		//如果未传入类别值 默认为分类列表的第一个类别
@@ -36,9 +39,9 @@ class UpdateController extends Controller
 		$this->assign( 'datalist', $datalist );
 
 		//加载备份文件 - 还原
-		$backupList = $this->RestoreService->getBackUpZipList();
-		if ( false == empty( $backupList ))
-			$this->assign( 'backuplist', $backupList );
+		$backupFile = $this->RestoreService->getBackUpZipList();
+		if ( false == empty( $backupFile ))
+			$this->assign( 'backupFile', $backupFile );
 
 		//加载视图
 		$this->display( 'Update/index' );
@@ -53,9 +56,9 @@ class UpdateController extends Controller
 		if ( empty( $vid )) die( '输入id名称' );
 
 		//开始更新
-		$this->display('Progress/index');
-		$this->UpdateService->updatePackProcess( $vid );
 		
+		$this->UpdateService->updatePackProcess( $vid );
+		$this->redirect('Common/message');
 		die();
 
 		$id = I( 'get.version_id' );
@@ -68,7 +71,7 @@ class UpdateController extends Controller
 		$backUpFile = I( 'backupath' );
 		if ( is_file( $backUpFile )) {
 			$this->RestoreService->restoreBackUpProcess( $backUpFile );
-			//$this->redirect( 'Update/reductionBackup' );
+			$this->redirect('Common/message');
 		}
 		//$this->redirect( 'Update/reductionBackup' );
 	}

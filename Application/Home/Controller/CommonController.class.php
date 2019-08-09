@@ -27,5 +27,11 @@ class CommonController extends Controller
 		$this->display( 'Common/error' );
 	}
 
+	//jquery弹出窗口
+	public function out() {
+		$this->display( 'Common/out' );
+	}
+
+	
 
 }

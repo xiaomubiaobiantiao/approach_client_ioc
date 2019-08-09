@@ -19,6 +19,7 @@ class RestoreParentService
 		$this->Detection = new Detection();
 	}
 
+	//查看版本信息
 	protected function checkFile( $pVersionPath ) {
 		return FileBase::checkFile( $pVersionPath );
 	}
@@ -37,6 +38,16 @@ class RestoreParentService
 	protected function readFile( $pFile ) {
 		return FileBase::readFile( $pFile );
 	}
+
+	//读取当前目录下所有文件
+	protected function checkDirFile( $pDir ) {
+		return FileBase::checkAllFile( $pDir );	
+	}
+
+	//获取文件修改时间
+	// protected function getFileMtime( $pFile ) {
+	// 	return FileBase::scanFileInfo( $pFile );
+	// }
 
 	//替换软件版本信息文件
 	protected function updateVersion( $pFilePath, $pNewPath ) {

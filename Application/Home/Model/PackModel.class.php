@@ -51,7 +51,7 @@ class PackModel
 				$data[$key]['type_name'] = $value['type_name'];
 			}
 		}
-		$this->orderByData();
+		//$this->orderByData();
 		return $data;
 	}
 

@@ -103,6 +103,7 @@ class UpdateService extends Process
 				BACKUP_TMP_PATH
 			);
 
+			//如果需要备份的文件有不存在的,就将它从需要压缩的备份列表里面去除
 			if ( false == empty( $tData ))
 				$PathObj->lastResult['backUpFileList']=array_diff( $PathObj->lastResult['backUpFileList'], $tData);
 
@@ -197,7 +198,7 @@ class UpdateService extends Process
 		/*----- 检测系统 - 检测所有操作是否成功 -----------------------------------------------*/
 		/*-------------------------------------------------------------------------------------*/
 
-		//备份文件列表存在 则检测需要备份的文件压缩包是否创建成功
+		//备份文件列表存在 则检测备份日志是否创建成功
 		if ( isset( $backUpLogFilePath ))
 			$this->scanBackUpLog( $PathObj->backUpLogFilePath );
 
