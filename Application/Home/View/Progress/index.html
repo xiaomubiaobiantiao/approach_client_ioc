@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh">
 <head>
 <meta charset="UTF-8">
@@ -30,7 +30,7 @@
 	.progress .progress-bar{
 		position: relative;
 		-webkit-animation: animate-positive 4s;
-		animation: animate-positive 4s;
+		animation: animate-positive 4ss;
 	}
 	.progress .progress-bar:after{
 		content: "";
@@ -139,7 +139,7 @@ function magic_number(value) {
         	var value = String(parseInt(this.count));
             num.text( value + '%' );
             if ( value == 100 ) {
-            	window.location.href = "http://localhost:81/index.php/Home/Common/message";
+            	window.location.href = "/index.php/Home/Common/message.html";
             }
         } 
     }); 

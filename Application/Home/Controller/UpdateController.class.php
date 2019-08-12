@@ -11,6 +11,8 @@ use Think\Controller;
 use Home\Service\Update\UpdateService;
 use Home\Service\Restore\RestoreService;
 
+use Home\Common\Utility\DataBaseUtility as DataBase;
+
 class UpdateController extends Controller
 {
 
@@ -49,6 +51,48 @@ class UpdateController extends Controller
 
 	//更新文件
 	public function update() {
+
+		$data = new DataBase();
+		$con = $data->db_con();
+
+		$aaa = "select * from syscolumns where id=object_id('qgsh_report') and name='shsjwpmca'";
+		// $sql = 'select * from contractTest';
+		//添加字段
+		//$sql = 'alter table ContractTest add test varchar(20) not null default 0';
+		$sql = 'alter table qgsh_report add shsjwpmca varchar(50)';
+
+		$result = odbc_exec( $con, $aaa );
+		// $count = odbc_num_rows( $result );
+		// echo $count; 
+		//没有返回 0  有返回 -1
+		//dump( $result );
+		
+		$ccc = odbc_fetch_array( $result );
+		dump( $ccc );
+
+		if ( false == $ccc ) {
+			echo '字段不存在';
+			$result = odbc_exec( $con, $sql );
+			echo 123;
+		} else {
+			echo '字段存在';
+
+		}
+
+		false == $result ? die( '更新失败' ) : die( '更新成功' );
+
+		dump( $result );
+
+		// $aaa = odbc_fetch_array( $result );
+		// $count = odbc_num_rows( $result );
+		// while( $row = odbc_fetch_array( $result )){
+		// 	dump( $row );
+		// }
+
+		// while (odbc_fetch_row($result)) {
+		// 	dump( $result );
+		// }
+		die();
 
 		$vid = I( 'version_id' );
 

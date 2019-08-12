@@ -5,7 +5,8 @@
 /* 被更新项目使用的常量 */
 //文件更新的路径
 //$path = 'D:/phpStudy/PHPTutorial/WWW/approach_test/';
-$path = 'E:/download/';
+$path = 'E:/approach_test/';
+//$path = 'E:/download/';
 
 define( 'UPDATE_PATH', $path );
 

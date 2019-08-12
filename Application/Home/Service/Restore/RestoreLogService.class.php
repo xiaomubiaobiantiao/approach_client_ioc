@@ -28,7 +28,7 @@ class RestoreLogService extends Logs
 			12 => 'restore Version update ',			//版本信息更新失败
 			15 => 'restore Initialize a log file ',		//初始化一个日志文件失败
 			16 => 'restore Create del log file ',		//创建删除文件日志失败
-			17 => 'restore Del project del file' ,		//删除项目文件失败 - 需要更新的项目
+			17 => 'restore Del a project file '			//删除项目文件失败 - 需要更新的项目
 
 	);
 
@@ -51,7 +51,7 @@ class RestoreLogService extends Logs
 			17 => 'restore Initialize log complete! ',				//初始化一个日志文件成功
 			18 => 'restore Create del file log complete! ',			//创建删除文件日志成功
 			19 => 'restore Del a project file ',					//删除项目中的一个文件成功
-			20 => 'restore Dont find Del a del-log project file ',	//需要删除的项目文件不存在 - 也成功
+			20 => 'restore Dont find Del del-log a project file '	//需要删除的项目文件不存在 - 也成功
 
 	);
 

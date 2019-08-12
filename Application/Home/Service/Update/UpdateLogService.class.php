@@ -27,7 +27,7 @@ class UpdateLogService extends Logs
 			12 => 'Version update ',			//版本信息更新失败
 			15 => 'Initialize a log file ',		//初始化一个日志文件失败
 			16 => 'Create del log file ',		//创建删除文件日志失败
-			17 => 'Del project del file' ,		//删除项目文件失败 - 需要更新的项目
+			17 => 'Del a project file ' ,		//删除项目文件失败 - 需要更新的项目
 			18 => 'Create default version info '//创建默认版本信息失败
 
 
@@ -51,7 +51,7 @@ class UpdateLogService extends Logs
 			17 => 'Initialize log complete! ',				//初始化一个日志文件成功
 			18 => 'Create del file log complete! ',			//创建删除文件日志成功
 			19 => 'Del a project file ',					//删除项目中的一个文件成功
-			20 => 'Dont find Del a del-log project file ',	//需要删除的项目文件不存在 - 也成功
+			20 => 'Dont find Del del-log a project file ',	//需要删除的项目文件不存在 - 也成功
 			21 => 'Create default version info complete! '	//创建默认版本信息成功
 
 	);
