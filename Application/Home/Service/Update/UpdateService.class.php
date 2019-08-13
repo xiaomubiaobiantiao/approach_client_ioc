@@ -84,6 +84,9 @@ class UpdateService extends Process
 		//检测压缩包文件 和 项目的文件
 		$PathObj = new GetPath( array( UNPACK_TMP_PATH, UPDATE_PATH ));
 	
+		dump( $PathObj->fileOperation );
+		die();
+
 		//如果版本信息不存在 创建版本信息
 		if ( false == is_file( OLD_VERSION_PATH ))
 			$this->createVersion( VERSION_DEFAULT_INFO.'-'.date('Y-m-d H:i:s',time()), OLD_VERSION_PATH );	
@@ -288,7 +291,7 @@ class UpdateService extends Process
 
 		//初始化日志文件
 		$this->initializeLog(
-			array( LOCAL_LOG, LOCAL_UPDATE_ERROR, LOCAL_UPDATE_RECORD, LOCAL_RESTORE_ERROR, LOCAL_RESTORE_RECORD )
+			array( LOCAL_LOG, LOCAL_UPDATE_ERROR, LOCAL_UPDATE_RECORD, LOCAL_RESTORE_ERROR, LOCAL_RESTORE_RECORD, DATABASE_LOG )
 		);
 	}
 

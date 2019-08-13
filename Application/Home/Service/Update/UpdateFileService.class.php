@@ -15,7 +15,7 @@ class UpdateFileService
 
 	//初始化更新包文件 与 原有文件 的数组结构
 	public $fileOperation = array(
-		'update'=>array( 'root_dir'=>array(), 'files'=>array(), 'dirs'=>array()),
+		'update'=>array( 'root_dir'=>array(), 'files'=>array(), 'dirs'=>array(), 'data'=>array()),
 		'old'=>array( 'root_dir'=>array(), 'files'=>array(), 'dirs'=>array())
 	);
 
@@ -121,15 +121,24 @@ class UpdateFileService
 
         //循环资源文件
 	    while ( false !== ( $file = readdir( $handle ))) {
+
 	    	//跳过不需要检测的文件
 	        if (( $file == "." || $file == ".." || in_array( $file, $this->strConversionArr( IGNORE_FILES ) )))
 	        	continue;
 	        
 	        //拼接地址
 	        $path = rtrim( $dir, '/' ).'/'.$file;
-	        //跳过不需要检测的目录
+
+	        //---
+	        if ( $path == IGNORE_NEW_DIRS ) {
+	        	$this->fileOperation['update']['data'][] = $path;
+	        	continue;
+	        }
+
+	        //跳过不需要检测的 原有文件的 目录
 	        if ( $arrName == 'old' && in_array( $dir, $this->strConversionArr( IGNORE_DIRS ) ))
 	        	continue;
+
 	        //递归检测目录
 	        if ( is_dir( $path )) {
 	        	$i++;

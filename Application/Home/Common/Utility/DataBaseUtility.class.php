@@ -11,42 +11,52 @@ class DataBaseUtility
 {
 
 	//初始化数据库参数
+	public $server = '';
 	public $user = '';
 	public $pass = '';
-	public $connection = '';
+	public $database = '';
+	public $connect = '';
 
-	//连接sqlserver
-	public function sqlServer() {
+	public $odbcConnect = '';
 
-		//$connect = 'DRIVER={SQL Server};SERVER=.;DATABASE=hicisdata_new_test';
-		$connect = 'DRIVER={SQL Server};SERVER=.;DATABASE=contract';
-		$user = 'sa';
-		$pass = '123123';
+	//初始化 - 备用
+	public function __construct( $pParamArr ) {
+		$this->setParam( $pParamArr );
+		$this->linkDataBase();
+	}
 
-		$this->setParam( $connect, $user, $pass );
-		$result = $this->linkDataBase();
-		return $result;
+	//设置数据库参数
+	public function setParam( $pParam ) {
+		$this->server = $pParam['server'];
+		$this->user = $pParam['user'];
+		$this->pass = $pParam['pass'];
+		$this->database = $pParam['database'];
+		$this->connect = $pParam['connect'];
 	}
 
 	//连接数据库
 	public function linkDataBase() {
-		return $connection = odbc_connect( $this->connection, $this->user, $this->pass );
-		//or die ("数据库连接失败！！！");
+		$this->odbcConnect = odbc_connect( $this->connect, $this->user, $this->pass );
 	}
 
-	//设置数据库参数
-	public function setParam( $pConnection, $pUser, $pPass ) {
-		$this->connection = $pConnection;
-		$this->user = $pUser;
-		$this->pass = $pPass;
+	//执行Sql语句
+	public function odbcExec( $pSql ) {
+		return odbc_exec( $this->odbcConnect, $pSql );
 	}
 
-	public function selectData( $pSql ) {
-		return mysql_query( $pSql );
+	//循环遍历内容
+	public function fetchConnect( $pArr ) {
+		while( $row = odbc_fetch_array( $pArr ))
+			dump( $row );
+	}
+
+	//查看总行数
+	public function numRows() {
+		return odbc_num_rows( $result );
 	}
 
 	/**
-	 * db_con
+	 * db_con  - 暂时未用
 	 *
 	 * 创建SqlServer连接。
 	 * 使用ODBC连接方式，需要到微软官网下载sqlserver for php相关驱动并重启。
@@ -58,11 +68,11 @@ class DataBaseUtility
 	 */
 	public function db_con()
 	{
-	    $server = '.';
-	    $username = 'sa'; //数据库用户名
-	    $password = '123123';   //数据库密码
-	    $database = 'contract';     //数据库
-	    $con_url = "Driver={SQL Server};Server=$server;Database=$database";
+	    // $server = '.';
+	    // $username = 'sa'; //数据库用户名
+	    // $password = '123123';   //数据库密码
+	    // $database = 'contract';     //数据库
+	    // $con_url = "Driver={SQL Server};Server=$server;Database=$database";
 	    //define ...
 	    $con = odbc_connect($con_url, $username, $password, SQL_CUR_USE_ODBC);
 	    if ($con)
@@ -71,7 +81,7 @@ class DataBaseUtility
 	}
 
 	/**
-	 * db_query
+	 * db_query - 暂时未用
 	 * 执行select语句，返回二维数组(不含字段)，参考test.php。
 	 */
 	public function db_query( $sql, $fieldcount)
@@ -113,7 +123,7 @@ class DataBaseUtility
 
 
 	/**
-	 * odbc_exec
+	 * odbc_exec - 暂时未用
 	 * 执行insert，update或delete语句。
 	 * 如果执行不成功，调整一下数据库参数和odbc_connect参数。
 	 */
