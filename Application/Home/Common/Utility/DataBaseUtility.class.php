@@ -20,7 +20,7 @@ class DataBaseUtility
 	public $odbcConnect = '';
 
 	//初始化 - 备用
-	public function __construct( $pParamArr ) {
+	public function __construct( $pDataType, $pParamArr ) {
 		$this->setParam( $pParamArr );
 		$this->linkDataBase();
 	}

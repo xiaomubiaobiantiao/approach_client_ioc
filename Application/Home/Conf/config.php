@@ -72,14 +72,13 @@ define( 'IGNORE_FILES', '.git,version.txt' );
 //数据文本的存放位置
 define( 'DATABASE_TEXT', 'Public/data/database.txt' );
 
+//下面这两项是不能更改的, 或者说根据 更新包 的数据库更新路径而更改的
+//因为没有判定数据库目录的方式, 所以要手动设定, 不需要更改
 //数据库更新目录的名称
 define( 'DATABASE_UPDATE_NAME', 'data_base' );
+//数据库更新目录的存放位置
+define( 'DATABASE_UPDATE', rtrim( UNPACK_TMP_PATH, '/' ).'/'.DATABASE_UPDATE_NAME );
 
-//数据库更新目录的存放位置 - 暂时未用 - 备用
-define( 'DATABASE_UPDATE', rtrim( UNPACK_TMP_PATH, '/' ).'/'.'data_base' );
-
-//压缩包内需要排除检测的目录
-define( 'IGNORE_NEW_DIRS', DATABASE_UPDATE );
 
 
 

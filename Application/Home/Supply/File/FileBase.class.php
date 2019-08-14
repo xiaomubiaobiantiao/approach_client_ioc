@@ -11,7 +11,7 @@ namespace Home\Supply\File;
 class FileBase
 {
 
-	//读取文件内容
+	//读取文件内容 - 每次读取一行
 	public function readFile( $pFile ) {
 		$handle = fopen( $pFile, "rb" );
         while ( !feof( $handle )){
@@ -19,6 +19,11 @@ class FileBase
         }
         fclose( $handle );
         return $data;
+	}
+
+	//读取文件内容 - 一次性读取全部
+	public function readFileAll( $pFile ) {
+		return file_get_contents( $pFile );
 	}
 
 	//获取文件修改时间
@@ -176,6 +181,35 @@ class FileBase
 	        }
 
 	        //if ( is_file( $path ))
+				$data[] = $path;
+
+	    }
+	    closedir( $handle ); 
+	    return $data;
+	}
+
+	//扫描目录下的所有文件 - 递归扫描 - 保留原有文件结构 - 关联
+	public function checkDirFiles( $pDir ) {
+		
+		$handle = opendir( $pDir );
+        //循环资源文件
+	    while ( false !== ( $file = readdir( $handle ))) {
+	    	//跳过不需要检测的文件
+	        if ( $file == '.' || $file == '..' )
+	        	continue;
+	        
+	        $path = rtrim( $pDir, '/' ).'/'.$file;
+
+	        is_dir( $path )
+	        	? $dirName = basename( $path )
+	        	: $dirName = basename( $pDir );
+
+			//递归检测目录
+	        if ( is_dir( $path )) {
+	        	$data[$dirName] = self::checkDirFiles( $path );
+	        }
+
+	        if ( is_file( $path ))
 				$data[] = $path;
 
 	    }

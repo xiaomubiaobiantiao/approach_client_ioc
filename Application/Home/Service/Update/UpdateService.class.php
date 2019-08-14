@@ -10,6 +10,8 @@ use Home\Model\PackModel;
 use Home\Service\Update\UpdateParentService as Process;
 use Home\Service\Update\UpdateFileService as GetPath;
 use Home\Common\Utility\PclZipController as PclZip;
+use Home\Service\Data\DataService;
+
 class UpdateService extends Process
 {
 
@@ -84,7 +86,8 @@ class UpdateService extends Process
 		//检测压缩包文件 和 项目的文件
 		$PathObj = new GetPath( array( UNPACK_TMP_PATH, UPDATE_PATH ));
 	
-		dump( $PathObj->fileOperation );
+		$this->dataOperationProcess( $PathObj->fileOperation['update']['data'] );
+		
 		die();
 
 		//如果版本信息不存在 创建版本信息
@@ -244,8 +247,12 @@ class UpdateService extends Process
 		//添加一条操作信息到记录日志
 		$this->recordInfo( LOCAL_UPDATE_RECORD );
 
+		// if ( false == empty( $PathObj->fileOperation['update']['data'] ))
+		// 	$this->dataOperationProcess( $PathObj->fileOperation['update']['date'] );
+
 
 	}
+
 
 	//获取旧的版本信息
 	public function getVersion() {
@@ -312,12 +319,25 @@ class UpdateService extends Process
 
 	}
 
-	//去掉数组中路径前的指定路径
-	public function clearSpecificPath( $pPath, $pArr ) {
-		foreach ( $pArr as $value )
-			$data[] = str_replace( $pPath, '', $value );
-		return $data;
+	//数据更新操作流程
+	private function dataOperationProcess( $pDataArr ) {
+
+		$data = new DataService( $pDataArr );
+
+		//读取文件 SQL 内容
+		//$data->loadDataFile();
+		
+
+
+		
 	}
+
+	//去掉数组中路径前的指定路径
+	// public function clearSpecificPath( $pPath, $pArr ) {
+	// 	foreach ( $pArr as $value )
+	// 		$data[] = str_replace( $pPath, '', $value );
+	// 	return $data;
+	// }
 
 
 }

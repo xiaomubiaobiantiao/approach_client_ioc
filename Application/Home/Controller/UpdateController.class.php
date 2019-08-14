@@ -12,6 +12,9 @@ use Home\Service\Update\UpdateService;
 use Home\Service\Restore\RestoreService;
 use Home\Service\Data\DataService;
 
+//use Home\Common\Utility\FileBaseUtility as FileBase;
+
+
 class UpdateController extends Controller
 {
 
@@ -50,6 +53,10 @@ class UpdateController extends Controller
 	//更新文件
 	public function update() {
 
+		// $result = FileBase::checkDirFiles( 'E:/approach_test/' );
+		// dump( $result );
+		// die();
+
 		//更新数据库字段或其它信息
 		// $this->updateData();
 		// die();
@@ -69,7 +76,7 @@ class UpdateController extends Controller
 
 	//恢复备份文件 - 还原
 	public function restore() {
-		
+
 		$backUpFile = I( 'backupath' );
 		if ( is_file( $backUpFile )) {
 			$this->RestoreService->restoreBackUpProcess( $backUpFile );
@@ -81,11 +88,11 @@ class UpdateController extends Controller
 	//更新数据库
 	public function updateData() {
 
-		$data = new DataService();
 
-		$data = new DataBase( $this->connectParam());
-		$result = $data->odbcExec( $sql );
-		$data->fetchConnect( $result );
+
+		// $data = new DataService( 'Public\files\unpack_tmp_pack\data_base\5.sql' );
+		// $result = $data->execStatements( $sql );
+		// $data->fetchTest( $result );
 
 	}
 

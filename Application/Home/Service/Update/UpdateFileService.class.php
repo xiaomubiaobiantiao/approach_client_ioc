@@ -8,7 +8,7 @@
 namespace Home\Service\Update;
 
 use Home\Service\Update\UpdateLogService as Log;
-// use Home\Common\Utility\DetectionUtility as Detection;
+use Home\Common\Utility\FileBaseUtility as FileBase;
 
 class UpdateFileService
 {
@@ -126,18 +126,18 @@ class UpdateFileService
 	        if (( $file == "." || $file == ".." || in_array( $file, $this->strConversionArr( IGNORE_FILES ) )))
 	        	continue;
 	        
-	        //拼接地址
-	        $path = rtrim( $dir, '/' ).'/'.$file;
-
-	        //---
-	        if ( $path == IGNORE_NEW_DIRS ) {
-	        	$this->fileOperation['update']['data'][] = $path;
-	        	continue;
+	        //如果是数据库目录, 单独放到一个元素里, 不与需要更新的文件在同一列表
+	        if ( $dir == DATABASE_UPDATE ) {
+	        	$this->fileOperation['update']['data'] = FileBase::checkDirFiles( $dir );
+	        	break;
 	        }
 
 	        //跳过不需要检测的 原有文件的 目录
 	        if ( $arrName == 'old' && in_array( $dir, $this->strConversionArr( IGNORE_DIRS ) ))
 	        	continue;
+
+	        //拼接地址
+	        $path = rtrim( $dir, '/' ).'/'.$file;
 
 	        //递归检测目录
 	        if ( is_dir( $path )) {
@@ -149,7 +149,7 @@ class UpdateFileService
 	        if ( $this->is_log( $path ))
 	        	continue;
 
-			//分类文件与文件夹
+			//分类文件与文件夹                            
 	        is_dir( $path )
 	        	? $this->fileOperation[$arrName]['dirs'][] = str_replace( $this->fileOperation[$arrName]['root_dir'][0], '', $path )
 	        	: $this->fileOperation[$arrName]['files'][] = str_replace( $this->fileOperation[$arrName]['root_dir'][0], '', $path );
@@ -247,5 +247,8 @@ class UpdateFileService
         return $data;
 	}
 	/* ------------------------------------------------------------------------------------- */
+
+
+
 
 }
