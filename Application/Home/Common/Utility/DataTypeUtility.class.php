@@ -7,53 +7,41 @@
  */
 namespace Home\Common\Utility;
 
-class DataBaseUtility
+class DataTypeUtility
 {
 
-	//初始化数据库参数
-	public $server = '';
-	public $user = '';
-	public $pass = '';
-	public $database = '';
-	public $connect = '';
+	//数据库类型
+	public $dataType = '';
 
-	public $odbcConnect = '';
-
-	//初始化 - 备用
-	public function __construct( $pDataType, $pParamArr ) {
-		$this->setParam( $pParamArr );
-		$this->linkDataBase();
+	public function __construct( $pDataType ) {
+		$this->setDataType( $pDataType );
 	}
 
-	//设置数据库参数
-	public function setParam( $pParam ) {
-		$this->server = $pParam['server'];
-		$this->user = $pParam['user'];
-		$this->pass = $pParam['pass'];
-		$this->database = $pParam['database'];
-		$this->connect = $pParam['connect'];
+	/* ------------------------------------------------------------------------------------*/
+	/* ------------------------------------ 数据库类型 ------------------------------------*/
+	/* ------------------------------------------------------------------------------------*/
+
+	//设置数据库类型
+	private function setDataType( $pDataType ) {
+		$this->dataType = $pDataType;
 	}
 
-	//连接数据库
-	public function linkDataBase() {
-		$this->odbcConnect = odbc_connect( $this->connect, $this->user, $this->pass );
+	//oracle 参数
+	public function oracleParam() {
+
 	}
 
-	//执行Sql语句
-	public function odbcExec( $pSql ) {
-		return odbc_exec( $this->odbcConnect, $pSql );
+	//mysql 参数
+	public function mysqlParam() {
+
 	}
 
-	//循环遍历内容
-	public function fetchConnect( $pArr ) {
-		while( $row = odbc_fetch_array( $pArr ))
-			dump( $row );
+	//sqlserver 参数
+	public function sqlserverParam() {
+
 	}
 
-	//查看总行数
-	public function numRows() {
-		return odbc_num_rows( $result );
-	}
+	/* ------------------------------------------------------------------------------------*/
 
 	/**
 	 * db_con  - 暂时未用

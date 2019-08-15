@@ -7,7 +7,7 @@
  */
 namespace Home\Service\Data;
 
-use Home\Common\Utility\DataBaseUtility as DataBase;
+use Home\Common\Utility\DataTypeUtility as DataType;
 use Home\Common\Utility\FileBaseUtility as FileBase;
 
 class DataService
@@ -45,7 +45,7 @@ class DataService
 	 * @return [type]            [null]
 	 */
 	public function connectData( $pDataType ) {
-		$this->data = new DataBase( $pDataType, $this->loadDataParam());
+		$this->data = new DataType( $pDataType, $this->loadDataParam());
 	}
 
 	//加载数据库文件
@@ -79,13 +79,13 @@ class DataService
 	//加载数据库配置参数 - 临时用
 	public function loadDataParam() {
 
-		$conf['server'] 	= '.';
-		$conf['user'] 		= 'sa';
-		$conf['pass'] 		= '123123';
-		$conf['database'] 	= 'hicisdata_new_test';
-		$conf['connect'] 	= 'DRIVER={SQL Server};SERVER='.$conf['server'].';DATABASE='.$conf['database'];
+		$dbconf['server'] 	= '.';
+		$dbconf['user'] 		= 'sa';
+		$dbconf['pass'] 		= '123123';
+		$dbconf['database'] 	= 'hicisdata_new_test';
+		$dbconf['connect'] 	= 'DRIVER={SQL Server};SERVER='.$dbconf['server'].';DATABASE='.$dbconf['database'];
 
-		return $conf;
+		return $dbconf;
 
 	}
 
