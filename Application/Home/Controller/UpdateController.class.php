@@ -12,7 +12,7 @@ use Home\Service\Update\UpdateService;
 use Home\Service\Restore\RestoreService;
 use Home\Service\Data\DataService;
 
-//use Home\Common\Utility\FileBaseUtility as FileBase;
+use Home\Common\Utility\FileBaseUtility as FileBase;
 
 
 class UpdateController extends Controller
@@ -53,13 +53,13 @@ class UpdateController extends Controller
 	//更新文件
 	public function update() {
 
-		// $result = FileBase::checkDirFiles( 'E:/approach_test/' );
+		// $result = FileBase::checkDirFiles( DATABASE_UPDATE );
 		// dump( $result );
 		// die();
 
-		//更新数据库字段或其它信息
-		// $this->updateData();
-		// die();
+		// 更新数据库字段或其它信息
+		$this->updateData();
+		die();
 
 		$vid = I( 'version_id' );
 
@@ -87,11 +87,8 @@ class UpdateController extends Controller
 
 	//更新数据库
 	public function updateData() {
-
-
-
-		// $data = new DataService( 'Public\files\unpack_tmp_pack\data_base\5.sql' );
-		// $result = $data->execStatements( $sql );
+		$data = new DataService();
+		//$result = $data->execStatements( $sql );
 		// $data->fetchTest( $result );
 
 	}

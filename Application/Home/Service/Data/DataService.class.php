@@ -19,8 +19,19 @@ class DataService
 	//初始化sql文件数组 - 包含文件名与SQL语句
 	public $sqlFiles = array();
 
-	public function __construct( $pFileArr ) {
-		$this->typeDistinguish( $pFileArr );
+	//数据库文件原始目录结构
+	public $dataDir = '';
+
+	//数据库文件需要更新的目录结构
+	public $dataStructure = '';
+
+	public function __construct() {
+		$this->updateDataProcess();
+	}
+
+	//读取数据库文件目录
+	private function readDataDir() {
+		return FileBase::checkDirFiles( DATABASE_UPDATE );
 	}
 
 	/**
@@ -29,14 +40,22 @@ class DataService
 	 * @param  [array] $pDataFilePath [database file path]
 	 * @return [type]                [null]
 	 */
-	public function updateDataProcess( $pDataType, $pDataFilePathArr ) {
-		$this->connectData( $pDataType );
-		$this->loadDataFile( $pDataFilePathArr );
-		$result = $this->execStatements( $this->sqlFiles['5.sql'] );
-		$this->fetchTest( $result );
+	public function updateDataProcess() {
+		$this->dataDir = $this->readDataDir();
+		$this->dataStructure = $this->loadDataFile( $this->dataDir );
+		$this->typeDistinguish( $this->dataStructure );
+
+
+
+		// $this->connectData( $pDataType );
+		// dump( $pDataType );
+		// $this->loadDataFile( $pDataFilePathArr );
+		// $result = $this->execStatements( $this->sqlFiles['5.sql'] );
+		// $this->fetchTest( $result );
 		// dump( $this->sqlFiles );
-		dump( $this->data );
-		dump( $result );
+		// dump( $this->data );
+		// dump( $result );
+		
 	}
 
 	/**
@@ -48,27 +67,36 @@ class DataService
 		$this->data = new DataType( $pDataType, $this->loadDataParam());
 	}
 
-	//加载数据库文件
-	public function loadDataFile( $pDataFilePathArr ) {
-		foreach ( $pDataFilePathArr as $value ) {
-			$connect = FileBase::readFileAll( $value );
-			$this->sqlFiles[basename($value)] = $connect;
-		}
+	private function loadDataFile( $pDataDir ) {
+		return array_filter( $pDataDir );
+		dump( $database );
+		$keys = array_keys( $database );
+		dump( $keys );
 	}
+
+	//加载数据库文件
+	// public function loadDataFile( $pDataFilePathArr ) {
+	// 	foreach ( $pDataFilePathArr as $value ) {
+	// 		$connect = FileBase::readFileAll( $value );
+	// 		$this->sqlFiles[basename($value)] = $connect;
+	// 	}
+	// }
 
 	//分类数据库类型和文件
 	public function typeDistinguish( $pFileArr ) {
 		$keys = array_keys( $pFileArr );
 		foreach ( $keys as $value ) {
 			if ( false == empty( $pFileArr[$value] ))
-				$this->updateDataProcess( $value, $pFileArr[$value] );
+				// $this->updateDataProcess( $value, $pFileArr[$value] );
+				dump( $pFileArr[$value] );
 		}
 	}
 	
 	//执行 SQL 语句
 	public function execStatements( $pSql ) {
 		//执行Sql语句
-		return $this->data->odbcExec( $pSql );
+		dump( $this->data );
+		//return $this->data->odbcExec( $pSql );
 	}
 
 	//检测 SQL 是否更新成功
@@ -101,6 +129,7 @@ class DataService
 	public function fetchTest( $pArr ) {
 		$this->data->fetchConnect( $pArr );
 	}
+
 
 
 }
