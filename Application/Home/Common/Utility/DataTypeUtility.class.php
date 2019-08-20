@@ -12,9 +12,13 @@ class DataTypeUtility
 
 	//数据库类型
 	public $dataType = '';
+	//連接數據庫參數
+	public $databaseParams = '';
 
-	public function __construct( $pDataType ) {
+
+	public function __construct( $pDataType='', $pDatabaseParams='' ) {
 		$this->setDataType( $pDataType );
+		$this->sqlserverParam( $pDatabaseParams );
 	}
 
 	/* ------------------------------------------------------------------------------------*/
@@ -26,9 +30,14 @@ class DataTypeUtility
 		$this->dataType = $pDataType;
 	}
 
-	//oracle 参数
-	public function oracleParam() {
+	//连接数据库
+	public function connect() {
+		return new SqlServerData( $this->databaseParams );
+	}
 
+	//oracle 参数
+	public function oracleParam( $pDatabaseParams ) {
+		
 	}
 
 	//mysql 参数
@@ -38,7 +47,7 @@ class DataTypeUtility
 
 	//sqlserver 参数
 	public function sqlserverParam() {
-
+		$this->param = $pDatabaseParams;
 	}
 
 	/* ------------------------------------------------------------------------------------*/

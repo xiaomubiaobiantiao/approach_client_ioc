@@ -42,6 +42,7 @@ $(function(){
         <ul class="menuson" style="display: block;">
             <li><cite></cite><a href="<?php echo U('Home/Update/index');?>" target='rightFrame'>实施更新</a><i></i></li>
             <li><cite></cite><a href="<?php echo U('Home/Pack/index');?>" target='rightFrame'>软件包管理</a><i></i></li>
+            <li><cite></cite><a href="<?php echo U('Home/UpdateData/index');?>" target='rightFrame'>數据更新</a><i></i></li>
         </ul>
     </dd>
 

@@ -243,7 +243,7 @@ $(document).ready(function(e) {
         progress();
     })
 
-     $("#restore").click(function(){
+    $("#restore").click(function(){
         $("form[id='from_restore']").submit();
         progress();        
     })

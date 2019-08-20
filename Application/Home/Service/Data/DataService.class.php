@@ -26,12 +26,13 @@ class DataService
 	public $dataStructure = '';
 
 	public function __construct() {
-		$this->updateDataProcess();
+		$this->dataDir = $this->readDataDir( DATABASE_UPDATE );
+		$this->data = new DataType( $pDatabaseType, $this->loadDataParam());
 	}
 
 	//读取数据库文件目录
-	private function readDataDir() {
-		return FileBase::checkDirFiles( DATABASE_UPDATE );
+	private function readDataDir( $pDir ) {
+		return FileBase::checkDirFiles( $pDir );
 	}
 
 	/**
@@ -41,11 +42,9 @@ class DataService
 	 * @return [type]                [null]
 	 */
 	public function updateDataProcess() {
-		$this->dataDir = $this->readDataDir();
 		$this->dataStructure = $this->loadDataFile( $this->dataDir );
-		$this->typeDistinguish( $this->dataStructure );
-
-
+		// dump( $this->dataStructure );
+		return $this->dataStructure;
 
 		// $this->connectData( $pDataType );
 		// dump( $pDataType );
@@ -58,20 +57,36 @@ class DataService
 		
 	}
 
+	//返回首页信息
+	public function indexInfo() {
+		return $this->dataStructure();
+	}
+
 	/**
 	 * [connectData 连接数据库]
 	 * @param  [string] $pDataType [database type]
 	 * @return [type]            [null]
 	 */
-	public function connectData( $pDataType ) {
-		$this->data = new DataType( $pDataType, $this->loadDataParam());
+	public function connectDatabase( $pDatabaseType ) {
+		$this->data->connect( $this->loadDataParam());
+		return $this->data;
 	}
 
+	//遍历数组连接数据库
+	public function connectDatabases( $pDatabaseTypeArr ) {
+		foreach ( $pDatabaseTypeArr as $value )
+			$this->connectDatabase( $value ) ? $data[$value] = true : $data[$value] = false;
+		return $data;
+	}
+
+	//返回需要修改的数据库名称和对应sql文件 - 暫時未用
 	private function loadDataFile( $pDataDir ) {
 		return array_filter( $pDataDir );
-		dump( $database );
-		$keys = array_keys( $database );
-		dump( $keys );
+	}
+
+	//返回数组键名 - 一维 - 暫時未用
+	private function getArrayKeys( $pArr ) {
+		return array_keys( $pArr );
 	}
 
 	//加载数据库文件
