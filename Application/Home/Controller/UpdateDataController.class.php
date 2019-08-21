@@ -23,6 +23,8 @@ class UpdateDataController extends Controller
 
 	//更新数据库首页
 	public function index() {
+		$this->display( 'UpdateData/index' );
+		die();
 		$this->detectionDatabaseConnect();
 		$databaselist = $this->data->updateDataProcess();
 		// dump( $databaselist );

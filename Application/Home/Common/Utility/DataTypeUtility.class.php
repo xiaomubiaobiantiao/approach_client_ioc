@@ -12,9 +12,8 @@ class DataTypeUtility
 
 	//数据库类型
 	public $dataType = '';
-	//連接數據庫參數
+	//连接数据库参数
 	public $databaseParams = '';
-
 
 	public function __construct( $pDataType='', $pDatabaseParams='' ) {
 		$this->setDataType( $pDataType );
