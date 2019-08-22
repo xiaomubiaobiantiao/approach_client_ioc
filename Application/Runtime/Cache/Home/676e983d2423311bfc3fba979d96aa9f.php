@@ -19,8 +19,6 @@
 </head>
 
 <body>
-    <?php
- var_dump( $_GET ); echo $id; ?>
     <div class="place">
     <span>位置：</span>
     <ul class="placeul">

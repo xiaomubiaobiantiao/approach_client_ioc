@@ -7,22 +7,42 @@
  */
 namespace Home\Common\Utility;
 
-class DataTypeUtility
+use Home\Common\Data\SqlServerData;
+use Home\Interfaces\Database;
+
+class DataTypeUtility implements Database
 {
 
+	//数据库对象
+	public $database = '';
 	//数据库类型
 	public $dataType = '';
 	//连接数据库参数
 	public $databaseParams = '';
 
-	public function __construct( $pDataType='', $pDatabaseParams='' ) {
-		$this->setDataType( $pDataType );
-		$this->sqlserverParam( $pDatabaseParams );
+	// public function __construct( $pDataType='', $pDatabaseParams='' ) {
+	// 	$this->setDataType( $pDataType );
+	// 	$this->sqlserverParam( $pDatabaseParams );
+	// }
+
+	// public function __construct( Database $pDatabase = null, $pDatabaseParams = null ) {
+	// 	if ( false == empty( $pDatabase )) {
+	// 		$this->database = $pDatabase;
+	// 		$this->dataType = $pDatabase;
+	// 	}
+	// }
+
+	public function __construct() {
+
 	}
 
 	/* ------------------------------------------------------------------------------------*/
 	/* ------------------------------------ 数据库类型 ------------------------------------*/
 	/* ------------------------------------------------------------------------------------*/
+
+	public function test() {
+		echo  123;
+	}
 
 	//设置数据库类型
 	private function setDataType( $pDataType ) {
@@ -30,8 +50,18 @@ class DataTypeUtility
 	}
 
 	//连接数据库
-	public function connect() {
-		return new SqlServerData( $this->databaseParams );
+	public function connection( Database $pDatabase = null, $params = null ) {
+		dump( $Database );
+		$this->database = $pDatabase;
+		$this->setDataType( $pDatabase );
+		dump( $this->database );
+		die();
+		return $this->database->connection( $this->databaseParams );
+	}
+
+	//新建数据库
+	public function newDatabase() {
+		return $this->database = new $this->dataType;
 	}
 
 	//oracle 参数

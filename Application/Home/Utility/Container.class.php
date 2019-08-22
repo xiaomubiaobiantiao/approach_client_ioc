@@ -6,6 +6,10 @@
  */
 namespace Home\Utility;
 
+use ReflectionClass;
+use BadMethodCallException;
+use Home\Common\Service\CommonService;
+
 class Container
 {
 
@@ -15,6 +19,13 @@ class Container
      * @var array
      */
 	protected $binds = array();
+    protected $services = array();
+
+
+    public function __construct() {
+        $service = new CommonService();
+        $this->services = $service->LoadService();
+    }
 
 	/**
      * set a singleton instance.
@@ -23,8 +34,8 @@ class Container
      * @param  string $concrete 
      * @return void
      */
-	public function bind( $abstract, $concrete = NULL ) {
-		$this->binds[$abstract] = $concrete == NULL ? $this->getInstance( $abstract ) : new $abstract( $this->binds[$concrete] );
+	public function bind( $abstract, $concrete = null ) {
+		$this->binds[$abstract] = $concrete == null ? $this->getInstance( $abstract ) : new $abstract( $this->binds[$concrete] );
 	}
 
 	/**
@@ -45,9 +56,18 @@ class Container
      * @return object
      */
 	public function getInstance( $className, $params=array()) {
-		
+        
+        if ( $this->services[$className] )
+            $className = $this->services[$className];
+
+        if ( false == class_exists( $className )) die( 'class not found' );
+
 		$reflector = new ReflectionClass( $className );
+
+        if ( $reflector->isInterface() ) return array_merge( $className, $params );
+
 		$constructor = $reflector->getConstructor();
+
 		$subclassParams = $constructor ? $this->getDiParams( $constructor->getParameters() ) : array();
 		return $reflector->newInstanceArgs( array_merge( $subclassParams, $params ) );
 		
@@ -65,17 +85,22 @@ class Container
      */
 	public function run( $className, $method, $params = array(), $construct_params = array() ) {
 
-        if ( false == class_exists( $className ))
-            throw new BadMethodCallException( "Class $class_name is not found!" );
+        if ( $this->services[$className] )
+            $className = $this->services[$className];
 
-        if ( false == method_exists( $className, $method ))
-            throw new BadMethodCallException( "undefined method $method in $class_name !" );
+        if ( false == class_exists( $className )) die( 'class not found' );
 
 		$instance = $this->getInstance( $className, $construct_params );
+        dump( $instance );dump( $method );
 	    $reflector = new ReflectionClass( $className );
+        
 	    $reflectorMethod = $reflector->getMethod( $method );
+        dump($reflectorMethod->getParameters());
 	    $subclassParams = $reflectorMethod ? $this->getDiParams( $reflectorMethod->getParameters()) : array();
-	    return call_user_func_array( array( $instance, $method ), array_merge( $subclassParams, $params ));
+        dump( $subclassParams );
+        dump( $params );
+	    $aaa = call_user_func_array( array( $instance, $method ), array_merge( $subclassParams, $params ));
+
 
 	}
 
@@ -87,11 +112,12 @@ class Container
      */
     public function getDiParams( array $params )
     {
+            // dump( $params );
         $subclassParams = array();
         foreach ( $params as $param ) {
             $class = $param->getClass();
             if ( false == empty( $class ))
-                $subclassParams[] = $this->getInstance( $class->name );
+                $subclassParams = $this->getInstance( $class->name );
         }
         return $subclassParams;
     }
@@ -104,6 +130,10 @@ class Container
 	public function getBind() {
 		return $this->binds;
 	}
+
+    public function getServices() {
+        return $this->services;
+    }
 
 	/**
      * print the result set

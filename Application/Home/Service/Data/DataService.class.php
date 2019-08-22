@@ -26,8 +26,7 @@ class DataService
 	public $dataStructure = '';
 
 	public function __construct() {
-		$this->dataDir = $this->readDataDir( DATABASE_UPDATE );
-		$this->data = new DataType( $pDatabaseType, $this->loadDataParam());
+		// $this->dataDir = $this->readDataDir( DATABASE_UPDATE );
 	}
 
 	//读取数据库文件目录
@@ -45,16 +44,6 @@ class DataService
 		$this->dataStructure = $this->loadDataFile( $this->dataDir );
 		// dump( $this->dataStructure );
 		return $this->dataStructure;
-
-		// $this->connectData( $pDataType );
-		// dump( $pDataType );
-		// $this->loadDataFile( $pDataFilePathArr );
-		// $result = $this->execStatements( $this->sqlFiles['5.sql'] );
-		// $this->fetchTest( $result );
-		// dump( $this->sqlFiles );
-		// dump( $this->data );
-		// dump( $result );
-		
 	}
 
 	//返回首页信息
@@ -62,14 +51,32 @@ class DataService
 		return $this->dataStructure();
 	}
 
+
+
+	public function test(  DataTypeUtility $DataTypeUtility ) {
+		echo '123'.'<br>';
+		$DataTypeUtility->test();
+		// dump( $data );
+		// $dataService->
+	}
+
 	/**
 	 * [connectData 连接数据库]
 	 * @param  [string] $pDataType [database type]
 	 * @return [type]            [null]
 	 */
-	public function connectDatabase( $pDatabaseType ) {
-		$this->data->connect( $this->loadDataParam());
-		return $this->data;
+	public function connectDatabase( DataTypeUtility $DataTypeUtility, $pData ) {
+		$DataTypeUtility->test();
+		dump( $DataTypeUtility );
+		// dump( $pData );
+		// dump( $DataTypeUtility );
+		// foreach ( $pData as $value ) {
+		// 	$DataTypeUtility->setDataType( $value );
+		// 	$DataTypeUtility->connection( $value );
+		// }
+		// dump( $DataTypeUtility );
+		// $result = $DataTypeUtility->connection( $DataTypeUtility, $this->loadDataParam());
+		// return $result;
 	}
 
 	//遍历数组连接数据库

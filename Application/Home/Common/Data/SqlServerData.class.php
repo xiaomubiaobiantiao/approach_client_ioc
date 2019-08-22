@@ -6,8 +6,9 @@
  * DateTime: 19-6-27 09:37:00
  */
 namespace Home\Common\Data;
+use Home\Interfaces\Database;
 
-class SqlServerData
+class SqlServerData implements Database
 {
 
 	//初始化数据库参数
@@ -23,7 +24,7 @@ class SqlServerData
 	//初始化 - 备用
 	public function __construct( $pDataType, $pParamArr ) {
 		$this->setParam( $pParamArr );
-		$this->linkDataBase();
+		$this->connection();
 	}
 
 	//设置数据库参数
@@ -36,7 +37,7 @@ class SqlServerData
 	}
 
 	//连接数据库
-	public function linkDataBase() {
+	public function connection() {
 		$this->odbcConnect = odbc_connect( $this->connect, $this->user, $this->pass );
 	}
 
