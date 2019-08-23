@@ -55,21 +55,17 @@ class Container
      * @param  array  $params 
      * @return object
      */
-	public function getInstance( $className, $params=array()) {
+	public function getInstance( $className, $params = array() ) {
         
         if ( $this->services[$className] )
             $className = $this->services[$className];
-
         if ( false == class_exists( $className )) die( 'class not found' );
-
 		$reflector = new ReflectionClass( $className );
-
         if ( $reflector->isInterface() ) return array_merge( $className, $params );
-
 		$constructor = $reflector->getConstructor();
-
 		$subclassParams = $constructor ? $this->getDiParams( $constructor->getParameters() ) : array();
-		return $reflector->newInstanceArgs( array_merge( $subclassParams, $params ) );
+        array_push( $subclassParams, $params );
+		return $reflector->newInstanceArgs( $subclassParams );
 		
 	}
 
@@ -87,21 +83,14 @@ class Container
 
         if ( $this->services[$className] )
             $className = $this->services[$className];
-
         if ( false == class_exists( $className )) die( 'class not found' );
-
 		$instance = $this->getInstance( $className, $construct_params );
-        dump( $instance );dump( $method );
 	    $reflector = new ReflectionClass( $className );
-        
 	    $reflectorMethod = $reflector->getMethod( $method );
-        dump($reflectorMethod->getParameters());
-	    $subclassParams = $reflectorMethod ? $this->getDiParams( $reflectorMethod->getParameters()) : array();
-        dump( $subclassParams );
-        dump( $params );
-	    $aaa = call_user_func_array( array( $instance, $method ), array_merge( $subclassParams, $params ));
-
-
+	    $subclassParams = $reflectorMethod ? $this->getDiParams( $reflectorMethod->getParameters()) : array(); 
+        array_push( $subclassParams, $params );
+        return call_user_func_array( array( $instance, $method ), $subclassParams );
+        
 	}
 
 	/**
@@ -112,12 +101,11 @@ class Container
      */
     public function getDiParams( array $params )
     {
-            // dump( $params );
         $subclassParams = array();
         foreach ( $params as $param ) {
             $class = $param->getClass();
             if ( false == empty( $class ))
-                $subclassParams = $this->getInstance( $class->name );
+                $subclassParams[] = $this->getInstance( $class->name );
         }
         return $subclassParams;
     }

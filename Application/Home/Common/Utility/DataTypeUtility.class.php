@@ -32,7 +32,7 @@ class DataTypeUtility implements Database
 	// 	}
 	// }
 
-	public function __construct() {
+	public function __construct( $aaa ) {
 
 	}
 
@@ -41,7 +41,7 @@ class DataTypeUtility implements Database
 	/* ------------------------------------------------------------------------------------*/
 
 	public function test() {
-		echo  123;
+		echo  'woqunimad';
 	}
 
 	//设置数据库类型

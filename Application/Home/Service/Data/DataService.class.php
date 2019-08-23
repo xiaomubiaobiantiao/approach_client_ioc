@@ -51,23 +51,15 @@ class DataService
 		return $this->dataStructure();
 	}
 
-
-
-	public function test(  DataTypeUtility $DataTypeUtility ) {
-		echo '123'.'<br>';
-		$DataTypeUtility->test();
-		// dump( $data );
-		// $dataService->
-	}
-
 	/**
 	 * [connectData 连接数据库]
 	 * @param  [string] $pDataType [database type]
 	 * @return [type]            [null]
 	 */
-	public function connectDatabase( DataTypeUtility $DataTypeUtility, $pData ) {
-		$DataTypeUtility->test();
-		dump( $DataTypeUtility );
+	public function connectDatabase( DataType $DataType, $pData=array() ) {
+		// $DataType->test();
+		// dump( $DataType );
+		dump( $pData );
 		// dump( $pData );
 		// dump( $DataTypeUtility );
 		// foreach ( $pData as $value ) {

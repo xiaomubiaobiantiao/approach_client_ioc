@@ -40,12 +40,13 @@ class UpdateDataController extends Controller
 
 	//接收数据库类型参数并检测对应数据库连接
 	public function detectionDatabaseConnect() {
+
 		$databaseType = I( 'database' );
 		$data = array( 'sqlserver', 'mysql' );
-		$aaa = $this->container->run( 'DataService', 'test', $data );
+
+		$aaa = $this->container->run( 'DataService', 'connectDatabase', $data );
 		// $dataService->connectDatabase( 'DataTypeUtility', $data );
 		// $this->dataService->connectDatabases( $data );
-		dump( $aaa );
 		// 
 	}
 
