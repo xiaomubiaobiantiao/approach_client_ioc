@@ -22,18 +22,18 @@ class SqlServerData implements Database
 	public $odbcConnect = '';
 
 	//初始化 - 备用
-	public function __construct( $pDataType, $pParamArr ) {
-		$this->setParam( $pParamArr );
+	public function __construct( array $pParams ) {
+		$this->setParam( $pParams );
 		$this->connection();
 	}
 
 	//设置数据库参数
-	public function setParam( $pParamArr ) {
-		$this->server = $pParamArr['server'];
-		$this->user = $pParamArr['user'];
-		$this->pass = $pParamArr['pass'];
-		$this->database = $pParamArr['database'];
-		$this->connect = $pParamArr['connect'];
+	public function setParam( array $pParams ) {
+		$this->server = $pParams['server'];
+		$this->user = $pParams['user'];
+		$this->pass = $pParams['pass'];
+		$this->database = $pParams['database'];
+		$this->connect = $pParams['connect'];
 	}
 
 	//连接数据库
@@ -42,7 +42,7 @@ class SqlServerData implements Database
 	}
 
 	//执行Sql语句
-	public function odbcExec( $pSql ) {
+	public function exec( $pSql ) {
 		return odbc_exec( $this->odbcConnect, $pSql );
 	}
 	

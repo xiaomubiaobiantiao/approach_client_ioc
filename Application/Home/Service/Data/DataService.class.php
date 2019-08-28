@@ -25,10 +25,6 @@ class DataService
 	//数据库文件需要更新的目录结构
 	public $dataStructure = '';
 
-	public function __construct() {
-		// $this->dataDir = $this->readDataDir( DATABASE_UPDATE );
-	}
-
 	//读取数据库文件目录
 	private function readDataDir( $pDir ) {
 		return FileBase::checkDirFiles( $pDir );
@@ -56,19 +52,15 @@ class DataService
 	 * @param  [string] $pDataType [database type]
 	 * @return [type]            [null]
 	 */
-	public function connectDatabase( DataType $DataType, $pData=array() ) {
-		// $DataType->test();
-		// dump( $DataType );
-		dump( $pData );
-		// dump( $pData );
-		// dump( $DataTypeUtility );
-		// foreach ( $pData as $value ) {
-		// 	$DataTypeUtility->setDataType( $value );
-		// 	$DataTypeUtility->connection( $value );
-		// }
-		// dump( $DataTypeUtility );
-		// $result = $DataTypeUtility->connection( $DataTypeUtility, $this->loadDataParam());
-		// return $result;
+	public function connectDatabase( array $pData ) {
+		
+		if ( is_object( current( $pData )))
+			$children = array_shift( $pData );
+
+		$database = $children->make( 'DataType', 'SqlServerData', $this->loadDataParam() );
+		// $database->test();
+		$database->connection();
+		dump( $database );
 	}
 
 	//遍历数组连接数据库
@@ -121,11 +113,11 @@ class DataService
 	//加载数据库配置参数 - 临时用
 	public function loadDataParam() {
 
-		$dbconf['server'] 	= '.';
+		$dbconf['server'] 		= '.';
 		$dbconf['user'] 		= 'sa';
 		$dbconf['pass'] 		= '123123';
 		$dbconf['database'] 	= 'hicisdata_new_test';
-		$dbconf['connect'] 	= 'DRIVER={SQL Server};SERVER='.$dbconf['server'].';DATABASE='.$dbconf['database'];
+		$dbconf['connect'] 		= 'DRIVER={SQL Server};SERVER='.$dbconf['server'].';DATABASE='.$dbconf['database'];
 
 		return $dbconf;
 

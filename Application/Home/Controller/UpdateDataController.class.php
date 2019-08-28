@@ -8,8 +8,8 @@
 namespace Home\Controller;
 
 use Think\Controller;
-// use Home\Service\Data\DataService as DataService;
-use Home\Utility\Container;
+use Home\Service\Data\DataService as DataService;
+use Home\Common\Utility\ChildrenUtility as children;
 
 class UpdateDataController extends Controller
 {
@@ -18,16 +18,14 @@ class UpdateDataController extends Controller
 
 	public function __construct() {
 		parent::__construct();
-		$container = new Container();
-		$this->container = $container;
+		$this->children = new children();
+		$this->dataService = $this->children->make( 'DataService' );
 	}
 
 	//更新数据库首页
 	public function index() {
-
-		$dataService = $this->container->getInstance( 'DataService' );
-		// die();
-		$this->detectionDatabaseConnect( $dataService );
+		
+		$this->detectionDatabaseConnect();
 		// echo 123;
 		die();
 
@@ -44,10 +42,8 @@ class UpdateDataController extends Controller
 		$databaseType = I( 'database' );
 		$data = array( 'sqlserver', 'mysql' );
 
-		$aaa = $this->container->run( 'DataService', 'connectDatabase', $data );
-		// $dataService->connectDatabase( 'DataTypeUtility', $data );
-		// $this->dataService->connectDatabases( $data );
-		// 
+		$aaa = $this->children->makeWith( $this->dataService, 'connectDatabase', $data, true );
+		
 	}
 
 	//检测数据库库名是否存在

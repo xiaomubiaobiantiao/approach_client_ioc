@@ -7,136 +7,185 @@
 namespace Home\Utility;
 
 use ReflectionClass;
-use BadMethodCallException;
-use Home\Common\Service\CommonService;
 
-class Container
+abstract class Container
 {
 
-	/**
-     * binds instances.
-     *
-     * @var array
-     */
-	protected $binds = array();
-    protected $services = array();
 
+    protected $bindings = array();
+    protected $associated = '';
+    protected $alias = array();
 
-    public function __construct() {
-        $service = new CommonService();
-        $this->services = $service->LoadService();
-    }
+    abstract public function bind();
+    abstract public function make();
+    abstract public function makeWith();
 
-	/**
-     * set a singleton instance.
-     *
-     * @param  object $abstract
-     * @param  string $concrete 
-     * @return void
-     */
-	public function bind( $abstract, $concrete = null ) {
-		$this->binds[$abstract] = $concrete == null ? $this->getInstance( $abstract ) : new $abstract( $this->binds[$concrete] );
-	}
+    public function _bind( $abstract, $concrete = null ) {
 
-	/**
-     * get a make instance.
-     *
-     * @param  string $className
-     * @return mixed object or NULL
-     */
-	public function make( $className ) {
-		return $this->binds[$className];
-	}
-
-	/**
-     * get Instance from reflection info.
-     *
-     * @param  string  $className
-     * @param  array  $params 
-     * @return object
-     */
-	public function getInstance( $className, $params = array() ) {
-        
-        if ( $this->services[$className] )
-            $className = $this->services[$className];
-        if ( false == class_exists( $className )) die( 'class not found' );
-		$reflector = new ReflectionClass( $className );
-        if ( $reflector->isInterface() ) return array_merge( $className, $params );
-		$constructor = $reflector->getConstructor();
-		$subclassParams = $constructor ? $this->getDiParams( $constructor->getParameters() ) : array();
-        array_push( $subclassParams, $params );
-		return $reflector->newInstanceArgs( $subclassParams );
-		
-	}
-
-	/**
-     * run class method.
-     *
-     * @param  string $className
-     * @param  string $method
-     * @param  array  $params
-     * @param  array  $construct_params
-     * @return mixed
-     * @throws \BadMethodCallException
-     */
-	public function run( $className, $method, $params = array(), $construct_params = array() ) {
-
-        if ( $this->services[$className] )
-            $className = $this->services[$className];
-        if ( false == class_exists( $className )) die( 'class not found' );
-		$instance = $this->getInstance( $className, $construct_params );
-	    $reflector = new ReflectionClass( $className );
-	    $reflectorMethod = $reflector->getMethod( $method );
-	    $subclassParams = $reflectorMethod ? $this->getDiParams( $reflectorMethod->getParameters()) : array(); 
-        array_push( $subclassParams, $params );
-        return call_user_func_array( array( $instance, $method ), $subclassParams );
-        
-	}
-
-	/**
-     * create Dependency injection params.
-     *
-     * @param  array $params
-     * @return array
-     */
-    public function getDiParams( array $params )
-    {
-        $subclassParams = array();
-        foreach ( $params as $param ) {
-            $class = $param->getClass();
-            if ( false == empty( $class ))
-                $subclassParams[] = $this->getInstance( $class->name );
+        if ( is_array( $concrete )) {
+            count( $concrete ) == count( $concrete, 1 )
+                ? $this->bindings[$abstract][$concrete[0]] = $concrete[1]
+                : $ccc =$this->bindings[$abstract][$concrete[0]][$concrete[1][0]] = $concrete[1][1];
+        } else {
+            is_null( $concrete )
+                ? $this->bindings[$abstract] = true
+                : $this->bindings[$abstract][$concrete] = $concrete;
         }
-        return $subclassParams;
+        
     }
 
-    /**
-     * get bind class or method
-     *
-     * @return array()
-     */
-	public function getBind() {
-		return $this->binds;
-	}
+    public function _make( $concrete, $associated = null, $params = null, $bool = false ) {
+        
+        if ( is_array( $associated ) && false == is_bool( $params ) )
+            list( $associated, $params ) = array( $params, $associated );
 
-    public function getServices() {
-        return $this->services;
+        if ( is_array( $associated ) && is_bool( $params ) )
+            list( $params, $bool, $associated ) = array( $associated, $params, null );      
+
+        $alias = $this->getAllAlias();
+        // switch ( func_num_args() || is_null( $associated ) ) {
+        switch ( is_null( $associated ) ) {
+            case 1:
+                if ( $alias[$concrete] ) $concrete = $alias[$concrete];
+                break;
+            default: 
+                if ( $alias[$concrete] && $alias[$associated] )
+                    list( $concrete, $associated ) = array( $alias[$concrete], $alias[$associated]);
+                break;
+        }
+        return $this->getInstance( $concrete, $associated, $params, $bool );
+
     }
 
-	/**
-     * print the result set
-     *
-     * @param  array $params
-     * @return The output to the browser
-     */
-	public function dump( $pParam ) {
-		if ( empty( $pParam )) {
-			print_r( 'NULL' ).'<br>';
-		} else {
-			// print_r( $pParam );echo '<br>';
-			var_dump( $pParam );echo '<br>';
-		}
-	}
+    public function _makeWith( $classInstance, $method, $methodAssociated = null, $methodParams = null, $bool = false ) {
+
+        if ( is_array( $methodAssociated ) && false == is_bool( $methodParams ) )
+            list( $methodParams, $methodAssociated ) = array( $methodAssociated, $methodParams );
+
+        if ( is_array( $methodAssociated ) && is_bool( $methodParams ) )
+            list( $methodParams, $bool, $methodAssociated ) = array( $methodAssociated, $methodParams, null );    
+       
+        $alias = $this->getAllAlias();
+        if ( $alias[$methodAssociated] )
+            $methodAssociated = $alias[$methodAssociated];
+        $className = $this->reflecterClass( $classInstance );
+        $reflecter = new ReflectionClass( $className );
+        $reflecterMethod = $reflecter->getMethod( $method );
+        $parameters = $reflecterMethod->getParameters();
+        foreach ( $parameters as $param ) {
+            $class = $param->getClass();
+            if ( $class ) {
+                if ( interface_exists( $class->name ) ) {
+
+                    if ( is_null( $methodAssociated ) )
+                        $methodAssociated = $this->searchBindInterface( $className, $class->name, $method );
+
+                    if ( empty( $this->bindings[$class->name][$methodAssociated] ))
+                        die( 'not found class, bind abstract or interface please !' );
+
+                    $instance[] = $this->make( $this->bindings[$class->name][$methodAssociated] );
+                } else {
+                    $instance[] = $this->getInstance( $class->name );
+                }
+            }
+        }
+        
+        if ( true === array_pop( array_filter( func_get_args())))
+            array_unshift( $methodParams, $this );
+        
+        empty( $instance )
+            ? $instance[] = $methodParams
+            : array_push( $instance, $methodParams );
+    
+        return call_user_func_array( array( $classInstance, $method ), $instance );
+
+    }
+
+    public function getInstance( $className, $associated = null, $params = null, $bool = false ) {
+
+        $reflecter = new ReflectionClass( $className );
+        $constructor = $reflecter->getConstructor();
+        $instance = array();
+        if ( false == $constructor )
+            return $reflecter->newInstanceArgs( $instance );
+        $parameters = $constructor->getParameters();
+        foreach ( $parameters as $param ) {
+            $class = $param->getClass();
+            if ( $class ) {
+                if ( interface_exists( $class->name ) ) {
+                    if ( is_null( $associated ) )
+                        $associated = $this->searchBindInterface( $className, $class->name );
+             
+                    if ( empty( $this->bindings[$class->name][$associated] ))
+                        die( 'not found class, bind abstract or interface please !' );
+                    $instance[] = $this->make( $this->bindings[$class->name][$associated] );
+                } else {
+                    $instance[] = $this->getInstance( $class->name );
+                }
+            } else {
+                $classParam[] = $param->name;
+            }
+        }       
+        
+        if ( true === array_pop( array_filter( func_get_args())))
+            array_unshift( $params, $this );
+
+        array_push( $instance, $params );
+        return $reflecter->newInstanceArgs( $instance );
+        
+    }
+
+    protected function searchBindInterface( $className, $abstract, $methodName = null ) {
+
+        if ( is_null( $methodName ) ) {
+            if ( $this->bindings[$className][$abstract] )
+                return $this->bindings[$className][$abstract];
+        } else {
+            if ( $this->bindings[$className][$methodName][$abstract] )
+                return $this->bindings[$className][$methodName][$abstract];
+        }
+        if ( count( $this->bindings[$abstract] ) != 1 ) {
+            die( 'getInstance: $this->bindings( '.$abstract.' ) only one Interface OR number 2 parameter bind class Concrete   please !' );
+        } 
+        return current( $this->bindings[$abstract] );
+
+    }
+
+    protected function bindAbstrcact() {
+        // $this->bind( 'abcd' );
+        // $this->bind( 'bacddddd', 'sadkfj;sadf' );
+    }
+
+    protected function bindAlias() {
+        return array(
+            // 'IndexController' => 'Controller\IndexController',
+            // 'ModelInterface' => 'Interfaces\ModelInterface',
+            // 'TestModel' => 'Model\TestModel',
+        );
+    }
+
+    public function setAlias( $alias, $fullName ) {
+        $this->alias[$alias] = $fullName;
+    }
+
+    public function getAlias() {
+        return $this->alias;
+    }
+
+    public function getAllAlias() {
+        return array_merge( $this->getAlias(), $this->bindAlias() );
+    }
+
+    public function getBinds() {
+        return $this->bindings;
+    }
+
+    protected function reflecterClass( $class ) {
+        $reflecterClass = new ReflectionClass( $class );
+        return $reflecterClass->name;
+    }
+
+
 
 
 }

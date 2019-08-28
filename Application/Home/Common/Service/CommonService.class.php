@@ -53,16 +53,7 @@ class CommonService
         return $result;
     }
 
-    public function LoadService() {
-        return array(
-            'SqlServerData' => '\Home\Common\Data\SqlServerData',
-            'MysqlData' => '\Home\Common\Data\MysqlData',
-            'OracleData' => '\Home\Common\Data\OracleData',
-
-            'DataTypeUtility' => '\Home\Common\Utility\DataTypeUtility',
-            'DataService' => '\Home\Service\Data\DataService'
-        );
-    }
+    
 
 
 }

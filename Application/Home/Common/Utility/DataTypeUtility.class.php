@@ -15,25 +15,15 @@ class DataTypeUtility implements Database
 
 	//数据库对象
 	public $database = '';
-	//数据库类型
-	public $dataType = '';
-	//连接数据库参数
-	public $databaseParams = '';
 
-	// public function __construct( $pDataType='', $pDatabaseParams='' ) {
-	// 	$this->setDataType( $pDataType );
-	// 	$this->sqlserverParam( $pDatabaseParams );
-	// }
+	//数据库参数
+	public $params = '';
 
-	// public function __construct( Database $pDatabase = null, $pDatabaseParams = null ) {
-	// 	if ( false == empty( $pDatabase )) {
-	// 		$this->database = $pDatabase;
-	// 		$this->dataType = $pDatabase;
-	// 	}
-	// }
-
-	public function __construct( $aaa ) {
-
+	public function __construct( Database $pDatabase, $pParams ) {
+		$this->database = $pDatabase;
+		$this->params = $pParams;
+		$this->database->setParam( $pParams );
+		$this->database->connection();
 	}
 
 	/* ------------------------------------------------------------------------------------*/
@@ -41,7 +31,7 @@ class DataTypeUtility implements Database
 	/* ------------------------------------------------------------------------------------*/
 
 	public function test() {
-		echo  'woqunimad';
+		echo 65465;
 	}
 
 	//设置数据库类型
@@ -50,13 +40,15 @@ class DataTypeUtility implements Database
 	}
 
 	//连接数据库
-	public function connection( Database $pDatabase = null, $params = null ) {
-		dump( $Database );
-		$this->database = $pDatabase;
-		$this->setDataType( $pDatabase );
-		dump( $this->database );
-		die();
-		return $this->database->connection( $this->databaseParams );
+	public function connection() {
+		dump( $this->database->odbcConnect );
+		dump( $this->database->exec( "select * from a_basic_info_ops" ));
+		// $this->database->setParam( $this->params );
+		// $this->setDataType( $pDatabase );
+		
+		// $result = $this->database->connection( $params );
+		// dump( $result );
+		// return $this->database->connection( $this->databaseParams );
 	}
 
 	//新建数据库
