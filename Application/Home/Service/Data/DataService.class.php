@@ -25,6 +25,14 @@ class DataService
 	//数据库文件需要更新的目录结构
 	public $dataStructure = '';
 
+	public function __construct( $pChildren ) {
+
+		if ( is_object( current( $pChildren )))
+			$this->children = array_shift( $pChildren );
+
+		// dump( $this->children );
+	}
+
 	//读取数据库文件目录
 	private function readDataDir( $pDir ) {
 		return FileBase::checkDirFiles( $pDir );
@@ -52,19 +60,24 @@ class DataService
 	 * @param  [string] $pDataType [database type]
 	 * @return [type]            [null]
 	 */
-	public function connectDatabase( array $pData ) {
-		
-		if ( is_object( current( $pData )))
-			$children = array_shift( $pData );
+	public function connectDatabase( array $pDatabaseType ) {
+		dump( $pDatabaseType );
 
-		$database = $children->make( 'DataType', 'SqlServerData', $this->loadDataParam() );
-		// $database->test();
-		$database->connection();
+		// 拼接完整数据库名称
+		$databaseType = ucfirst( $pDatabaseType[1].'Data' );
+		
+		$database = $this->children->make( 'DataType', $databaseType, $this->loadDataParam() );
 		dump( $database );
+
+		// $sql = "select * from a_nnis";
+		// $resources = $database->exec( $sql );
+		// $nums = $database->numRows( $resources );
+		// dump( $nums );
+		
 	}
 
 	//遍历数组连接数据库
-	public function connectDatabases( $pDatabaseTypeArr ) {
+	public function connectDatabases( array $pDatabaseTypeArr ) {
 		foreach ( $pDatabaseTypeArr as $value )
 			$this->connectDatabase( $value ) ? $data[$value] = true : $data[$value] = false;
 		return $data;

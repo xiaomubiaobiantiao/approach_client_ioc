@@ -19,10 +19,10 @@ class UpdateDataController extends Controller
 	public function __construct() {
 		parent::__construct();
 		$this->children = new children();
-		$this->dataService = $this->children->make( 'DataService' );
+		$this->dataService = $this->children->make( 'DataService', array( $this->children ) );
 	}
 
-	//更新数据库首页
+	// 更新数据库首页
 	public function index() {
 		
 		$this->detectionDatabaseConnect();
@@ -36,21 +36,24 @@ class UpdateDataController extends Controller
 
 	}
 
-	//接收数据库类型参数并检测对应数据库连接
+	// 接收数据库类型参数并检测对应数据库连接
 	public function detectionDatabaseConnect() {
 
 		$databaseType = I( 'database' );
-		$data = array( 'sqlserver', 'mysql' );
+		$data = array( 'Sqlserver', 'Mysql' );
+		$this->dataService->connectDatabase( $data );
 
-		$aaa = $this->children->makeWith( $this->dataService, 'connectDatabase', $data, true );
-		
 	}
 
-	//检测数据库库名是否存在
+	// 检测数据库库名是否存在
 	public function detectionDatabaseName() {
 
 	}
 
+	// 测试
+	public function test( DataService $DataService ) {
+		$DataService->test();
+	}
 
 
 }

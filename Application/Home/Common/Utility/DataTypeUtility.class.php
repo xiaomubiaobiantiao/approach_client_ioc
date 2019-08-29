@@ -10,13 +10,13 @@ namespace Home\Common\Utility;
 use Home\Common\Data\SqlServerData;
 use Home\Interfaces\Database;
 
-class DataTypeUtility implements Database
+class DataTypeUtility // implements Database
 {
 
-	//数据库对象
+	// 数据库对象
 	public $database = '';
 
-	//数据库参数
+	// 数据库参数
 	public $params = '';
 
 	public function __construct( Database $pDatabase, $pParams ) {
@@ -34,39 +34,47 @@ class DataTypeUtility implements Database
 		echo 65465;
 	}
 
-	//设置数据库类型
+	// 连接数据库
+	public function connection() {
+		return $this->database->odbcConnect;
+	}
+
+	// 执行Sql语句
+	public function exec( $pSql ) {
+		return $this->database->exec( $pSql );
+	}
+
+	// 循环遍历内容
+	public function fetchConnect( $pResources ) {
+		return $this->database->fetchConnect( $pResources );
+	}
+
+	// 查看总行数
+	public function numRows( $pResources ) {
+		return $this->database->numRows( $pResources );
+	}
+
+	// 设置数据库类型
 	private function setDataType( $pDataType ) {
 		$this->dataType = $pDataType;
 	}
 
-	//连接数据库
-	public function connection() {
-		dump( $this->database->odbcConnect );
-		dump( $this->database->exec( "select * from a_basic_info_ops" ));
-		// $this->database->setParam( $this->params );
-		// $this->setDataType( $pDatabase );
-		
-		// $result = $this->database->connection( $params );
-		// dump( $result );
-		// return $this->database->connection( $this->databaseParams );
-	}
-
-	//新建数据库
+	// 新建数据库
 	public function newDatabase() {
 		return $this->database = new $this->dataType;
 	}
 
-	//oracle 参数
+	// oracle 参数
 	public function oracleParam( $pDatabaseParams ) {
 		
 	}
 
-	//mysql 参数
+	// mysql 参数
 	public function mysqlParam() {
 
 	}
 
-	//sqlserver 参数
+	// sqlserver 参数
 	public function sqlserverParam() {
 		$this->param = $pDatabaseParams;
 	}

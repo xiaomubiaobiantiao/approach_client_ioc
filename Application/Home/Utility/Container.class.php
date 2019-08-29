@@ -69,6 +69,7 @@ abstract class Container
         if ( $alias[$methodAssociated] )
             $methodAssociated = $alias[$methodAssociated];
         $className = $this->reflecterClass( $classInstance );
+
         $reflecter = new ReflectionClass( $className );
         $reflecterMethod = $reflecter->getMethod( $method );
         $parameters = $reflecterMethod->getParameters();
@@ -102,9 +103,13 @@ abstract class Container
     }
 
     public function getInstance( $className, $associated = null, $params = null, $bool = false ) {
+        
+        if ( false == class_exists( $className )) die( 'Class '.$className.' does not exist' );
 
         $reflecter = new ReflectionClass( $className );
+        
         $constructor = $reflecter->getConstructor();
+        
         $instance = array();
         if ( false == $constructor )
             return $reflecter->newInstanceArgs( $instance );
@@ -115,7 +120,6 @@ abstract class Container
                 if ( interface_exists( $class->name ) ) {
                     if ( is_null( $associated ) )
                         $associated = $this->searchBindInterface( $className, $class->name );
-             
                     if ( empty( $this->bindings[$class->name][$associated] ))
                         die( 'not found class, bind abstract or interface please !' );
                     $instance[] = $this->make( $this->bindings[$class->name][$associated] );
@@ -125,8 +129,8 @@ abstract class Container
             } else {
                 $classParam[] = $param->name;
             }
-        }       
-        
+        }
+
         if ( true === array_pop( array_filter( func_get_args())))
             array_unshift( $params, $this );
 

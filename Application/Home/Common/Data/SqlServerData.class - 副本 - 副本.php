@@ -1,6 +1,6 @@
 <?php
 /**
- * Êı¾İ¿âÁ¬½ÓÀà
+ * æ•°æ®åº“è¿æ¥ç±»
  * Created by Sublime Text
  * @author Michael
  * DateTime: 19-6-27 09:37:00
@@ -8,25 +8,26 @@
 namespace Home\Common\Data;
 use Home\Interfaces\Database;
 
-class SqlserverData implements Database
+class SqlServerData implements Database
 {
 
-	// ³õÊ¼»¯Êı¾İ¿â²ÎÊı
+	//åˆå§‹åŒ–æ•°æ®åº“å‚æ•°
 	public $server = '';
 	public $user = '';
 	public $pass = '';
 	public $database = '';
 	public $connect = '';
 
-	// Êı¾İ¿âÁ¬½Ó
-	public $dataConnect = '';
+	//æ•°æ®åº“è¿æ¥
+	public $odbcConnect = '';
 
-	// ³õÊ¼»¯ - ±¸ÓÃ
+	//åˆå§‹åŒ– - å¤‡ç”¨
 	public function __construct( array $pParams ) {
 		$this->setParam( $pParams );
+		$this->connection();
 	}
 
-	// ÉèÖÃÊı¾İ¿â²ÎÊı
+	//è®¾ç½®æ•°æ®åº“å‚æ•°
 	public function setParam( array $pParams ) {
 		$this->server = $pParams['server'];
 		$this->user = $pParams['user'];
@@ -35,31 +36,28 @@ class SqlserverData implements Database
 		$this->connect = $pParams['connect'];
 	}
 
-	// Á¬½ÓÊı¾İ¿â
+	//è¿æ¥æ•°æ®åº“
 	public function connection() {
-		echo __CLASS__;
-		$this->dataConnect = odbc_connect( $this->connect, $this->user, $this->pass );
-		return $this->dataConnect;
+		$this->odbcConnect = odbc_connect( $this->connect, $this->user, $this->pass );
 	}
 
-	// Ö´ĞĞSqlÓï¾ä
+	//æ‰§è¡ŒSqlè¯­å¥
 	public function exec( $pSql ) {
-		return odbc_exec( $this->dataConnect, $pSql );
+		return odbc_exec( $this->odbcConnect, $pSql );
 	}
 	
-	// Ñ­»·±éÀúÄÚÈİ
-	public function fetchConnect( $pResources ) {
-		while( $row = odbc_fetch_array( $pResources ))
+	//å¾ªç¯éå†å†…å®¹
+	public function fetchConnect( $pArr ) {
+		while( $row = odbc_fetch_array( $pArr ))
 			$result[] = $row;
-		return $result;
+		return $row;
 	}
 
-	// ²é¿´×ÜĞĞÊı
-	public function numRows( $pResources ) {
-		return odbc_num_rows( $pResources );
+	//æŸ¥çœ‹æ€»è¡Œæ•°
+	public function numRows() {
+		return odbc_num_rows( $result );
 	}
 
-	//
 	
 
 
