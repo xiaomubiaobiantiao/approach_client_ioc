@@ -26,11 +26,15 @@ class DataService
 	public $dataStructure = '';
 
 	public function __construct( $pChildren ) {
-
-		if ( is_object( current( $pChildren )))
-			$this->children = array_shift( $pChildren );
+		// dump( $pChildren );
+		// if ( is_object( current( $pChildren )))
+		// 	$this->children = array_shift( $pChildren );
 
 		// dump( $this->children );
+	}
+
+	public function test() {
+		echo 444;
 	}
 
 	//读取数据库文件目录

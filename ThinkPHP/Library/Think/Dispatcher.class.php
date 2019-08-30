@@ -248,6 +248,7 @@ class Dispatcher {
 
         //保证$_REQUEST正常取值
         $_REQUEST = array_merge($_POST,$_GET,$_COOKIE);	// -- 加了$_COOKIE.  保证哦..
+
     }
 
     /**
@@ -281,6 +282,7 @@ class Dispatcher {
             // 智能识别方式 user_type 识别到 UserTypeController 控制器
             $controller = parse_name($controller,1);
         }
+        // return strip_tags(ucfirst($controller));
         return strip_tags(ucfirst($controller));
     }
 
@@ -312,7 +314,7 @@ class Dispatcher {
                     return   '';
                 }
             }
-        }
+        }   // dump(strip_tags( $urlCase? strtolower($action) : $action ));
         return strip_tags( $urlCase? strtolower($action) : $action );
     }
 

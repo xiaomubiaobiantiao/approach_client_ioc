@@ -12,7 +12,8 @@ namespace Think;
 /**
  * ThinkPHP 应用程序类 执行应用过程管理
  */
-class App {
+use Think\ChildrenUtility;
+class App extends ChildrenUtility {
 
     /**
      * 应用程序初始化
@@ -51,6 +52,7 @@ class App {
 
         // TMPL_EXCEPTION_FILE 改为绝对地址
         C('TMPL_EXCEPTION_FILE',realpath(C('TMPL_EXCEPTION_FILE')));
+
         return ;
     }
 
@@ -60,10 +62,9 @@ class App {
      * @return void
      */
     static public function exec() {
-    
         if(!preg_match('/^[A-Za-z](\/|\w)*$/',CONTROLLER_NAME)){ // 安全检测
             $module  =  false;
-        }elseif(C('ACTION_BIND_CLASS')){
+        }elseif(C('ACTION_BIND_CLASS')){ 
             // 操作绑定到类：模块\Controller\控制器\操作
             $layer  =   C('DEFAULT_C_LAYER');
             if(is_dir(MODULE_PATH.$layer.'/'.CONTROLLER_NAME)){
@@ -84,9 +85,24 @@ class App {
             $module  =  new $class;
             // 操作绑定到类后 固定执行run入口
             $action  =  'run';
+            echo 98989898;
         }else{
+            // dump( CONTROLLER_NAME );
+            // dump( CONTROLLER_PATH );
+
             //创建控制器实例
-            $module  =  controller(CONTROLLER_NAME,CONTROLLER_PATH);                
+            // $module  =  controller(CONTROLLER_NAME,CONTROLLER_PATH); 
+                
+            // $class; echo 3333; dump( $module );echo 6666;        
+            // $abc = CONTROLLER_NAME;
+               // $module = new $abc();
+               dump( ACTION_NAME );
+               $children = new ChildrenUtility();
+               $module = $children->make( CONTROLLER_NAME );
+               $moduleAction = $children->makeWith( $module, ACTION_NAME );
+               // dump( $module );
+               // dump( $aaa );
+               // die();
         }
 
         if(!$module) {
@@ -96,7 +112,7 @@ class App {
             }
 
             // 是否定义Empty控制器
-            $module = A('Empty');
+            $module = A('Empty');//dump($module);
             if(!$module){
                 E(L('_CONTROLLER_NOT_EXIST_').':'.CONTROLLER_NAME);
             }

@@ -10,29 +10,32 @@ namespace Home\Controller;
 use Think\Controller;
 use Home\Service\Data\DataService as DataService;
 use Home\Common\Utility\ChildrenUtility as children;
-
+use COM;
 class UpdateDataController extends Controller
 {
 
 	public $dataService = '';
 
-	public function __construct() {
+	public function __construct( DataService $DataService ) {
 		parent::__construct();
-		$this->children = new children();
-		$this->dataService = $this->children->make( 'DataService', array( $this->children ) );
+		// $DataService->test();
+		// $this->children = new children();
+		// $this->dataService = $this->children->make( 'DataService', array( $this->children ) );
 	}
 
 	// 更新数据库首页
-	public function index() {
+	public function index( DataService $DataService ) {
 		
-		$this->detectionDatabaseConnect();
+		$DataService->test();
+		echo 8989;
+		// $this->detectionDatabaseConnect();
 		// echo 123;
-		die();
+		
 
 		// $databaselist = $this->dataService->updateDataProcess();
 		// dump( $databaselist );
 		// $this->assign( 'databaselist', $databaselist );
-		// $this->display( 'UpdateData/index' );
+		$this->display( 'UpdateData/index' );
 
 	}
 
@@ -53,6 +56,7 @@ class UpdateDataController extends Controller
 	// 测试
 	public function test( DataService $DataService ) {
 		$DataService->test();
+
 	}
 
 
